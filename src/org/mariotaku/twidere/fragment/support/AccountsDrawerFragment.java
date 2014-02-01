@@ -42,7 +42,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +61,7 @@ import org.mariotaku.twidere.adapter.AccountsDrawerAdapter;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.GroupItem;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.OnAccountActivateStateChangeListener;
 import org.mariotaku.twidere.adapter.AccountsDrawerAdapter.OptionItem;
+import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -252,7 +252,10 @@ public class AccountsDrawerFragment extends BaseSupportFragment implements Loade
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final Context theme = new ContextThemeWrapper(getActivity(), ThemeUtils.getDrawerThemeResource(getActivity()));
+		final Context context = getActivity();
+		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
+		final int accentColor = ThemeUtils.getUserThemeColor(context);
+		final Context theme = new TwidereContextThemeWrapper(context, themeResource, accentColor);
 		final View view = LayoutInflater.from(theme).inflate(R.layout.accounts_drawer, container, false);
 		mListView = (ExpandableListView) view.findViewById(android.R.id.list);
 		return view;

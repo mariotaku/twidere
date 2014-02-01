@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -98,25 +99,25 @@ public class CustomTabUtils implements Constants {
 					CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 10, false));
 		}
 
-		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_tab_accounts);
+		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_iconic_action_accounts);
 		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_tab_fire);
 		CUSTOM_TABS_ICON_NAME_MAP.put("hamster", R.drawable.ic_tab_hamster);
 		CUSTOM_TABS_ICON_NAME_MAP.put("heart", R.drawable.ic_tab_heart);
-		CUSTOM_TABS_ICON_NAME_MAP.put("home", R.drawable.ic_tab_home);
+		CUSTOM_TABS_ICON_NAME_MAP.put("home", R.drawable.ic_iconic_action_home);
 		CUSTOM_TABS_ICON_NAME_MAP.put("list", R.drawable.ic_tab_list);
-		CUSTOM_TABS_ICON_NAME_MAP.put("mention", R.drawable.ic_tab_mention);
-		CUSTOM_TABS_ICON_NAME_MAP.put("message", R.drawable.ic_tab_message);
+		CUSTOM_TABS_ICON_NAME_MAP.put("mention", R.drawable.ic_iconic_action_mention);
+		CUSTOM_TABS_ICON_NAME_MAP.put("message", R.drawable.ic_iconic_action_message);
 		CUSTOM_TABS_ICON_NAME_MAP.put("neko", R.drawable.ic_tab_neko);
-		CUSTOM_TABS_ICON_NAME_MAP.put("person", R.drawable.ic_tab_person);
+		CUSTOM_TABS_ICON_NAME_MAP.put("person", R.drawable.ic_iconic_action_profile);
 		CUSTOM_TABS_ICON_NAME_MAP.put("pin", R.drawable.ic_tab_pin);
-		CUSTOM_TABS_ICON_NAME_MAP.put("quote", R.drawable.ic_tab_quote);
+		CUSTOM_TABS_ICON_NAME_MAP.put("quote", R.drawable.ic_iconic_action_quote);
 		CUSTOM_TABS_ICON_NAME_MAP.put("ribbon", R.drawable.ic_tab_ribbon);
-		CUSTOM_TABS_ICON_NAME_MAP.put("search", R.drawable.ic_tab_search);
+		CUSTOM_TABS_ICON_NAME_MAP.put("search", R.drawable.ic_iconic_action_search);
 		CUSTOM_TABS_ICON_NAME_MAP.put("staggered", R.drawable.ic_tab_staggered);
-		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_tab_star);
+		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_iconic_action_star);
 		CUSTOM_TABS_ICON_NAME_MAP.put("trends", R.drawable.ic_tab_trends);
-		CUSTOM_TABS_ICON_NAME_MAP.put("twidere", R.drawable.ic_tab_twidere);
-		CUSTOM_TABS_ICON_NAME_MAP.put("twitter", R.drawable.ic_tab_twitter);
+		CUSTOM_TABS_ICON_NAME_MAP.put("twidere", R.drawable.ic_iconic_action_twidere);
+		CUSTOM_TABS_ICON_NAME_MAP.put("twitter", R.drawable.ic_iconic_action_twitter);
 	}
 
 	public static String findTabIconKey(final int iconRes) {
@@ -261,10 +262,22 @@ public class CustomTabUtils implements Constants {
 		else if (icon_obj instanceof Drawable)
 			return (Drawable) icon_obj;
 		else if (icon_obj instanceof File) {
-			final Bitmap b = Utils.getTabIconFromFile((File) icon_obj, res);
+			final Bitmap b = getTabIconFromFile((File) icon_obj, res);
 			if (b != null) return new BitmapDrawable(res, b);
 		}
 		return res.getDrawable(R.drawable.ic_tab_list);
+	}
+
+	public static Bitmap getTabIconFromFile(final File file, final Resources res) {
+		if (file == null || !file.exists()) return null;
+		final String path = file.getPath();
+		final BitmapFactory.Options o = new BitmapFactory.Options();
+		o.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, o);
+		if (o.outHeight <= 0 || o.outWidth <= 0) return null;
+		o.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
+		o.inJustDecodeBounds = false;
+		return BitmapFactory.decodeFile(path, o);
 	}
 
 	public static Object getTabIconObject(final String type) {

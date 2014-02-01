@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.preference.CheckBoxPreference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
@@ -34,7 +33,8 @@ import org.mariotaku.twidere.util.ParseUtils;
 
 import java.util.Map;
 
-public class ValueDependencyCheckBoxPreference extends CheckBoxPreference implements OnSharedPreferenceChangeListener {
+public class ValueDependencyCheckBoxPreference extends AutoFixCheckBoxPreference implements
+		OnSharedPreferenceChangeListener {
 
 	private final String mDependencyKey, mDependencyValueDefault;
 	private final String[] mDependencyValues;

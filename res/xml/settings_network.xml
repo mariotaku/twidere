@@ -14,23 +14,23 @@
 			app:min="5"
 			app:progressTextSuffix="s"/>
 
-		<CheckBoxPreference
+		<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 			android:defaultValue="true"
 			android:key="fast_image_loading"
 			android:summary="@string/fast_image_loading_summary"
 			android:title="@string/fast_image_loading"/>
-		<CheckBoxPreference
+		<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 			android:defaultValue="false"
 			android:key="ignore_ssl_error"
 			android:summary="@string/ignore_ssl_error_summary"
 			android:title="@string/ignore_ssl_error"/>
-		<CheckBoxPreference
+		<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 			android:defaultValue="false"
 			android:key="tcp_dns_query"
 			android:summary="@string/tcp_dns_query_summary"
 			android:title="@string/tcp_dns_query"/>
 
-		<EditTextPreference
+		<org.mariotaku.twidere.preference.AutoFixEditTextPreference
 			android:defaultValue="8.8.8.8"
 			android:dialogTitle="@string/dns_server"
 			android:inputType="textVisiblePassword"
@@ -48,19 +48,19 @@
 	<PreferenceCategory
 		android:key="category_proxy"
 		android:title="@string/proxy">
-		<CheckBoxPreference
+		<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 			android:defaultValue="false"
 			android:disableDependentsState="false"
 			android:key="enable_proxy"
 			android:summary="@string/http_proxy_summary"
 			android:title="@string/http_proxy"/>
 
-		<EditTextPreference
+		<org.mariotaku.twidere.preference.AutoFixEditTextPreference
 			android:dependency="enable_proxy"
 			android:key="proxy_host"
 			android:singleLine="true"
 			android:title="@string/proxy_host"/>
-		<EditTextPreference
+		<org.mariotaku.twidere.preference.AutoFixEditTextPreference
 			android:dependency="enable_proxy"
 			android:inputType="number"
 			android:key="proxy_port"
@@ -70,7 +70,7 @@
 	<PreferenceCategory
 		android:key="category_api"
 		android:title="@string/api">
-		<CheckBoxPreference
+		<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 			android:defaultValue="true"
 			android:key="gzip_compressing"
 			android:summary="@string/gzip_compressing_summary"

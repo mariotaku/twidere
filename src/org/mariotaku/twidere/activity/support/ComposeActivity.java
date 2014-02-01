@@ -548,7 +548,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
 		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
-		setContentView(R.layout.compose);
+		setContentView(R.layout.activity_compose);
 		setProgressBarIndeterminateVisibility(false);
 		setFinishOnTouchOutside(false);
 		mAccountIds = getAccountIds(this);

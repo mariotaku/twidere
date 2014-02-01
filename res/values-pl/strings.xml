@@ -32,6 +32,7 @@
   <string name="error_occurred">Wystąpił błąd, spróbuj ponownie.</string>
   <string name="error_already_logged_in">Już jesteś zalogowany.</string>
   <string name="no_account_selected">Nie wybrano żadnego konta.</string>
+  <string name="empty_account_selection_disallowed">Wybierz przynajmniej jedno konto.</string>
   <string name="error_unknown_error">Nieznany błąd, prawdopodobnie błąd w aplikacji.</string>
   <string name="error_message">Błąd: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Błąd podczas <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
@@ -63,6 +64,7 @@
   <string name="open_source_license">Licencja open source</string>
   <string name="api">API</string>
   <string name="default_api_settings">Ustawienia domyślnego API</string>
+  <string name="default_api_settings_summary">Te ustawienia mają zastosowanie do nowo zalogowanych kont</string>
   <string name="consumer_key">Klucz klienta</string>
   <string name="consumer_secret">Consumer secret</string>
   <string name="ignore_ssl_error">Ignoruj błąd SSL</string>
@@ -95,7 +97,7 @@
   <string name="sources">Źródła</string>
   <string name="content">Zawartość</string>
   <string name="customize">Ustaw</string>
-  <string name="set_nickname">Ustaw ksywkę</string>
+  <string name="set_nickname">Ustaw pseudonim</string>
   <string name="set_color">Ustaw kolor</string>
   <string name="clear">Wyczyść</string>
   <string name="pick_color">Wybierz kolor</string>
@@ -103,8 +105,8 @@
   <string name="unfollow">Przestań obserwować</string>
   <string name="bottom_compose_button">Przycisk \"zaćwierkaj\" na dole</string>
   <string name="bottom_compose_button_summary">Pokazuje przycisk zaćwierkaj na dole ekranu, można włączyć jeśli masz duży ekran.</string>
-  <string name="leftside_compose_button">Przycisk Zaćwierkaj po lewej stronie</string>
-  <string name="leftside_compose_button_summary">Włącz przycisk Zaćwierkaj po lewej stronie.</string>
+  <string name="leftside_compose_button">Przycisk \"zaćwierkaj\" po lewej stronie</string>
+  <string name="leftside_compose_button_summary">Włącz przycisk zaćwierkaj po lewej stronie.</string>
   <string name="bottom_send_button">Przycisk \"wyślij\" na dole</string>
   <string name="load_item_limit">Limit ładowania</string>
   <string name="load_item_limit_summary">Ustaw ilość wpisów ładowanych jednorazowo.</string>
@@ -124,7 +126,7 @@
   <string name="refresh">Odśwież</string>
   <string name="retry">Ponów</string>
   <string name="more">Więcej</string>
-  <string name="quote_format">Format Cytowania</string>
+  <string name="quote_format">Format cytowania</string>
   <string name="quote_format_summary">\"[TEXT]\" = Tweet text\n\"[NAME]\" = Nazwa użytkownika w Twitterze</string>
   <string name="direct_messages">Wiadomości</string>
   <string name="blocked_users">Zablokowani użytkownicy</string>
@@ -180,6 +182,7 @@
   <string name="type_to_compose">Wpisuj</string>
   <string name="users_lists">Listy użytkownika</string>
   <string name="lists_following_user">Listy obserwujące tego użytkownika</string>
+  <string name="lists_following_me">Listy obserwujące mnie</string>
   <string name="item_3_minutes">3 minuty</string>
   <string name="item_5_minutes">5 minut</string>
   <string name="item_10_minutes">10 minut</string>
@@ -222,7 +225,7 @@
   <string name="share_format">Format udostępniania</string>
   <string name="share_format_summary">\"[TITLE]\" = Tytuł zawartości\n\"[TEXT]\" = Tekst zawartości</string>
   <string name="network">Sieć</string>
-  <string name="content_and_storage">Zawartość &amp; Przechowywanie</string>
+  <string name="content_and_storage">Zawartość i przechowywanie</string>
   <string name="image_uploader">Ładowarka obrazów</string>
   <string name="image_uploader_default">Domyślne (Twitter)</string>
   <string name="home_refresh">Odśwież w strumieniu głównym</string>
@@ -268,22 +271,33 @@
   <string name="activity_about_me_retweet"><xliff:g id="user">%s</xliff:g> przesłał/a dalej Twojego ćwierka.</string>
   <string name="activity_about_me_retweet_multi"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> innych przesłało dalej Twojego ćwierka.</string>
   <string name="activity_about_me_list_member_added"><xliff:g id="user">%s</xliff:g> dodał/a Cię do listy.</string>
+  <string name="activity_about_me_list_member_added_with_name"><xliff:g id="user">%1$s</xliff:g> dodał Cię do listy "<xliff:g id="list">%2$s</xliff:g>\".</string>
   <string name="activity_about_me_list_member_added_multi"><xliff:g id="user">%s</xliff:g> i <xliff:g id="count">%d</xliff:g> innych dodało Cię do ich list.</string>
   <string name="activity_by_friends_favorite"><xliff:g id="user">%1$s</xliff:g> polubił ćwierka <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_favorite_multi"><xliff:g id="user">%1$s</xliff:g> polubił <xliff:g id="target">%2$s</xliff:g> i <xliff:g id="count">%3$d</xliff:g> innych ćwierków.</string>
+  <string name="activity_by_friends_follow"><xliff:g id="user">%1$s</xliff:g> obserwuje <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> obserwuje <xliff:g id="target">%2$s</xliff:g> i <xliff:g id="count">%3$d</xliff:g> innych.</string>
+  <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> przesłał dalej ćwierka <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> dodał <xliff:g id="target">%2$s</xliff:g> do listy.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> utworzył listę <xliff:g id="target">%2$s</xliff:g>.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> utworzył listę <xliff:g id="target">%2$s</xliff:g> i <xliff:g id="count">%3$d</xliff:g> więcej.</string>
   <string name="status_not_updated">Ćwierk nie został wysłany.</string>
   <string name="status_not_updated_summary">Ćwierk nie został wysłany, zapisano w szkicach.</string>
   <string name="incoming_friendships">Oczekujące prośby obserwowania</string>
   <string name="send_follow_request">Wyślij prośbę obserwowania</string>
   <string name="follow_request_sent">Prośba obserwowania wysłana</string>
   <string name="separate_retweet_action">Osobna akcja przesłania dalej</string>
-  <string name="separate_retweet_action_summary">Pokaż obie akcje przesłania dalej i cytowania w menu ćwierka</string>
+  <string name="separate_retweet_action_summary">Pokaż obie akcje przesłania dalej i cytowania w menu tweeta</string>
   <string name="status">Ćwierk</string>
   <string name="preview">Podgląd</string>
   <string name="connection_timeout">Przekroczono limit czasu oczekiwania</string>
   <string name="both">Oba</string>
   <string name="browser_sign_in">Logowanie w przeglądarce</string>
   <string name="stop_auto_refresh_when_battery_low">Zatrzymaj automatyczne odświeżanie przy słabej baterii</string>
+  <string name="notification_status">Nowy ćwierk od <xliff:g id="user">%s</xliff:g></string>
+  <string name="notification_status_multiple">Nowy ćwierk od <xliff:g id="user">%1$s</xliff:g> i <xliff:g id="count">%2$d</xliff:g> innych</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> wzmiankował/a o Tobie.</string>
+  <string name="notification_mention_multiple"><xliff:g id="user">%1$s</xliff:g> i <xliff:g id="count">%2$d</xliff:g> innych wzmiankowali o Tobie.</string>
   <string name="notification_direct_message"><xliff:g id="user">%s</xliff:g> wysłał/a Ci wiadomość.</string>
   <string name="notification_direct_message_multiple_messages"><xliff:g id="user">%1$s</xliff:g> wysłał Ci <xliff:g id="messages_count">%2$d</xliff:g> wiadomości.</string>
   <string name="notification_direct_message_multiple_users"><xliff:g id="user">%1$s</xliff:g> i <xliff:g id="users_count">%2$d</xliff:g> innych użytkowników wysłali Ci <xliff:g id="messages_count">%3$d</xliff:g> wiadomości.</string>
@@ -312,6 +326,10 @@
   <string name="action_reporting_for_spam">zgłaszanie spamu</string>
   <string name="action_subscribing_to_list">zapisywanie na listę</string>
   <string name="action_unsubscribing_from_list">wypisywanie z listy</string>
+  <string name="action_saving_search">zapisywanie wyszukiwania</string>
+  <string name="action_deleting_search">usuwanie wyszukiwania</string>
+  <string name="action_accepting_follow_request">akceptowanie żądania obserwacji</string>
+  <string name="action_denying_follow_request">odmawianie żądania obserwacji</string>
   <string name="status_is_duplicate">Twój ćwierk jest zduplikowany.</string>
   <string name="data_profiling_summary"> </string>
   <string name="data_profiling">Statystyka użytkowania</string>
@@ -322,6 +340,7 @@
   <string name="silent_notifications">Ciche powiadomienia</string>
   <string name="silent_notifications_summary">Wyłącz dzwonek/wibracje dla powiadomień</string>
   <string name="disable_background_service">Wyłącz pracę w tle</string>
+  <string name="disable_background_service_summary">Jeśli automatyczne odświeżanie strumienia jest wyłączone, żadne usługi Twidere nie działają w tle.</string>
   <string name="text_copied">Tekst skopiowany do schowka.</string>
   <string name="amount_usd">Wartość (USD)</string>
   <string name="donate">Zrób darowiznę</string>
@@ -340,17 +359,22 @@
   <string name="clear_search_history">Wyczyść historię wyszukiwania</string>
   <string name="permission_description_none">Nie są wymagane pozwolenia</string>
   <string name="permission_description_refresh">Odśwież strumień (razem z wiadomościami)</string>
+  <string name="permission_description_read">Czytanie ćwierków i zawartości cache</string>
   <string name="permission_description_write">Zapisz do bazy danych, aktualizuj status</string>
   <string name="permission_description_direct_messages">Odczytuj/Pisz/Wysyłaj wiadomości</string>
   <string name="permission_description_accounts">Pokaż informację o koncie</string>
+  <string name="permission_description_preferences">Odczyt ustawień</string>
   <string name="permissions_request">Żądanie pozwoleń</string>
   <string name="permissions_request_message">Rozszerzenie wymaga następujących pozwoleń</string>
+  <string name="accept_permission_request">Akceptuj</string>
   <string name="no_thanks">Nie, dziękuję</string>
   <string name="revoke_permissions">Odwołaj pozwolenia</string>
   <string name="fast_scroll_thumb">Szybkie przewijanie palcem</string>
   <string name="indicate_my_status">Wyróżniaj moje ćwierki</string>
   <string name="default_ringtone">Domyślny dzwonek</string>
   <string name="phishing_link_warning">Ostrzeżenie od linku phishingowym</string>
+  <string name="phishing_link_warning_summary">Ostrzega użytkownika przed odnośnikiem w wiadomości, którego odwiedzenie może prowadzić do wyłudzenia informacji (phishing).</string>
+  <string name="phishing_link_warning_message_1">Otwierasz odnośnik z wiadomości, który może prowadzić do strony wyłudzającej informacje.\n\nSprawdź adres dwukrotnie zanim podasz jakiekolwiek dane osobiste.</string>
   <string name="phishing_link_warning_message_2">Czy na pewno kontynuować?</string>
   <string name="image_preload_options">Opcje wczytywania obrazów</string>
   <string name="profile_images">Obrazy profilu</string>
@@ -358,6 +382,8 @@
   <string name="preload_wifi_only">Wczytuj tylko gdy działa Wi-Fi</string>
   <string name="disable_tab_swipe">Wyłącz przełączanie kart gestem</string>
   <string name="sign_in_method_introduction_title">Jak to działa?</string>
+  <string name="sign_in_method_introduction">Większość klientów jak np. Twicca otwiera okno przeglądarki gdzie należy podać nazwę użytkownika i hasło a następnie wraca do aplikacji. Czasami może to być całkiem niewygodne.\n\n
+Twidere używa znacznie prostszego mechanizmu logowania, bez otwierania okna przeglądarki. Twoje hasło jest całkowicie bezpieczne gdyż Twidere nigdy go nie przechowuje.</string>
   <string name="quote_protected_status_notice">Nie jest zalecane cytowanie chronionych ćwierków.</string>
   <string name="edit_draft">Edytuj szkic</string>
   <string name="profile_image">Obraz profilu</string>
@@ -366,6 +392,7 @@
   <string name="wrong_url_format">Nieprawidłowy format URL.</string>
   <string name="wrong_username_password">Błędna nazwa użytkownika / hasło.</string>
   <string name="network_error">Błąd sieci.</string>
+  <string name="api_data_corrupted">Dane API uszkodzone.</string>
   <string name="ssl_error">Błąd SSL, można spróbować włączyć opcję \"Ignoruj błąd SSL\".</string>
   <string name="wrong_api_key">Nieprawidłowy adres API lub klucz/hasło klienta, proszę sprawdzić dane ponownie.</string>
   <string name="status_updated">Ćwierk wysłany.</string>
@@ -376,27 +403,52 @@
   <string name="retweet_cancelled">Przesyłanie dalej anulowane.</string>
   <string name="direct_message_sent">Wiadomość bezpośrednia wysłana.</string>
   <string name="direct_message_deleted">Wiadomość bezpośrednia usunięta.</string>
+  <string name="search_saved">Wyszukiwanie zapisane.</string>
+  <string name="search_name_saved">Wyszukiwanie \"<xliff:g id="name">%s</xliff:g>\" zapisane.</string>
+  <string name="search_deleted">Wyszukiwanie usunięte.</string>
+  <string name="search_name_deleted">Wyszukiwanie \"<xliff:g id="name">%s</xliff:g>\" usunięte.</string>
   <string name="import_from">Importuj z…</string>
   <string name="link_to_quoted_status">Odnośnik do cytowanego ćwierka</string>
+  <string name="followed_user">Obserwujesz <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="sent_follow_request_to_user">Wysłano żądania obserwacji do <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unfollowed_user">Nie obserwujesz <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="blocked_user">Zablokowano <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="unblocked_user">Odblokowano <xliff:g id="user">%s</xliff:g>.</string>
   <string name="profile_updated">Profil uaktualniony.</string>
   <string name="profile_banner_image_updated">Obrazu nagłówka profilu zaktualizowany.</string>
   <string name="profile_image_updated">Obraz profilu zaktualizowany.</string>
   <string name="created_list">Utworzono listę \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="deleted_list">Usunięto listę \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="updated_list_details">Zaktualizowano szczegóły listy \"<xliff:g id="list">%s</xliff:g>\".</string>
   <string name="subscribed_to_list">Zapisano na listę \"<xliff:g id="list">%s</xliff:g>\".</string>
   <string name="unsubscribed_from_list">Wypisano z listy \"<xliff:g id="list">%s</xliff:g>\".</string>
+  <string name="added_N_users_to_list_quantity_one">Dodano <xliff:g id="items">%1$d</xliff:g> użytkowników do listy "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="added_N_users_to_list_quantity_other">Dodano <xliff:g id="items">%1$d</xliff:g> użytkowników do listy "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="added_user_to_list">Dodano <xliff:g id="user">%1$s</xliff:g> do listy "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_user_from_list">Usunięto <xliff:g id="user">%1$s</xliff:g> z listy "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_N_users_from_list_quantity_one">Usunięto <xliff:g id="items">%1$d</xliff:g> użytkownika z listy "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="deleted_N_users_from_list_quantity_other">Usunięto <xliff:g id="items">%1$d</xliff:g> użytkowników z listy "<xliff:g id="list">%2$s</xliff:g>\".</string>
+  <string name="delete_user_from_list_confirm">Usunąć <xliff:g id="user">%1$s</xliff:g> z listy "<xliff:g id="list">%2$s</xliff:g>\"?</string>
+  <string name="delete_N_users_from_list_confirm_quantity_one">Usunąć <xliff:g id="items">%1$d</xliff:g> użytkownika z listy "<xliff:g id="list">%2$s</xliff:g>\"?</string>
+  <string name="delete_N_users_from_list_confirm_quantity_other">Usuń <xliff:g id="items">%1$d</xliff:g> użytkowników z listy "<xliff:g id="list">%2$s</xliff:g>\"?</string>
   <string name="subscribe">Zapisz</string>
   <string name="unsubscribe">Wypisz</string>
   <string name="background_toast_notification">Powiadomienia Toast</string>
   <string name="background_toast_notification_summary">Pokazuje powiadomienia Toas gdy aplikacja działa w tle</string>
   <string name="original_status">Ćwierk oryginalny</string>
+  <string name="compose_quit_action">Przy anulowaniu \"Zaćwierkaj\"</string>
   <string name="ask">Zapytaj</string>
+  <string name="no_close_after_status_updated">Zostaw okno \"Zaćwierkaj\" otwarte po wysłaniu ćwierka</string>
+  <string name="no_close_after_status_updated_summary">Drobny prezent dla gaduł</string>
   <string name="status_saved_to_draft">Ćwierk zapisany jako szkic.</string>
+  <string name="default_account">Domyślne konto</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> ćwierknięć na dzień)</string>
   <string name="empty_content">Pusta zawartość</string>
   <string name="fast_image_loading">Szybkie ładowanie obrazów</string>
   <string name="fast_image_loading_summary">Włącz aby ładować obrazy szybciej, wyłącz w przypadku błędów wyświetlania.</string>
   <string name="select_user_list">Wybierz listę użytkowników</string>
   <string name="select_user">Wybierz użytkownika</string>
+  <string name="created_by">Utworzone przez <xliff:g id="created_by">%s</xliff:g></string>
   <string name="add_to_list">Dodaj do listy</string>
   <string name="account_delete_confirm_title">Usuń konto</string>
   <string name="account_delete_confirm_message">Konto zostanie usunięte z Twidere.</string>
@@ -407,13 +459,16 @@
   <string name="no_rule">Brak regół</string>
   <string name="enable_in_mentions">Włącz we wzmiankach</string>
   <string name="enable_in_home_timeline">Włącz w strumieniu głównym</string>
+  <string name="enable_for_rts">Włącz dla przesłanych ponownie</string>
   <string name="safety">Bezpieczeństwo</string>
   <string name="updating_status_notification">Wysyłanie ćwierka…</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Zapytanie</string>
   <string name="nickname_only">Tylko pseudonim</string>
-  <string name="nickname_only_summary">Zastępuje nazwę użytkownika ksywką, tam gdzie to możliwe</string>
+  <string name="nickname_only_summary">Zastępuje nazwę użytkownika pseudonimem, tam gdzie to możliwe</string>
+  <string name="input_text">Tekst wejściowy</string>
   <string name="users_lists_with_name">Listy użytkownika <xliff:g id="name">%s</xliff:g></string>
+  <string name="lists_following_user_with_name">Listy obserwujące <xliff:g id="name">%s</xliff:g></string>
   <string name="highlight">Podświetlenie</string>
   <string name="underline">Podkreślenie</string>
   <string name="link_highlight_option">Podświetlanie odnośników</string>
@@ -425,6 +480,7 @@
   <string name="wizard_page_welcome_title">Witamy</string>
   <string name="wizard_page_welcome_text">Dziękujemy za wybranie Twidere.\nCzy chcesz go skonfigurować teraz?</string>
   <string name="wizard_page_welcome_yes">Tak</string>
+  <string name="wizard_page_welcome_not_now">Nie teraz</string>
   <string name="wizard_page_welcome_import_settings">Zaimportuj ustawienia</string>
   <string name="wizard_page_theme_text">Wybierz swój motyw.</string>
   <string name="wizard_page_tabs_text">Dodaj karty do Twidere.\nŚledź ludzi bądź rzeczy na których Ci zależy.</string>
@@ -440,11 +496,16 @@
   <string name="keyword_filter_name">Słowo kluczowe: <xliff:g id="name">%s</xliff:g></string>
   <string name="source_filter_name">Źródło: <xliff:g id="name">%s</xliff:g></string>
   <string name="block_user">Zablokuj <xliff:g id="name">%s</xliff:g></string>
-  <string name="unfollow_user">Przestać obserwować <xliff:g id="name">%s</xliff:g></string>
+  <string name="block_user_confirm_message">Zablokuj <xliff:g id="name">%s</xliff:g>? Ten użytkownik nie będzie mógł Cię obserwować, wzmiankować o Tobie oraz wysyłać wiadomości.</string>
+  <string name="unfollow_user">Przestań obserwować <xliff:g id="name">%s</xliff:g></string>
+  <string name="unfollow_user_confirm_message">Przestań obserwować <xliff:g id="name">%s</xliff:g>? Nie będziesz już widzieć ćwierków od tego użytkownika.</string>
   <string name="delete_user_list">Usuń listę <xliff:g id="name">%s</xliff:g></string>
+  <string name="delete_user_list_confirm_message">Usunąć listę <xliff:g id="name">%s</xliff:g>? Nie będzie można cofnąć.</string>
   <string name="report_user">Zgłoś <xliff:g id="name">%s</xliff:g></string>
+  <string name="report_user_confirm_message">Zgłoś <xliff:g id="name">%s</xliff:g> za spam? Użytkownik zostanie także zablokowany.</string>
   <string name="twidere_test">Test Twidere</string>
   <string name="donate_via_paypal">Przekaż darowiznę przez PayPal</string>
+  <string name="pay_via_paypal">Zapłać bezpośrednio przez PayPal</string>
   <string name="donate_via_alipay">Przekaż darowiznę przez Alipay</string>
   <string name="unread_count">Licznik nieprzeczytanych</string>
   <string name="developed_by">Rozwijana przez</string>
@@ -458,8 +519,10 @@
   <string name="account_options">Ustawienia konta</string>
   <string name="show_in_timeline">Pokazuj w strumieniu</string>
   <string name="cards">Ćwierki</string>
+  <string name="no_tab_hint">Brak kart</string>
   <string name="delete_user">Usuń użytkownika <xliff:g id="name">%s</xliff:g></string>
   <string name="delete_users">Usuń użytkowników</string>
+  <string name="delete_user_confirm_message">Usunąć <xliff:g id="name">%s</xliff:g>? Nie będzie można cofnąć.</string>
   <string name="toggle">Przełącz</string>
   <string name="general">Ogólne</string>
   <string name="hints">Wskazówki</string>
@@ -468,5 +531,53 @@
   <string name="theme_background_default">Domyślne</string>
   <string name="theme_background_solid">Czyste biało-czarne</string>
   <string name="theme_background_transparent">Przezroczyste</string>
+  <string name="theme_dark_actionbar">Ciemny ActionBar</string>
+  <string name="wizard_hint_compose_select_account">Dotknij tej ikony aby wybrać konto podczas pisania ćwierka.</string>
+  <string name="wizard_hint_quote_format">Ustaw ulubiony format cytatu w \"Ustawienia\" - \"Zawartość i przechowywanie\"</string>
+  <string name="wizard_hint_filters">Możesz ukryć niechciane ćwierki w strumieniu i powiadomieniach za pomocą \"Filtrów\".</string>
+  <string name="view_replies">Zobacz odpowiedzi</string>
+  <string name="compact_cards">Kompaktowe karty</string>
+  <string name="compact_cards_summary">Wyświetla więcej kart na ekranie</string>
+  <string name="dashclock_mentions_unread_count_name">Licznik nieprzeczytanych wzmianek Twidere</string>
+  <string name="dashclock_mentions_unread_count_description">Licznik nieprzeczytanych wzmianek</string>
+  <string name="dashclock_messages_unread_count_name">Licznik nieprzeczytanych wiadomości Twidere</string>
+  <string name="dashclock_messages_unread_count_description">Licznik nieprzeczytanych wiadomości</string>
+  <string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g> nowy ćwierk</string>
+  <string name="preparing_database">Przygotowywanie bazy danych</string>
+  <string name="preparing_database_toast">Przygotowywanie bazy danych, proszę czekać.</string>
+  <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, zapisono o <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="update_status">Wyślij ćwierka</string>
+  <string name="sending_direct_message">Wysyłanie wiadomości</string>
+  <string name="tab_display_option">Sposób wyświetlania kart</string>
+  <string name="livewp_daydream_enabled_message">Oto mały prezent dla Ciebie, znajdź go w ustawieniach :)</string>
+  <string name="multi_select">Zaznaczanie wielokrotne</string>
+  <string name="long_click_to_open_menu">Przytrzymaj aby otworzyć menu</string>
+  <string name="swipe_back">Przeciągnij aby zamknąć</string>
+  <string name="tab_display_option_icon">Ikona</string>
+  <string name="tab_display_option_label">Etykieta</string>
+  <string name="tab_display_option_icon_and_label">Ikona i etykieta</string>
+  <string name="highlight_and_underline">Podświetlenie i podkreślenie</string>
+  <string name="back">Wstecz</string>
+  <string name="theme_font_family">Rodzina czcionek motywu</string>
+  <string name="translation_destination">Docelowe tłumaczenie</string>
   <string name="accept">Akceptuj</string>
+  <string name="deny">Odrzuć</string>
+  <string name="accepted_users_follow_request">Zaakceptowano żądanie obserwowania od <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="denied_users_follow_request">Odmówiono żądania obserwowania od <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="import_settings">Importuj ustawienia</string>
+  <string name="export_settings">Eksportuj ustawienia</string>
+  <string name="export_settings_type_dialog_title">Eksportowanie ustawień…</string>
+  <string name="import_settings_type_dialog_title">Importowanie ustawień…</string>
+  <string name="nicknames">Pseudonimy</string>
+  <string name="user_colors">Kolory użytkownika</string>
+  <string name="import_export">Import/Eksport</string>
+  <string name="theme_background_alpha">Przezroczystość tła motywu</string>
+  <string name="progress">Postęp</string>
+  <string name="hidden_settings">Ukryte ustawienia</string>
+  <string name="hidden_settings_warning_title">UWAGA: Ustawienia te mogą szkodzić!</string>
+  <string name="hidden_settings_warning_message">NIGDY nie zmieniaj tych ustawień, jeśli nie wiesz do czego służą, w przeciwnym razie spowodują:\n * śmierć jednego kotka\n * odpalenie bomby atomowej w Północnej Korei\n *  zniszczenie wszechświata</string>
+  <string name="force_using_private_apis">Wymuś używanie prywatnego API</string>
+  <string name="status_text_limit">Limit długości ćwierka</string>
+  <string name="load_more_from_top">Wczytaj więcej od góry</string>
+  <string name="load_more_from_top_summary">Użyteczne przy czytaniu od dołu do góry</string>
 </resources>

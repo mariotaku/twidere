@@ -37,20 +37,20 @@
   <string name="error_message">Fout: <xliff:g id="message">%s</xliff:g></string>
   <string name="error_message_with_action">Fout bij actie <xliff:g id="action">%1$s</xliff:g>: <xliff:g id="message">%2$s</xliff:g></string>
   <string name="error_message_rate_limit">Twitters vernieuwlimiet overschreden, probeer opnieuw na <xliff:g id="time">%s</xliff:g></string>
-  <string name="error_message_rate_limit_with_action">Twitters vernieuwlimiet overschreden, terwijl <xliff:g id="action">%1$s</xliff:g>, probeer opnieuw na <xliff:g id="time">%2$s</xliff:g></string>
+  <string name="error_message_rate_limit_with_action">Twitters vernieuwingslimiet overschreden, terwijl <xliff:g id="action">%1$s</xliff:g>, probeer opnieuw na <xliff:g id="time">%2$s</xliff:g></string>
   <string name="select_account">Selecteer account</string>
   <string name="username">Gebruikersnaam</string>
   <string name="password">Wachtwoord</string>
   <string name="label_tweetstore_provider">Citeer</string>
   <string name="label_refresh_service">Vernieuw dienst</string>
-  <string name="label_background_operation_service">Achtergrond operatie dienst</string>
+  <string name="label_background_operation_service">Achtergrond activiteiten service.</string>
   <string name="open_in_browser">In browser openen</string>
   <string name="tap_to_load_more">Klik om meer te laden</string>
   <string name="delete">Verwijderen</string>
   <string name="retweet">Retweet</string>
   <string name="cancel_retweet">Annuleer retweet</string>
   <string name="favorite">Favoriet</string>
-  <string name="unfavorite">Onfavoriet</string>
+  <string name="unfavorite">Defavoriet</string>
   <string name="reply">Antwoord</string>
   <string name="share">Delen</string>
   <string name="share_via_twidere">Deel via Twidere</string>
@@ -86,8 +86,8 @@
   <string name="image_load_summary">Dit uitschakelen versnelt het scrollen en vermindert data verkeer.</string>
   <string name="in_reply_to">In antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="retweeted_by"><xliff:g id="user_name">%s</xliff:g> retweet dit</string>
-  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> en <xliff:g id="retweet_count">%2$d</xliff:g> anderen hebben dit ge-retweet</string>
-  <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g> personen hebben dit ge-retweet</string>
+  <string name="retweeted_by_with_count"><xliff:g id="user_name">%1$s</xliff:g> en <xliff:g id="retweet_count">%2$d</xliff:g> anderen hebben dit geretweet</string>
+  <string name="retweeted_by_count"><xliff:g id="retweet_count">%d</xliff:g> personen hebben dit geretweet</string>
   <string name="users_retweeted_this">Gebruikers retweet dit</string>
   <string name="reply_to">Antwoord aan <xliff:g id="user_name">%s</xliff:g>;</string>
   <string name="quote_user">Quote <xliff:g id="user_name">%s</xliff:g>;</string>
@@ -144,7 +144,7 @@
   <string name="users_blocked">Geblokkeerde gebruikers.</string>
   <string name="user_unblocked">Deze gebruiker is gedeblokkeerd.</string>
   <string name="reported_user_for_spam">Rapporteer deze gebruiker voor spam.</string>
-  <string name="reported_users_for_spam">Rapporteer deze gebruikers als spam.</string>
+  <string name="reported_users_for_spam">Rapporteer deze gebruikers voor spam.</string>
   <string name="filename_hint">Bestandsnaam</string>
   <string name="overwrite_confirm">Bestand bestaat, overschrijven?</string>
   <string name="save_as">Opslaan als</string>
@@ -167,7 +167,7 @@
   <string name="auto_refresh">Auto vernieuwen</string>
   <string name="refresh_interval">Vernieuw interval</string>
   <string name="content_to_refresh">Inhoud vernieuwen</string>
-  <string name="content_to_notify">Inhoud melden</string>
+  <string name="content_to_notify">Te melden inhoud</string>
   <string name="notifications_type">Notificatie type</string>
   <string name="sound">Geluid</string>
   <string name="ringtone">Beltoon</string>
@@ -176,16 +176,16 @@
   <string name="notifications">Notificaties</string>
   <string name="screen_name">Gebruikersnaam</string>
   <string name="refresh_on_start">Vernieuw bij starten</string>
-  <string name="refresh_on_start_summary">Vernieuw timeline en vermeldingingen bij opstarten.</string>
-  <string name="refresh_after_status_updated">Ververs na tweet versturen</string>
-  <string name="refresh_after_status_updated_summary">Ververs tijdlijn en berichten na tweet versturen.</string>
+  <string name="refresh_on_start_summary">Vernieuw tijdlijn en berichten bij het opstarten.</string>
+  <string name="refresh_after_status_updated">Vernieuw na het versturen van een tweet</string>
+  <string name="refresh_after_status_updated_summary">Vernieuw tijdlijn en berichten na tweet versturen.</string>
   <string name="list_timeline">Lijst tijdlijn</string>
   <string name="list_members">Lijst-leden</string>
   <string name="list_subscribers">Lijst-abonnees</string>
   <string name="type_to_compose">Typ om op te stellen</string>
   <string name="users_lists">Gebruikers lijst</string>
-  <string name="lists_following_user">Lijsten die deze gebruiker volgt</string>
-  <string name="lists_following_me">Lijst volgt mij</string>
+  <string name="lists_following_user">Lijsten die deze gebruiker volgen</string>
+  <string name="lists_following_me">Lijsten die mij volgen</string>
   <string name="item_3_minutes">3 minuten</string>
   <string name="item_5_minutes">5 minuten</string>
   <string name="item_10_minutes">10 minuten</string>
@@ -194,7 +194,7 @@
   <string name="item_1_hour">1 uur</string>
   <string name="item_2_hours">2 uur</string>
   <string name="item_4_hours">4 uur</string>
-  <string name="display_image_preview">Toon foto voorbeeld</string>
+  <string name="display_image_preview">Toon voorbeeld van afbeelding</string>
   <string name="following_you">Volgt jou</string>
   <string name="user_list">Lijst</string>
   <string name="user_lists">Lijsten</string>
@@ -204,7 +204,7 @@
   <string name="accounts">Accounts</string>
   <string name="account">Account</string>
   <string name="mention_this_user">Vermeld deze gebruiker</string>
-  <string name="signing_in_please_wait">Inloggen, wacht of klik op TERUG om te annuleren.</string>
+  <string name="signing_in_please_wait">Bezig met inloggen, wacht of druk op TERUG om te annuleren.</string>
   <string name="connectivity">Connectiviteit</string>
   <string name="add_member">Voeg lid toe</string>
   <string name="new_user_list">Nieuwe lijst</string>
@@ -224,12 +224,12 @@
   <string name="pick_file">Kies bestand</string>
   <string name="user_timeline">Gebruiker tijdlijn</string>
   <string name="notification_ringtone">Beltoon</string>
-  <string name="notification_light_color">Licht Kleur</string>
+  <string name="notification_light_color">Lichte Kleur</string>
   <string name="share_format">Deel formaat</string>
   <string name="share_format_summary">\"[TITLE]\" = Inhoud titel\n\"[TEXT]\" = Inhoud tekst</string>
   <string name="network">Netwerk</string>
   <string name="content_and_storage">Inhoud &amp; opslag</string>
-  <string name="image_uploader">Foto uploader</string>
+  <string name="image_uploader">Afbeelding uploader</string>
   <string name="image_uploader_default">Standaard (Twitter)</string>
   <string name="home_refresh">Vernieuw in thuis tijdlijn</string>
   <string name="error_message_image_upload_failed">Foto upload mislukt.</string>
@@ -282,21 +282,21 @@
   <string name="activity_by_friends_follow_multi"><xliff:g id="user">%1$s</xliff:g> volgt <xliff:g id="target">%2$s</xliff:g> en <xliff:g id="count">%3$d</xliff:g> anderen.</string>
   <string name="activity_by_friends_retweet"><xliff:g id="user">%1$s</xliff:g> heeft <xliff:g id="target">%2$s</xliff:g>\'s tweet ge-retweet.</string>
   <string name="activity_by_friends_list_member_added"><xliff:g id="user">%1$s</xliff:g> heeft <xliff:g id="target">%2$s</xliff:g> toegevoegt aan zijn lijst.</string>
-  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> aangemaakte lijst <xliff:g id="target">%2$s</xliff:g>.</string>
-  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> aangemaakte lijst <xliff:g id="target">%2$s</xliff:g> en <xliff:g id="count">%3$d</xliff:g> meer.</string>
+  <string name="activity_by_friends_list_created"><xliff:g id="user">%1$s</xliff:g> heeft lijst <xliff:g id="target">%2$s</xliff:g> aangemaakt.</string>
+  <string name="activity_by_friends_list_created_multi"><xliff:g id="user">%1$s</xliff:g> heeft lijst <xliff:g id="target">%2$s</xliff:g> en <xliff:g id="count">%3$d</xliff:g> meer aangemaakt.</string>
   <string name="status_not_updated">Tweet niet verzonden.</string>
   <string name="status_not_updated_summary">Tweet niet verzonden, opgeslagen in concepten.</string>
-  <string name="incoming_friendships">De volgende aanvragen zijn nog niet afgehandeld</string>
-  <string name="send_follow_request">Zend volg verzoek</string>
-  <string name="follow_request_sent">Volg verzoek verstuurd</string>
+  <string name="incoming_friendships">Openstaande volg-verzoeken</string>
+  <string name="send_follow_request">Verstuur verzoek om te volgen</string>
+  <string name="follow_request_sent">Volg-verzoek verstuurd</string>
   <string name="separate_retweet_action">Aparte retweet actie</string>
   <string name="separate_retweet_action_summary">Toon zowel retweet en citaat actie in tweet menu</string>
   <string name="status">Tweet</string>
   <string name="preview">Voorbeeld</string>
   <string name="connection_timeout">Connectie timeout</string>
   <string name="both">Beide</string>
-  <string name="browser_sign_in">Browser aanmelding</string>
-  <string name="stop_auto_refresh_when_battery_low">Stop automatisch vernieuwen wanneer batterijpercentage laag is</string>
+  <string name="browser_sign_in">Aanmelden met de browser</string>
+  <string name="stop_auto_refresh_when_battery_low">Stop automatisch vernieuwen wanneer de batterij bijna leeg is</string>
   <string name="notification_status">Nieuwe tweet door <xliff:g id="user">%s</xliff:g></string>
   <string name="notification_status_multiple">Nieuwe tweet door <xliff:g id="user">%1$s</xliff:g> en <xliff:g id="count">%2$d</xliff:g> anderen</string>
   <string name="notification_mention"><xliff:g id="user">%s</xliff:g> vermeldde jou.</string>
@@ -593,4 +593,17 @@
   <string name="nicknames">Bijnamen</string>
   <string name="user_colors">Gebruikerskleuren</string>
   <string name="import_export">Importeren/exporteren</string>
+  <string name="theme_background_alpha">Thema achtergrond alfa</string>
+  <string name="progress">vooruitgang</string>
+  <string name="hidden_settings">verborgen instellingen</string>
+  <string name="hidden_settings_warning_title">OPGELET: Deze instellingen kunnen schade toebrengen!</string>
+  <string name="hidden_settings_warning_message">Verandere deze instellingen NOOIT als je niet precies wat het is, of het zal:
+* een nieuwe economische crisis beginnen
+* Het heelal vernietigen
+* de belastingen verhogen
+* nog vaker regenen</string>
+  <string name="force_using_private_apis">Forceer het gebruik van private API\'s</string>
+  <string name="status_text_limit">tweet tekst limiet</string>
+  <string name="load_more_from_top">Laad meer</string>
+  <string name="load_more_from_top_summary">Handig als je graag van beneden naar boven leest</string>
 </resources>

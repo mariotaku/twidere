@@ -593,4 +593,13 @@
   <string name="nicknames">暱稱</string>
   <string name="user_colors">用戶顏色標籤</string>
   <string name="import_export">匯入/匯出</string>
+  <string name="theme_background_alpha">主題背景透明度</string>
+  <string name="progress">進度</string>
+  <string name="hidden_settings">隱藏設定</string>
+  <string name="hidden_settings_warning_title">警告：這些設定受結界保護！</string>
+  <string name="hidden_settings_warning_message">*永遠* 不要在你清楚這些設定的意義下更改它們，否則它們會：\n * 殺掉你家的貓\n * 發射北韓的核彈\n * 把所有魔法少女變成偽娘\n * 毀滅宇宙</string>
+  <string name="force_using_private_apis">強制使用不公開的 API</string>
+  <string name="status_text_limit">推文字數限制</string>
+  <string name="load_more_from_top">從頂部載入更多</string>
+  <string name="load_more_from_top_summary">如果你習慣從底部向上閱讀的話會很有用</string>
 </resources>

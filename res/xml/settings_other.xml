@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/other_settings">
 
-	<CheckBoxPreference
+	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="false"
 		android:key="quick_send"
 		android:summary="@string/quick_send_summary"
@@ -16,7 +16,7 @@
 		android:summary="%s"
 		android:title="@string/compose_quit_action"/>
 
-	<CheckBoxPreference
+	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="false"
 		android:key="no_close_after_tweet_sent"
 		android:summary="@string/no_close_after_status_updated_summary"

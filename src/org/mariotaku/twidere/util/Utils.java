@@ -597,6 +597,7 @@ public final class Utils implements Constants {
 	}
 
 	public static Fragment createFragmentForIntent(final Context context, final Intent intent) {
+		final long start = System.currentTimeMillis();
 		intent.setExtrasClassLoader(context.getClassLoader());
 		final Bundle extras = intent.getExtras();
 		final Uri uri = intent.getData();
@@ -851,6 +852,9 @@ public final class Utils implements Constants {
 			}
 		}
 		fragment.setArguments(args);
+		if (isDebugBuild()) {
+			Log.d(LOGTAG, String.format("createFragmentForIntent used %d ms", System.currentTimeMillis() - start));
+		}
 		return fragment;
 	}
 
@@ -1995,18 +1999,6 @@ public final class Utils implements Constants {
 			return VALUE_TAB_DIPLAY_OPTION_CODE_ICON;
 		else if (VALUE_TAB_DIPLAY_OPTION_LABEL.equals(option)) return VALUE_TAB_DIPLAY_OPTION_CODE_LABEL;
 		return VALUE_TAB_DIPLAY_OPTION_CODE_BOTH;
-	}
-
-	public static Bitmap getTabIconFromFile(final File file, final Resources res) {
-		if (file == null || !file.exists()) return null;
-		final String path = file.getPath();
-		final BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(path, o);
-		if (o.outHeight <= 0 || o.outWidth <= 0) return null;
-		o.inSampleSize = (int) (Math.max(o.outWidth, o.outHeight) / (48 * res.getDisplayMetrics().density));
-		o.inJustDecodeBounds = false;
-		return BitmapFactory.decodeFile(path, o);
 	}
 
 	public static int getTableId(final Uri uri) {

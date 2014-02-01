@@ -3,15 +3,16 @@
 <resources>
   <string name="error_32">No se pudo autenticar su usuario, quizá necesite iniciar sesión de nuevo.</string>
   <string name="error_34">No existe este tuit, usuario o página.</string>
-  <string name="error_88">Límite de frecuencia excedido, inténtelo de nuevo más tarde.</string>
-  <string name="error_89">Tu información de acceso es incorrecta o ha expirado, por favor iniciar sesión nuevamente.</string>
+  <string name="error_88">Límite alcanzado, por favor intenta más tarde.</string>
+  <string name="error_89">Tu información de acceso es incorrecta o ha expirado, por favor inicia sesión nuevamente.</string>
   <string name="error_64">Su cuenta está suspendida y no se le permite acceder a esta función.</string>
-  <string name="error_130">Twitter esta temporalmente excedido en su capacidad .</string>
-  <string name="error_131">El servidor de Twitter está caído temporalmente, inténtelo de nuevo más tarde.</string>
+  <string name="error_130">Twitter esta saturado temporalmente.</string>
+  <string name="error_131">Posiblemente Twitter este temporalmente inaccesible, por favor intente más tarde.</string>
   <string name="error_135">Por favor verifique el reloj del sistema.</string>
-  <string name="error_172">Ya ha grabado esta búsqueda.</string>
+  <string name="error_162">Estás bloqueado por este usuario.</string>
+  <string name="error_172">Esta búsqueda ya estaba guardada.</string>
   <string name="error_179">No puedes ver este tuit protegido por el usuario.</string>
-  <string name="error_187">Ya ha enviado este tuit.</string>
-  <string name="error_193">La foto que quieres cargar es demasiado grande.</string>
-  <string name="error_215">Es necesario iniciar sesión nuevamente.</string>
+  <string name="error_187">Ya se envió este tuit.</string>
+  <string name="error_193">La foto a cargar es muy grande.</string>
+  <string name="error_215">Es posible que necesites iniciar sesión otra vez.</string>
 </resources>

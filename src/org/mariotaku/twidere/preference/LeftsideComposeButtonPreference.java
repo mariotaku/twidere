@@ -20,13 +20,12 @@
 package org.mariotaku.twidere.preference;
 
 import android.content.Context;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.util.AttributeSet;
 
 import org.mariotaku.twidere.util.SmartBarUtils;
 
-public class LeftsideComposeButtonPreference extends CheckBoxPreference {
+public class LeftsideComposeButtonPreference extends AutoFixCheckBoxPreference {
 
 	public LeftsideComposeButtonPreference(final Context context) {
 		super(context);

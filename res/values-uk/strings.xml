@@ -593,4 +593,13 @@
   <string name="nicknames">Псевдо</string>
   <string name="user_colors">Кольори користувача</string>
   <string name="import_export">Імпорт/експорт</string>
+  <string name="theme_background_alpha">Альфа-версію тла теми</string>
+  <string name="progress">Перебіг</string>
+  <string name="hidden_settings">Приховані налаштування</string>
+  <string name="hidden_settings_warning_title">УВАГА: ці параметри можуть пошкодити!</string>
+  <string name="hidden_settings_warning_message">НІКОЛИ не змінюйте ці параметри, якщо ви не знаєте, що робите або що станеться:\n * Уб\'єте свого кота\n * Запустите ядерну зброю у Північну Корею\n * Виріжете усіх москалів на Сході України\n * Знищите Всесвіт</string>
+  <string name="force_using_private_apis">Примусово використовувати приватні API</string>
+  <string name="status_text_limit">Обмеження довжини твіту</string>
+  <string name="load_more_from_top">Завантажувати більше зверху</string>
+  <string name="load_more_from_top_summary">Корисно, якщо ви віддаєте перевагу читати знизу вгору</string>
 </resources>

@@ -497,7 +497,7 @@
   <string name="add_to_filter">添加到过滤器</string>
   <string name="user_filter_name">用户：<xliff:g id="name">%s</xliff:g></string>
   <string name="keyword_filter_name">关键词：<xliff:g id="name">%s</xliff:g></string>
-  <string name="source_filter_name">来源<xliff:g id="name">%s</xliff:g></string>
+  <string name="source_filter_name">来源：<xliff:g id="name">%s</xliff:g></string>
   <string name="block_user">阻止<xliff:g id="name">%s</xliff:g></string>
   <string name="block_user_confirm_message">阻止<xliff:g id="name">%s</xliff:g>？这个用户将不能关注你、提及你，或者给你发送私信。</string>
   <string name="unfollow_user">取消关注<xliff:g id="name">%s</xliff:g></string>
@@ -593,4 +593,13 @@
   <string name="nicknames">昵称</string>
   <string name="user_colors">用户颜色标签</string>
   <string name="import_export">导入/导出</string>
+  <string name="theme_background_alpha">主题背景透明度</string>
+  <string name="progress">进度</string>
+  <string name="hidden_settings">隐藏设定</string>
+  <string name="hidden_settings_warning_title">警告：这些设定受结界保护！</string>
+  <string name="hidden_settings_warning_message">*永远*不要在你不明白这些设定的意义的情况下更改它们，否则它们会：\n * 干掉你家的猫\n * 发射金三胖家的核弹\n * 把所有魔法少女都变成魔女\n * 毁灭宇宙</string>
+  <string name="force_using_private_apis">强制使用不公开的API</string>
+  <string name="status_text_limit">推文字数限制</string>
+  <string name="load_more_from_top">从顶部载入更多</string>
+  <string name="load_more_from_top_summary">如果你偏好从底部向上阅读的话会很有用</string>
 </resources>

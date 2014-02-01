@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.activity;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -122,7 +123,9 @@ public class SettingsActivity extends BasePreferenceActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		final ActionBar actionBar = getActionBar();
+		actionBar.setIcon(R.drawable.ic_iconic_action_twidere);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		if (savedInstanceState != null) {
 			invalidateHeaders();
 		}

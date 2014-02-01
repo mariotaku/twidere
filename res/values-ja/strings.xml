@@ -331,7 +331,7 @@
   <string name="action_unsubscribing_from_list">リストの保存解除</string>
   <string name="action_saving_search">検索の保存</string>
   <string name="action_deleting_search">検索の削除</string>
-  <string name="action_accepting_follow_request">フォローリクエストに応答</string>
+  <string name="action_accepting_follow_request">フォローリクエスト許可</string>
   <string name="action_denying_follow_request">フォローリクエスト拒否</string>
   <string name="status_is_duplicate">既にあなたは同じツイートを送信済みです。</string>
   <string name="data_profiling_summary">Twidereはカリフォルニア大学デービス校でのSNSでの行動調査に協力しています。\n\n必要としているデータとその理由は以下の通りです:\n収集するデータ:\n1. ユーザーのTwitter ID\n2. ユーザーのタイムライン (ユーザーとソーシャルの動向を調べる目的のため)\n3. ユーザーのツイート上でのタップ (ユーザーとソーシャルの動向を調べる目的のため)\n4. 大まかな位置情報 (いつユーザーがTwitterにアクセスするのか調べるため)\n\nTwidereはWi-fiに接続され充電している時にのみデータを送信するので無駄な通信をしたりバッテリーを消費することはありません。</string>
@@ -522,7 +522,7 @@
   <string name="project_account">プロジェクトアカウント</string>
   <string name="donators">寄付したユーザー</string>
   <string name="translators">翻訳者</string>
-  <string name="translate">翻訳に協力する</string>
+  <string name="translate">翻訳する</string>
   <string name="sponsored_by">スポンサー</string>
   <string name="special_thanks_to">スペシャルサンクス</string>
   <string name="contributors_list_summary">寄付･翻訳しているのにあなたの名前が無い場合プロジェクトアカウントに英語で連絡してください。</string>
@@ -581,7 +581,7 @@
   <string name="twip_api_version_notice_message">TWIPは\"/1.1/\"で終わっていないRest Base URLを正しく扱えません。\n\n 画像のアップロードの問題を解決するためには\"/1.1/\"をRest Base URLの最後に追記してください。</string>
   <string name="back">戻る</string>
   <string name="theme_font_family">使用するフォント</string>
-  <string name="translation_destination">翻訳先</string>
+  <string name="translation_destination">翻訳先の言語</string>
   <string name="accept">同意</string>
   <string name="deny">拒否</string>
   <string name="accepted_users_follow_request"><xliff:g id="user">%s</xliff:g>さんのフォローリクエストを許可しました。</string>
@@ -593,4 +593,13 @@
   <string name="nicknames">ニックネーム</string>
   <string name="user_colors">ユーザー色</string>
   <string name="import_export">インポート/エクスポート</string>
+  <string name="theme_background_alpha">テーマ背景の透過度</string>
+  <string name="progress">進捗</string>
+  <string name="hidden_settings">隠し設定</string>
+  <string name="hidden_settings_warning_title">警告: これらの設定は危なっかしいかも！</string>
+  <string name="hidden_settings_warning_message">よくわからない場合これらの設定を変えないでください。もしかしたら\n * あなたの猫が殺されたり\n * 北朝鮮の核兵器が発射されたり\n * すべての魔法少女が魔女化したり\n * 宇宙が再構築されたり\nするかもしれません…</string>
+  <string name="force_using_private_apis">非公開APIを強制的に利用する</string>
+  <string name="status_text_limit">ツイート文字数制限</string>
+  <string name="load_more_from_top">上からさらに読み込む</string>
+  <string name="load_more_from_top_summary">下から上に読みたい場合に便利です</string>
 </resources>

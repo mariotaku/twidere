@@ -11,7 +11,7 @@
   <string name="remove_location">Ort entfernen</string>
   <string name="remove_image">Bild entfernen</string>
   <string name="remove_photo">Foto entfernen</string>
-  <string name="status_hint">Was ist los?</string>
+  <string name="status_hint">Was passiert gerade?</string>
   <string name="sign_up">Registrieren</string>
   <string name="sign_in">Einloggen</string>
   <string name="rest_base_url">REST Basis URL</string>
@@ -64,9 +64,10 @@
   <string name="followers">Follower</string>
   <string name="following">Folgen</string>
   <string name="about">Über</string>
-  <string name="open_source_license">Open Source Lizenz</string>
+  <string name="open_source_license">Open-Source-Lizenz</string>
   <string name="api">API</string>
   <string name="default_api_settings">Standard API Einstellungen</string>
+  <string name="default_api_settings_summary">Diese Einstellungen wirken sich nur auf neu eingeloggte Accounts aus</string>
   <string name="consumer_key">Benutzerschlüssel</string>
   <string name="consumer_secret">Benutzergeheimnis</string>
   <string name="ignore_ssl_error">Ignoriere SSL Fehler</string>
@@ -113,7 +114,7 @@
   <string name="load_item_limit">Limitierung zu ladender Elemente</string>
   <string name="load_item_limit_summary">Element-Limitierung pro Ladevorgang festlegen.</string>
   <string name="load_more_automatically">Lade automatisch mehr Inhalt.</string>
-  <string name="load_more_automatically_summary">Lade weitere Inhalte (z.B. Fotos, Karten, Stausmeldungen) automatisch</string>
+  <string name="load_more_automatically_summary">Lade weitere Inhalte (z.B. Fotos, Karten, Statusmeldungen) automatisch</string>
   <string name="quote">Zitat</string>
   <string name="add_rule">Regel hinzufügen</string>
   <string name="text_size">Textgröße</string>
@@ -184,6 +185,7 @@
   <string name="type_to_compose">Schreiben Sie etwas</string>
   <string name="users_lists">Listen des Benutzers</string>
   <string name="lists_following_user">Listen, die diesem Nutzer folgen</string>
+  <string name="lists_following_me">Listen die mir folgen</string>
   <string name="item_3_minutes">3 Minuten</string>
   <string name="item_5_minutes">5 Minuten</string>
   <string name="item_10_minutes">10 Minuten</string>
@@ -315,12 +317,12 @@
   <string name="action_updating_profile_image">Profilbild wird aktualisiert</string>
   <string name="action_updating_profile_banner_image">Aktualisiere Profiltitelbild</string>
   <string name="action_removing_profile_banner_image">Lösche Profiltitelbild</string>
-  <string name="action_updating_details">aktualisiere Details</string>
-  <string name="action_blocking">blocken</string>
+  <string name="action_updating_details">Aktualisiere Details</string>
+  <string name="action_blocking">Blockieren</string>
   <string name="action_unblocking">entblocken</string>
   <string name="action_following">folgen</string>
   <string name="action_unfollowing">entfolgen</string>
-  <string name="action_creating_list">Erstelle Liste</string>
+  <string name="action_creating_list">erstelle Liste</string>
   <string name="action_adding_member">Mitglied hinzufügen</string>
   <string name="action_signing_in">anmelden</string>
   <string name="action_retweeting">Retweet</string>
@@ -329,6 +331,8 @@
   <string name="action_unsubscribing_from_list">Kündige Listen-Abonnement</string>
   <string name="action_saving_search">Speichere Suche</string>
   <string name="action_deleting_search">lösche Suche</string>
+  <string name="action_accepting_follow_request">Akzeptiere Follower-Anfrage</string>
+  <string name="action_denying_follow_request">Lehne Follower-Anfrage ab</string>
   <string name="status_is_duplicate">Ihr Tweet ist ein Duplikat.</string>
   <string name="data_profiling_summary">Twidere hat an einem Forschungsvorhaben von Studenten der UC Davis zur Vorhersage des Verhaltens von Benutzern in Sozialen Netzwerken teilgenommen, um Inhalt im vorraus laden zu können.\n\nDiese Daten wollen wir sammeln:\nGesammelte Daten:\n1. Die Twitter-ID des Benutzers\n2. Die Timeline des Benutzers (Vorhersage basiert auf den Interessen und Interaktionen des Benutzers)\n3. Klicks auf Tweets (Vorhersage basiert auf den Interessen und Interaktionen des Benutzers)\n4. Grober Aufenthaltsort (welcher ein guter Hinweis ist, ob der Benutzer Twitter benutzen wird)\n\nTwidere lädt die gesammelten Daten nur hoch, wenn WLAN verfügbar ist und das Gerät aufgeladen wird, so dass es weder zusätzliche Kosten verursacht noch Akkuladung verbraucht.</string>
   <string name="data_profiling">Nutzungsstatistiken</string>
@@ -378,10 +382,10 @@
   <string name="image_preload_options">Bildvorabladen Optionen</string>
   <string name="profile_images">Profil Bild</string>
   <string name="preview_images">Vorschaubilder</string>
-  <string name="preload_wifi_only">Vorrausladen nur mit WLan</string>
+  <string name="preload_wifi_only">Vorausladen nur mit WLAN</string>
   <string name="disable_tab_swipe">Deaktiviere wischen für Reiter</string>
   <string name="sign_in_method_introduction_title">Wie funktioniert es?</string>
-  <string name="sign_in_method_introduction">Die meisten Anwendungen öffnen einen externen Browser, um dort nach Benutzernamen und Passwort zu fragen. Dies ist manchmal sehr umständlich.\n\nTwidere öffnen keinen externen Browser, sondern verwendet einfacherere Methoden, um sich anzumelden. Twidere speichert niemals das Passwort, es ist daher völlig sicher!</string>
+  <string name="sign_in_method_introduction">Die meisten Anwendungen öffnen einen externen Browser, um dort nach Benutzernamen und Passwort zu fragen. Dies kann manchmal sehr umständlich sein.\n\nTwidere öffnet keinen externen Browser, sondern verwendet einfachere Methoden, um sich anzumelden. Twidere wird niemals Passwörter speichern und ist daher völlig sicher!</string>
   <string name="quote_protected_status_notice">Es ist nicht empfohlen einen geschützten Tweet zu zitieren.</string>
   <string name="edit_draft">Bearbeite Entwurf</string>
   <string name="profile_image">Profilbild</string>
@@ -391,7 +395,7 @@
   <string name="wrong_url_format">Falsches URL-Format.</string>
   <string name="wrong_username_password">Falscher Benutzername/Passwort.</string>
   <string name="network_error">Netzwerkfehler</string>
-  <string name="api_data_corrupted">API Daten beschädigt.</string>
+  <string name="api_data_corrupted">API-Daten beschädigt.</string>
   <string name="ssl_error">SSL-Fehler, aktivieren von \"SSL-Fehler ignorieren\" könnte helfen.</string>
   <string name="wrong_api_key">API URL oder consumer key/secret ist nicht korrekt, bitte nochmals prüfen!</string>
   <string name="status_updated">Tweet gesendet.</string>
@@ -409,7 +413,7 @@
   <string name="import_from">Importiere aus…</string>
   <string name="link_to_quoted_status">Link zum zitierten Tweet</string>
   <string name="followed_user">Folge <xliff:g id="user">%s</xliff:g>.</string>
-  <string name="sent_follow_request_to_user">Folgen Anfrage an <xliff:g id="user">%s</xliff:g> senden.</string>
+  <string name="sent_follow_request_to_user">Follower-Anfrage an <xliff:g id="user">%s</xliff:g> senden.</string>
   <string name="unfollowed_user">Entfolge <xliff:g id="user">%s</xliff:g>.</string>
   <string name="blocked_user"><xliff:g id="user">%s</xliff:g> blockiert.</string>
   <string name="unblocked_user"><xliff:g id="user">%s</xliff:g> nicht mehr blockiert.</string>
@@ -440,7 +444,7 @@
   <string name="no_close_after_status_updated">Eingabemaske geöffnet lassen, nachdem der Tweet gesendet wurde</string>
   <string name="no_close_after_status_updated_summary">Ein kleines Geschenk an die Chatterbox</string>
   <string name="status_saved_to_draft">Tweet als Entwurf gespeichert.</string>
-  <string name="default_account">Standard-Konto</string>
+  <string name="default_account">Standard-Account</string>
   <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> Tweet(s) pro Tag)</string>
   <string name="empty_content">Leerer Inhalt</string>
   <string name="fast_image_loading">Schnelleres Bilder laden</string>
@@ -457,34 +461,34 @@
   <string name="settings_interface">Oberfläche</string>
   <string name="no_rule">Keine Regel</string>
   <string name="enable_in_mentions">In Erwähnungen aktivieren</string>
-  <string name="enable_in_home_timeline">In der Home Timeline aktivieren</string>
+  <string name="enable_in_home_timeline">In der Home-Timeline aktivieren</string>
   <string name="enable_for_rts">Für RTs einschalten</string>
   <string name="safety">Sicherheit</string>
-  <string name="updating_status_notification">Sende tweet...</string>
+  <string name="updating_status_notification">Sende Tweet...</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Abfrage</string>
   <string name="nickname_only">Nur Spitzname</string>
-  <string name="nickname_only_summary">Nur Spitznamen anzeigen wenn vorhanden</string>
+  <string name="nickname_only_summary">Benutzernamen durch Spitznamen ersetzen, falls verfügbar</string>
   <string name="input_text">Text eingeben</string>
   <string name="users_lists_with_name"><xliff:g id="name">%s</xliff:g>\'s Listen</string>
-  <string name="lists_following_user_with_name">Folgen <xliff:g id="name">%s</xliff:g></string>
+  <string name="lists_following_user_with_name">Listen, die <xliff:g id="name">%s</xliff:g> folgen</string>
   <string name="highlight">Hervorheben</string>
   <string name="underline">Unterstreichen</string>
   <string name="link_highlight_option">Optionen für Hervorhebung von Links</string>
-  <string name="users_statuses">Tweets des Nutzers</string>
-  <string name="card_animation">Karten Animationen</string>
+  <string name="users_statuses">Tweets des Benutzers</string>
+  <string name="card_animation">Animierte Karten</string>
   <string name="name_first">Name zuerst anzeigen</string>
   <string name="next">Weiter</string>
   <string name="settings_wizard">Einstellungsdialog</string>
   <string name="wizard_page_welcome_title">Willkomen</string>
-  <string name="wizard_page_welcome_text">Danke dass Sie sich für Twidere entschieden haben.\nWollen Sie es jetzt konfigurieren?</string>
+  <string name="wizard_page_welcome_text">Danke, dass Sie sich für Twidere entschieden haben.\nMöchten Sie die Anwendung jetzt konfigurieren?</string>
   <string name="wizard_page_welcome_yes">Ja</string>
   <string name="wizard_page_welcome_not_now">Nicht jetzt</string>
   <string name="wizard_page_welcome_import_settings">Einstellungen importieren</string>
   <string name="wizard_page_theme_text">Theme auswählen.</string>
   <string name="wizard_page_tabs_text">Neue Tabs hinzufügen.\nInteressensgebiete hinterlegen.</string>
   <string name="wizard_page_tabs_unchanged_message">Neue Tabs in \"Einstellungen\" - \"Reiter\"</string>
-  <string name="wizard_page_cards_text">Tweet Kärtchen konfigurieren.</string>
+  <string name="wizard_page_cards_text">Tweet-Karten konfigurieren.</string>
   <string name="wizard_page_hints_text">Hier sind ein paar nützliche Hinweise.</string>
   <string name="wizard_page_finished_title">Fertig</string>
   <string name="wizard_page_finished_text">Twidere ist jetzt bereit.</string>
@@ -510,7 +514,7 @@
   <string name="twidere_test">Twidere test</string>
   <string name="donate_via_paypal">Mit PayPal spenden</string>
   <string name="pay_via_paypal">Mit PayPal direkt bezahlen</string>
-  <string name="pay_via_paypal_summary">Wenn Du \"This recipient is not eligible to receive funds\" siehst</string>
+  <string name="pay_via_paypal_summary">Falls du \"This recipient is not eligible to receive funds\" angezeigt bekommst</string>
   <string name="donate_via_alipay">Mit Alipay spenden</string>
   <string name="staggered_home_timeline">Gestaffelte Timeline</string>
   <string name="unread_count">Anzahl ungelesene</string>
@@ -519,10 +523,10 @@
   <string name="donators">Spender</string>
   <string name="translators">Übersetzer</string>
   <string name="translate">Übersetzen</string>
-  <string name="sponsored_by">Sponsored by</string>
-  <string name="special_thanks_to">Special thanks to</string>
-  <string name="contributors_list_summary">Wenn Sie Ihren Namen nicht gefunden haben wenden Sie sich bitte an den Projekt Inhaber.</string>
-  <string name="account_options">Account Optionen</string>
+  <string name="sponsored_by">Gesponsort von</string>
+  <string name="special_thanks_to">Besonderen Dank an</string>
+  <string name="contributors_list_summary">Falls du deinen Namen nicht finden kannst, teile dies bitte dem Projektinhaber mit.</string>
+  <string name="account_options">Account-Optionen</string>
   <string name="show_in_timeline">In Timeline anzeigen</string>
   <string name="cards">Karten</string>
   <string name="no_tab_hint">Kein Tab</string>
@@ -537,13 +541,13 @@
   <string name="theme_background_default">Standard</string>
   <string name="theme_background_solid">Schwarz/Weiß</string>
   <string name="theme_background_transparent">Transparent</string>
-  <string name="theme_dark_actionbar">Dunkle ActionBar</string>
+  <string name="theme_dark_actionbar">Dunkle Aktionsleiste</string>
   <string name="wizard_hint_compose_select_account">Klick das Icon um den Account beim Tweet schreiben zu wechseln.</string>
   <string name="wizard_hint_quote_format">Stell das Zitat-Format in \"Einstellungen\" - \"Inhalt &amp; Speicher\" ein</string>
   <string name="wizard_hint_filters">Du kannst ungewünschte Tweets aus Deiner Timeline mit einem \"Filter\" entfernen.</string>
   <string name="view_replies">Antworten ansehen</string>
-  <string name="compact_cards">Kärtchen schrumpfen</string>
-  <string name="compact_cards_summary">Mehr Kärtchen anzeigen</string>
+  <string name="compact_cards">Karten schrumpfen</string>
+  <string name="compact_cards_summary">Mehr Karten anzeigen</string>
   <string name="dashclock_home_unread_count_name">Anzahl ungelesene anzeigen</string>
   <string name="dashclock_home_unread_count_description">Anzahl ungelesene anzeigen</string>
   <string name="dashclock_mentions_unread_count_name">Anzahl Erwähnungen anzeigen</string>
@@ -557,8 +561,8 @@
   <string name="N_new_messages_quantity_one"><xliff:g id="items">%d</xliff:g> neue Unterhaltung</string>
   <string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> neue Unterhaltungen</string>
   <string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g> (@<xliff:g id="screen_name">%2$s</xliff:g>), um <xliff:g id="time">%3$s</xliff:g></string>
-  <string name="rate_limit">Rate limit</string>
-  <string name="wizard_hint_rate_limit">Wenn ein rate limit Problem auftaucht bin ich nicht schuld. Das gehört zu Twitter\'s Geschäftspolitik.</string>
+  <string name="rate_limit">Datendurchsatzbeschränkung</string>
+  <string name="wizard_hint_rate_limit">Falls du auf ein Datendurchsatzproblem stößt, gib\' bitte nicht mir die Schuld - das sind Twitters Richtlinien.</string>
   <string name="preparing_database">Datenbank wird vorbereitet</string>
   <string name="preparing_database_toast">Datenbank wird vorbereitet, dies kann ein bisschen dauern.</string>
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, gespeichert um <xliff:g id="time">%2$s</xliff:g></string>
@@ -569,18 +573,33 @@
   <string name="center">Mitte</string>
   <string name="multi_select">Mehrfachauswahl</string>
   <string name="long_click_to_open_menu">Langer Klick um das Menü zu öffnen</string>
-  <string name="swipe_back">Zum schließen wischen</string>
+  <string name="swipe_back">Zum Schließen wischen</string>
   <string name="tab_display_option_icon">Symbol</string>
   <string name="tab_display_option_label">Label</string>
   <string name="tab_display_option_icon_and_label">Icon und Label</string>
   <string name="highlight_and_underline">Hervorheben und unterstreichen</string>
   <string name="twip_api_version_notice_message">TWIP kann keine Rest Bade URL bearbeiten, die nicht mit \"/1.1/\" endet.\n\nSie müssen evtl. \"/1.1/\" an die Rest Base URL anhängen, um Probleme beim hochladen von Bildern zu vermeiden.</string>
   <string name="back">Zurück</string>
+  <string name="theme_font_family">Theme Schriftart</string>
+  <string name="translation_destination">Zielsprache</string>
   <string name="accept">Akzeptieren</string>
   <string name="deny">Ablehnen</string>
+  <string name="accepted_users_follow_request">Follower-Anfrage von <xliff:g id="user">%s</xliff:g> wurde akzeptiert.</string>
+  <string name="denied_users_follow_request">Follower-Anfrage von <xliff:g id="user">%s</xliff:g> wurde abgelehnt.</string>
   <string name="import_settings">Einstellungen importieren</string>
   <string name="export_settings">Einstellungen exportieren</string>
   <string name="export_settings_type_dialog_title">Einstellungen exportieren…</string>
   <string name="import_settings_type_dialog_title">Einstellungen importieren…</string>
   <string name="nicknames">Spitznamen</string>
+  <string name="user_colors">Benutzerfarben</string>
+  <string name="import_export">Importieren/Exportieren</string>
+  <string name="theme_background_alpha">Theme-Hintergrundtransparenz</string>
+  <string name="progress">Fortschritt</string>
+  <string name="hidden_settings">Versteckte Einstellungen</string>
+  <string name="hidden_settings_warning_title">ACHTUNG: Diese Einstellungen können Schaden anrichten!</string>
+  <string name="hidden_settings_warning_message">Ändern Sie diesen Einstellungen NIEMALS, wenn Sie nicht wissen um was es geht, andernfalls werden Katzenbabies getötet...</string>
+  <string name="force_using_private_apis">Private APIs erzwingen</string>
+  <string name="status_text_limit">Tweet Text Limit</string>
+  <string name="load_more_from_top">Neues von Oben laden</string>
+  <string name="load_more_from_top_summary">Nützlich wenn Sie von Unten nach Oben lesen wollen</string>
 </resources>

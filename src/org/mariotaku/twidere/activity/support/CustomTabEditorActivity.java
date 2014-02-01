@@ -49,8 +49,8 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.AccountsSpinnerAdapter;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.content.TwidereContextWrapper;
 import org.mariotaku.twidere.fragment.support.BaseSupportDialogFragment;
-import org.mariotaku.twidere.graphic.DropShadowDrawable;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -244,6 +244,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
+		final Context context = new TwidereContextWrapper(this, getResources());
 		final Intent intent = getIntent();
 		final String type = mTabType = intent.getStringExtra(EXTRA_TYPE);
 		if (type == null) {
@@ -253,10 +254,10 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		mTabId = intent.getLongExtra(EXTRA_ID, -1);
 		setTitle(isEditMode() ? R.string.edit_tab : R.string.add_tab);
 		setContentView(R.layout.custom_tab_editor);
-		mTabTypeName.setText(getTabTypeName(this, type));
-		mTabIconsAdapter = new CustomTabIconsAdapter(this);
+		mTabTypeName.setText(getTabTypeName(context, type));
+		mTabIconsAdapter = new CustomTabIconsAdapter(context);
 		mTabIconsAdapter.setData(getIconMap());
-		mAccountsAdapter = new AccountsSpinnerAdapter(this);
+		mAccountsAdapter = new AccountsSpinnerAdapter(context);
 		mAccountSpinner.setAdapter(mAccountsAdapter);
 		mTabIconSpinner.setAdapter(mTabIconsAdapter);
 		final String icon_key;
@@ -452,7 +453,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 			final int value = item.getValue();
 			if (value > 0) {
-				icon.setImageDrawable(new DropShadowDrawable(mResources, mResources.getDrawable(value), 2, 0x80000000));
+				icon.setImageDrawable(mResources.getDrawable(value));
 			} else {
 				icon.setImageDrawable(null);
 			}

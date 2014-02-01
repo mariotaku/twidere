@@ -146,7 +146,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_QUOTE_FORMAT = "quote_format";
 	@Preference(type = BOOLEAN)
 	public static final String KEY_REMEMBER_POSITION = "remember_position";
-	@Preference(type = BOOLEAN, hasDefault=true, defaultBoolean=false)
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_LOAD_MORE_FROM_TOP = "load_more_from_top";
 	@Preference(type = INT, exportable = false)
 	public static final String KEY_SAVED_TAB_POSITION = "saved_tab_position";
@@ -268,7 +268,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_SWIPE_BACK = "swipe_back";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_FORCE_USING_PRIVATE_APIS = "force_using_private_apis";
-	@Preference(type = INT, hasDefault = true, defaultInt = 140)
+	@Preference(type = STRING, hasDefault = true, defaultString = "140")
 	public static final String KEY_STATUS_TEXT_LIMIT = "status_text_limit";
 
 	@Preference(type = STRING)

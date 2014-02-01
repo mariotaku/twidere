@@ -29,11 +29,11 @@ import android.support.v4.app.NavUtils;
 import com.negusoft.holoaccent.AccentHelper;
 
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
-import org.mariotaku.twidere.theme.TwidereAccentHelper;
 import org.mariotaku.twidere.util.CompareUtils;
 import org.mariotaku.twidere.util.StrictModeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.theme.TwidereAccentHelper;
 
 public abstract class BaseSupportThemedActivity extends FragmentActivity implements IThemedActivity {
 
@@ -75,7 +75,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	@Override
 	public final Resources getThemedResources() {
 		if (mAccentHelper == null) {
-			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this));
+			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this), getThemeResourceId());
 		}
 		return mAccentHelper.getResources(this, super.getResources());
 	}

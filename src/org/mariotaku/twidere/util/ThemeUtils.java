@@ -45,7 +45,8 @@ import org.mariotaku.refreshnow.widget.RefreshNowProgressIndicator.IndicatorConf
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
-import org.mariotaku.twidere.theme.TwidereContextWrapper;
+import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
+import org.mariotaku.twidere.content.TwidereContextWrapper;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.iface.ICardItemView;
 
@@ -144,7 +145,7 @@ public class ThemeUtils implements Constants {
 		final int resId = a.getResourceId(0, 0);
 		a.recycle();
 		if (resId == 0) return context;
-		return new ContextThemeWrapper(context, resId);
+		return new TwidereContextThemeWrapper(context, resId, getUserThemeColor(context));
 	}
 
 	@Deprecated
@@ -195,9 +196,9 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_Colored_SolidBackground:
 			case R.style.Theme_Twidere_Colored_Transparent:
 			case R.style.Theme_Twidere_Colored_Compose:
-				return 0xc0333333;
+				return 0x99333333;
 		}
-		return Color.WHITE;
+		return 0xCCFFFFFF;
 	}
 
 	public static Drawable getCardItemBackground(final Context context) {
@@ -237,7 +238,7 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Context getDialogThemedContext(final Context context) {
-		return new ContextThemeWrapper(context, getDialogThemeResource(context));
+		return new TwidereContextThemeWrapper(context, getDialogThemeResource(context), getThemeColor(context));
 	}
 
 	public static int getDialogThemeResource(final Context context) {
@@ -728,12 +729,12 @@ public class ThemeUtils implements Constants {
 		return true;
 	}
 
-	public static boolean shouldApplyColorFilterToTabIcons(final Context context) {
-		return shouldApplyColorFilterToTabIcons(getThemeResource(context));
+	public static boolean shouldApplyColorFilterToActionIcons(final Context context) {
+		return false;
 	}
 
-	public static boolean shouldApplyColorFilterToTabIcons(final int res) {
-		return isLightActionBar(res);
+	public static boolean shouldApplyColorFilterToActionIcons(final int res) {
+		return false;
 	}
 
 	private static Drawable applyActionBarDrawable(final Context context, final Drawable d, final boolean applyAlpha) {

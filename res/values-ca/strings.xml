@@ -67,6 +67,7 @@
   <string name="open_source_license">Llicència de codi obert</string>
   <string name="api">API</string>
   <string name="default_api_settings">Paràmetres per defecte de l\'API</string>
+  <string name="default_api_settings_summary">Aquests paràmetres només s\'apliquen a nous comptes connectats</string>
   <string name="consumer_key">Clau del consumidor</string>
   <string name="consumer_secret">Clau secreta de consumidor</string>
   <string name="ignore_ssl_error">Ignora error d\'SSL</string>
@@ -184,6 +185,7 @@
   <string name="type_to_compose">Escriu per redactar</string>
   <string name="users_lists">Llistes de l\'usuari</string>
   <string name="lists_following_user">Llistes que segueixen a aquest usuari</string>
+  <string name="lists_following_me">Llistes que em segueixen</string>
   <string name="item_3_minutes">3 minuts</string>
   <string name="item_5_minutes">5 minuts</string>
   <string name="item_10_minutes">10 minuts</string>
@@ -329,6 +331,8 @@
   <string name="action_unsubscribing_from_list">s\'està eliminant la subscripció a la llista</string>
   <string name="action_saving_search">s\'està desant la cerca</string>
   <string name="action_deleting_search">s\'està esborrant la cerca</string>
+  <string name="action_accepting_follow_request">s\'està acceptant la soŀlicitud de seguiment</string>
+  <string name="action_denying_follow_request">s\'està rebutjant la soŀlicitud de seguiment</string>
   <string name="status_is_duplicate">La vostra piulada està duplicada.</string>
   <string name="data_profiling_summary">Twidere va participar en un projecte iniciat pels estudiants de la UC Davis per predir els comportaments socials dels usuaris de continguts pre-carregats.\n\nHeus aquí les dades que volíem recopilar i per què:\nDades obtingudes:\n1. Nom d\'usuari de Twitter.\n2. La cronologia de l\'usuari (predita basada en els interessos de l\'usuari i la seva interacció social)\n3. Els clics del l\'usuari a una piulada (predits basat en els interessos de l\'usuari i la seva interacció social).\n4. Localització no exacta (que és un indicador de la hora d\'accés de l\'usuari a Twitter)\n\nTwidere carregarà les dades obtingudes només en una xarxa Wi-Fi i quan tingueu el vostre dispositiu connectat al carregador, així que no us costarà us de dades extra o us descarregarà la bateria.</string>
   <string name="data_profiling">Estadístiques d\'ús</string>
@@ -362,9 +366,10 @@
   <string name="permission_description_write">Escriu a la base de dades i actualitza l\'estat</string>
   <string name="permission_description_direct_messages">Llegir/Escriure/Enviar missatges directes</string>
   <string name="permission_description_accounts">Mostra la informació del compte</string>
-  <string name="permission_description_preferences">Llegeix la configuració</string>
+  <string name="permission_description_preferences">Llegeix els paràmetres</string>
   <string name="permissions_request">Petició de permisos</string>
   <string name="permissions_request_message">Una extensió necessita els permisos següents</string>
+  <string name="accept_permission_request">Accepta</string>
   <string name="no_thanks">No, gràcies</string>
   <string name="revoke_permissions">Revoca els permisos</string>
   <string name="fast_scroll_thumb">Desplaçament ràpid amb el polze</string>
@@ -380,6 +385,7 @@
   <string name="preload_wifi_only">Precarrega només a través de Wi-Fi</string>
   <string name="disable_tab_swipe">Desactiva poder navegar entre pestanyes fent lliscar el dit</string>
   <string name="sign_in_method_introduction_title">Com funciona, això?</string>
+  <string name="sign_in_method_introduction">La majoria de clients com Twicca obren un navegador demanant que escriviu el vostre nom d\'usuari i contrasenya, i aleshores us tornen al seu client. Però això pot ser molt incòmode.\n\nTwidere utilitza passes més senzilles per connectar-vos, sense obrir el navegador. No us preocupeu per la contrasenya, Twidere mai la desarà, és totalment segur!</string>
   <string name="quote_protected_status_notice">No és recomanable citar piulades protegides.</string>
   <string name="edit_draft">Edita l\'esborrany</string>
   <string name="profile_image">Imatge de perfil</string>
@@ -477,6 +483,7 @@
   <string name="wizard_page_welcome_title">Benvingut/da</string>
   <string name="wizard_page_welcome_text">Gràcies per escollir el Twidere.\nVoleu configurar-lo ara?</string>
   <string name="wizard_page_welcome_yes">Sí</string>
+  <string name="wizard_page_welcome_not_now">Ara no</string>
   <string name="wizard_page_welcome_import_settings">Importa els paràmetres</string>
   <string name="wizard_page_theme_text">Trieu un tema que us agradi.</string>
   <string name="wizard_page_tabs_text">Afegeix alguna pestanya al Twidere.\nPodreu seguir la gent o els temes que us importin.</string>
@@ -570,5 +577,30 @@
   <string name="swipe_back">Fes lliscar el dit per a tancar</string>
   <string name="tab_display_option_icon">Icona</string>
   <string name="tab_display_option_label">Nom</string>
+  <string name="tab_display_option_icon_and_label">Icona i etiqueta</string>
+  <string name="highlight_and_underline">Destacat i subratllat</string>
+  <string name="twip_api_version_notice_message">TWIP no pot manegar correctament URLs Rest Base que no acabin en \"/1.1/\".\n\n Potser necessiteu afegir \"/1.1/\" al final de la URL Rest Base per evitar problemes quan pengeu una imatge.</string>
+  <string name="back">Torna</string>
+  <string name="theme_font_family">Família tipogràfica del tema</string>
+  <string name="translation_destination">Destí de la traducció</string>
   <string name="accept">D\'acord</string>
+  <string name="deny">Denega</string>
+  <string name="accepted_users_follow_request">S\'ha acceptat la soŀlicitud de seguiment de <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="denied_users_follow_request">S\'ha denegat la soŀlicitud de seguiment de <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="import_settings">Importa paràmetres</string>
+  <string name="export_settings">Exporta els paràmetres</string>
+  <string name="export_settings_type_dialog_title">Exporta els paràmetres…</string>
+  <string name="import_settings_type_dialog_title">Importa paràmetres…</string>
+  <string name="nicknames">Sobrenoms</string>
+  <string name="user_colors">Colors de l\'usuari</string>
+  <string name="import_export">Importar/Exportar</string>
+  <string name="theme_background_alpha">Transparència del fons de pantalla</string>
+  <string name="progress">Progrés</string>
+  <string name="hidden_settings">Paràmetres ocults</string>
+  <string name="hidden_settings_warning_title">ATENCIÓ: Aquests paràmetres són perillosos!</string>
+  <string name="hidden_settings_warning_message">MAI DE LA VIDA canvieu aquests paràmetres si no sabeu què volen dir o sinó el Twidere:\n * Convertirà tots els calçots en calçotets\n * Convertirà la Moritz en Mahou\n * I el sincrotró ALBA s\'empassarà el món sencer!</string>
+  <string name="force_using_private_apis">Força lús d\'APIs privades</string>
+  <string name="status_text_limit">Límit de llargària del tuit</string>
+  <string name="load_more_from_top">Carrega piulades amagades per sobre</string>
+  <string name="load_more_from_top_summary">Útil si t\'estimes més llegir d\'avall cap amunt</string>
 </resources>

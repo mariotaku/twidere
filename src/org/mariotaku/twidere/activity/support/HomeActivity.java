@@ -359,16 +359,16 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			final SupportTabSpec tab = mPagerAdapter.getTab(position);
 			if (tab == null) {
 				title = R.string.compose;
-				icon = R.drawable.ic_menu_status_compose;
+				icon = R.drawable.ic_iconic_action_new_message;
 			} else {
 				if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-					icon = R.drawable.ic_menu_compose;
+					icon = R.drawable.ic_iconic_action_new_message;
 					title = R.string.compose;
 				} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
-					icon = android.R.drawable.ic_menu_search;
+					icon = R.drawable.ic_iconic_action_search;
 					title = android.R.string.search_go;
 				} else {
-					icon = R.drawable.ic_menu_status_compose;
+					icon = R.drawable.ic_iconic_action_new_message;
 					title = R.string.compose;
 				}
 			}
@@ -816,16 +816,16 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		final SupportTabSpec tab = mPagerAdapter.getTab(position);
 		if (tab == null) {
 			title = R.string.compose;
-			icon = R.drawable.ic_menu_status_compose;
+			icon = R.drawable.ic_iconic_action_compose;
 		} else {
 			if (classEquals(DirectMessagesFragment.class, tab.cls)) {
-				icon = R.drawable.ic_menu_compose;
+				icon = R.drawable.ic_iconic_action_new_message;
 				title = R.string.compose;
 			} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
-				icon = android.R.drawable.ic_menu_search;
+				icon = R.drawable.ic_iconic_action_search;
 				title = android.R.string.search_go;
 			} else {
-				icon = R.drawable.ic_menu_status_compose;
+				icon = R.drawable.ic_iconic_action_compose;
 				title = R.string.compose;
 			}
 		}

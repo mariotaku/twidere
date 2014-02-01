@@ -593,4 +593,13 @@
   <string name="nicknames">Surnoms</string>
   <string name="user_colors">Couleurs utilisateur</string>
   <string name="import_export">Importer / Exporter</string>
+  <string name="theme_background_alpha">Alpha de l\'arrière-plan du thème</string>
+  <string name="progress">Avancement</string>
+  <string name="hidden_settings">Paramètres cachés</string>
+  <string name="hidden_settings_warning_title">ATTENTION : Ces paramètres peuvent faire mal !</string>
+  <string name="hidden_settings_warning_message">Ne changez JAMAIS ces paramètres si vous ne savez pas ce que c\'est, où ils :\n * Tueront votre chat\n * Lanceront des bombes atomiques en Corée du Nord\n * Transformeront TOUTES les Mahou Shoujo en Majo\n * Détruiront l\'univers</string>
+  <string name="force_using_private_apis">Forcer l\'utilisation d\'API privées</string>
+  <string name="status_text_limit">Limite de caractères du Tweet</string>
+  <string name="load_more_from_top">Chargement par le haut</string>
+  <string name="load_more_from_top_summary">Pratique si vous préférez lire de bas en haut</string>
 </resources>

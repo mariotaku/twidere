@@ -21,21 +21,29 @@ package org.mariotaku.twidere.activity;
 
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.theme.TwidereResourceHelper;
 
 public abstract class BasePreferenceActivity extends PreferenceActivity implements Constants {
 
+	private final TwidereResourceHelper mResourceHelper = new TwidereResourceHelper();
 	private int mCurrentThemeResource;
 
 	@Override
 	public void finish() {
 		super.finish();
 		overrideCloseAnimationIfNeeded();
+	}
+
+	@Override
+	public Resources getResources() {
+		return mResourceHelper.getResources(this, super.getResources());
 	}
 
 	public int getThemeResourceId() {
