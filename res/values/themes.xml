@@ -115,6 +115,8 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Colored</item>
+		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.ActionBar.Colored.Light</item>
+		<item name="android:actionBarItemBackground">@drawable/list_selector_light_white</item>
 	</style>
 
 	<style name="Theme.Twidere.Colored.DarkActionBar" parent="Theme.Twidere.Light.DarkActionBar">
@@ -122,13 +124,7 @@
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Colored.Inverse</item>
 		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.ActionBar.Colored.Dark</item>
-	</style>
-
-	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="Theme.HoloAccent">
-
-		<!-- Accent Colors -->
-		<item name="accentColor">#ff0099cc</item>
-		<item name="accentColorTranslucent">#660099cc</item>
+		<item name="android:actionBarItemBackground">@drawable/list_selector_white</item>
 	</style>
 
 	<style name="Theme.Twidere.Colored.DarkActionBar.Transparent">
@@ -211,6 +207,18 @@
 
 		<!-- Window attributes -->
 		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+
+	<style name="Theme.Twidere.ActionBar.Colored.Light" parent="Theme.Twidere.Light">
+		<item name="accentColor">@color/accent_white</item>
+		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.Light.ActionButton.Colored</item>
+	</style>
+
+	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="Theme.Twidere.Dark">
+		<item name="accentColor">@color/accent_white</item>
+		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
+		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton.Colored</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">

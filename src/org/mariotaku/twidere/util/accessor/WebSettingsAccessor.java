@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.view;
+package org.mariotaku.twidere.util.accessor;
 
 import android.annotation.TargetApi;
 import android.os.Build;

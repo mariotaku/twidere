@@ -17,10 +17,10 @@
 		android:layout_gravity="center"
 		android:layout_margin="32dp"/>
 
-	<org.mariotaku.twidere.view.TwidereMenuBar
-		android:id="@+id/menu_bar"
+	<org.mariotaku.twidere.view.ActionBarSplitThemedContainer
 		android:layout_width="match_parent"
-		android:layout_height="?android:actionBarSize"
-		android:layout_gravity="bottom"/>
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		android:layout="@layout/activity_image_viewer_bottombar"/>
 
 </merge>

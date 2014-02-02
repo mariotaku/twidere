@@ -242,6 +242,7 @@
 			android:theme="@style/Theme.Twidere.Light.NoDisplay"/>
 		<activity
 			android:name=".activity.support.LinkHandlerActivity"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:windowSoftInputMode="adjustResize">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"

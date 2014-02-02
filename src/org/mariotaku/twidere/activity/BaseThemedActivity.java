@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.MenuInflater;
 
 import com.negusoft.holoaccent.AccentHelper;
 
@@ -33,15 +34,15 @@ import org.mariotaku.twidere.util.CompareUtils;
 import org.mariotaku.twidere.util.StrictModeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.theme.AccentThemeFixer;
 import org.mariotaku.twidere.util.theme.TwidereAccentHelper;
 
 public abstract class BaseThemedActivity extends Activity implements IThemedActivity {
 
 	private int mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha;
-
 	private String mCurrentThemeFontFamily;
-
 	private AccentHelper mAccentHelper;
+	private MenuInflater mMenuInflater;
 
 	@Override
 	public void finish() {
@@ -57,6 +58,12 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	@Override
 	public Resources getDefaultResources() {
 		return super.getResources();
+	}
+
+	@Override
+	public MenuInflater getMenuInflater() {
+		if (mMenuInflater != null) return mMenuInflater;
+		return mMenuInflater = new MenuInflater(AccentThemeFixer.getThemedContext(this));
 	}
 
 	@Override
@@ -126,6 +133,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 		}
 		setTheme();
 		super.onCreate(savedInstanceState);
+		AccentThemeFixer.fixActionBar(getActionBar(), this);
 		setActionBarBackground();
 	}
 

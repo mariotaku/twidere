@@ -23,6 +23,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.mariotaku.twidere.Constants;
@@ -31,6 +32,7 @@ import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.theme.AccentThemeFixer;
 
 @SuppressLint("Registered")
 public class BaseSupportActivity extends BaseSupportThemedActivity implements Constants {
@@ -38,6 +40,13 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
 	private SharedPreferences mPreferences;
 	private boolean mCompactCards;
+	private MenuInflater mMenuInflater;
+
+	@Override
+	public MenuInflater getMenuInflater() {
+		if (mMenuInflater != null) return mMenuInflater;
+		return mMenuInflater = new MenuInflater(AccentThemeFixer.getThemedContext(this));
+	}
 
 	public MessagesManager getMessagesManager() {
 		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;

@@ -474,7 +474,7 @@ public class ThemeUtils implements Constants {
 		final Resources res = getResources(context);
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int def = res.getColor(android.R.color.holo_blue_light);
-		return pref.getInt(KEY_THEME_COLOR, def);
+		return pref != null ? pref.getInt(KEY_THEME_COLOR, def) : def;
 	}
 
 	public static Typeface getUserTypeface(final Context context, final Typeface defTypeface) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.content.res.iface.IThemedResources;
 
 public class TwidereResources extends Resources implements IThemedResources {

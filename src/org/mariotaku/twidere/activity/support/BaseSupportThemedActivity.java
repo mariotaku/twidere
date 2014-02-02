@@ -25,6 +25,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.view.Window;
 
 import com.negusoft.holoaccent.AccentHelper;
 
@@ -33,6 +34,7 @@ import org.mariotaku.twidere.util.CompareUtils;
 import org.mariotaku.twidere.util.StrictModeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
+import org.mariotaku.twidere.util.theme.AccentThemeFixer;
 import org.mariotaku.twidere.util.theme.TwidereAccentHelper;
 
 public abstract class BaseSupportThemedActivity extends FragmentActivity implements IThemedActivity {
@@ -116,6 +118,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		AccentThemeFixer.fixWindow(this);
 		if (Utils.isDebugBuild()) {
 			StrictModeUtils.detectAllVmPolicy();
 			StrictModeUtils.detectAllThreadPolicy();
@@ -126,6 +129,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		}
 		setTheme();
 		super.onCreate(savedInstanceState);
+		AccentThemeFixer.fixActionBar(getActionBar(), this);
 		setActionBarBackground();
 	}
 

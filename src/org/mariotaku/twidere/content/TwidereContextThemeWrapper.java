@@ -32,11 +32,18 @@ public class TwidereContextThemeWrapper extends ContextThemeWrapper {
 	private final int mThemeResourceId;
 	private final int mAccentColor;
 
+	private final boolean mIsActionBarContext;
+
 	public TwidereContextThemeWrapper(final Context base, final int themeResource, final int accentColor) {
+	this(base,themeResource,accentColor,false);
+	}
+	public TwidereContextThemeWrapper(final Context base, final int themeResource, final int accentColor,
+			final boolean isActionBarContext) {
 		super(base, themeResource);
 		mThemeResourceId = themeResource;
 		mAccentColor = accentColor;
 		mAccentHelper = new TwidereAccentHelper(accentColor, themeResource);
+		mIsActionBarContext = isActionBarContext;
 	}
 
 	public int getAccentColor() {
@@ -50,6 +57,15 @@ public class TwidereContextThemeWrapper extends ContextThemeWrapper {
 
 	public int getThemeResourceId() {
 		return mThemeResourceId;
+	}
+
+	public boolean isActionBarContext() {
+		return mIsActionBarContext;
+	}
+
+	@Override
+	public String toString() {
+		return "TwidereContextThemeWrapper{isActionBarContext=" + isActionBarContext() + "}";
 	}
 
 }

@@ -33,6 +33,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -433,10 +434,26 @@ public final class ImageViewerGLActivity extends TwidereSwipeBackActivity implem
 		if (!mShowBars || isSwiping()) return;
 		mShowBars = false;
 		mActionBar.hide();
-		mMenuBar.setVisibility(View.GONE);
 		final TranslateAnimation anim = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0,
 				Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 1);
 		anim.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
+		anim.setAnimationListener(new AnimationListener() {
+			
+			@Override
+			public void onAnimationStart(Animation animation) {
+				
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				
+			}
+			
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				mMenuBar.setVisibility(View.GONE);
+			}
+		});
 		mMenuBar.startAnimation(anim);
 		mHandler.removeMessages(MSG_HIDE_BARS);
 	}

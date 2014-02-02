@@ -1223,7 +1223,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		private final LongSparseArray<Boolean> mAccountSelectStates = new LongSparseArray<Boolean>();
 
 		public AccountSelectorAdapter(final Context context) {
-			super(context, R.layout.compose_account_selector_item, Account.getAccounts(context, false));
+			super(context, R.layout.gallery_item_compose_account, Account.getAccounts(context, false));
 		}
 
 		public void clearAccountSelection() {

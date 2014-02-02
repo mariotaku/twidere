@@ -12,5 +12,7 @@
 	<color name="highlighted_text_holo_light">#66b0b0b0</color>
 	<color name="text_link_holo_dark">#909090</color>
 	<color name="text_link_holo_light">#707070</color>
+	<color name="accent_white">#ffffff</color>
+	<color name="accent_white_translucent">#66ffffff</color>
 
 </resources>

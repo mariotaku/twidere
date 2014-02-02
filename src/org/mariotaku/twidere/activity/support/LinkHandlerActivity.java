@@ -127,7 +127,6 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 		setUiOptions(getWindow(), data);
 		super.onCreate(savedInstanceState);
 		mActionBar = getActionBar();
-		mActionBar.setIcon(R.drawable.ic_iconic_action_twidere);
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 		mActionBar.setDisplayShowTitleEnabled(true);
 		mActionBar.setDisplayShowCustomEnabled(false);

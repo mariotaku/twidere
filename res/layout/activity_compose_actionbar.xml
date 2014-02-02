@@ -74,7 +74,7 @@
 		android:padding="2dp"
 		android:visibility="gone"/>
 
-	<org.mariotaku.twidere.view.TwidereMenuBar
+	<org.mariotaku.menucomponent.widget.MenuBar
 		android:id="@+id/action_menu"
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"

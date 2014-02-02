@@ -9,7 +9,7 @@
 	<org.mariotaku.twidere.view.ActionBarThemedContainer
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout="@layout/compose_actionbar"/>
+		android:layout="@layout/activity_compose_actionbar"/>
 
 	<LinearLayout
 		android:id="@+id/compose_content"
@@ -58,7 +58,7 @@
 		<org.mariotaku.twidere.view.ActionBarSplitThemedContainer
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout="@layout/compose_bottombar"/>
+			android:layout="@layout/activity_compose_bottombar"/>
 	</LinearLayout>
 
 </LinearLayout>

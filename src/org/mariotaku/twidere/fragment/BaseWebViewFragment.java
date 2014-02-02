@@ -26,8 +26,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewFragment;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.util.accessor.WebSettingsAccessor;
 import org.mariotaku.twidere.util.webkit.DefaultWebViewClient;
-import org.mariotaku.twidere.view.WebSettingsAccessor;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class BaseWebViewFragment extends WebViewFragment implements Constants {

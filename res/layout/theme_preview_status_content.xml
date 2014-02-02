@@ -12,7 +12,7 @@
 
 		<include
 			android:id="@+id/status_content"
-			layout="@layout/status_header"/>
+			layout="@layout/header_status"/>
 
 		<View
 			android:id="@+id/theme_preview_window_content_overlay"
