@@ -551,7 +551,7 @@ abstract class BaseStatusesStaggeredGridFragment<Data> extends BasePullToRefresh
 			final Drawable icon = direct_retweet.getIcon().mutate();
 			direct_retweet.setVisible(separateRetweetAction && (!status.user_is_protected || isMyRetweet(status)));
 			if (isMyRetweet(status)) {
-				icon.setColorFilter(activated_color, PorterDuff.Mode.MULTIPLY);
+				icon.setColorFilter(activated_color, PorterDuff.Mode.SRC_ATOP);
 				direct_retweet.setTitle(R.string.cancel_retweet);
 			} else {
 				icon.clearColorFilter();

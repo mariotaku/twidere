@@ -128,6 +128,7 @@
 		<activity
 			android:name=".activity.support.ComposeActivity"
 			android:excludeFromRecents="true"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/compose"
 			android:launchMode="singleTop"
 			android:theme="@style/Theme.Blank.Dialog"
@@ -159,6 +160,7 @@
 		</activity>
 		<activity
 			android:name=".activity.support.SignInActivity"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/sign_in"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
@@ -169,6 +171,7 @@
 		</activity>
 		<activity
 			android:name=".activity.support.BrowserSignInActivity"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/browser_sign_in"
 			android:theme="@style/Theme.Blank.Dialog"
 			android:windowSoftInputMode="adjustResize">
@@ -180,6 +183,7 @@
 		</activity>
 		<activity
 			android:name=".activity.SettingsActivity"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/settings"
 			android:theme="@style/Theme.Blank"
 			android:windowSoftInputMode="adjustResize">
@@ -196,6 +200,7 @@
 		</activity>
 		<activity
 			android:name=".activity.FiltersActivity"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/filters">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.FILTERS"/>
@@ -225,6 +230,7 @@
 		<activity
 			android:name=".activity.support.BrowserActivity"
 			android:exported="false"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/browser">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_WEBPAGE"/>
@@ -325,6 +331,7 @@
 		<activity
 			android:name=".activity.support.DraftsActivity"
 			android:exported="false"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/drafts"
 			android:launchMode="singleTop">
 			<intent-filter>
@@ -341,6 +348,7 @@
 			android:name="org.mariotaku.gallery3d.ImageViewerGLActivity"
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:hardwareAccelerated="true"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
 			android:theme="@style/Theme.Blank">
@@ -387,6 +395,7 @@
 		<activity
 			android:name=".activity.support.UserProfileEditorActivity"
 			android:exported="false"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/edit_profile"
 			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
@@ -397,6 +406,7 @@
 		</activity>
 		<activity
 			android:name=".activity.CustomTabsActivity"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/tabs"
 			android:theme="@style/Theme.Blank"/>
 		<activity
@@ -414,7 +424,7 @@
 		<activity
 			android:name=".activity.CreateComposeShortcutActivity"
 			android:label="@string/compose"
-			android:theme="@android:style/Theme.NoDisplay">
+			android:theme="@style/Theme.Twidere.Dark.NoDisplay">
 			<intent-filter>
 				<action android:name="android.intent.action.CREATE_SHORTCUT"/>
 
@@ -424,6 +434,7 @@
 		<activity
 			android:name=".activity.DataProfilingSettingsActivity"
 			android:exported="false"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/data_profiling"
 			android:theme="@style/Theme.Blank"/>
 		<activity
@@ -470,6 +481,7 @@
 			android:theme="@android:style/Theme.NoDisplay"/>
 		<activity
 			android:name=".activity.TestActivity"
+			android:icon="@drawable/ic_iconic_twidere"
 			android:launchMode="singleTop"
 			android:theme="@style/Theme.Twidere.Settings.Light"
 			android:windowSoftInputMode="adjustResize"/>

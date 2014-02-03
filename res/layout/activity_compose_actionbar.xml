@@ -15,9 +15,9 @@
 
 		<LinearLayout
 			android:id="@+id/close"
-			style="?android:actionButtonStyle"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
+			android:background="?android:actionBarItemBackground"
 			android:clickable="true"
 			android:focusable="true"
 			android:orientation="horizontal"

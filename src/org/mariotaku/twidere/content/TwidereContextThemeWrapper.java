@@ -23,9 +23,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.view.ContextThemeWrapper;
 
+import org.mariotaku.twidere.content.iface.ITwidereContextWrapper;
 import org.mariotaku.twidere.util.theme.TwidereAccentHelper;
 
-public class TwidereContextThemeWrapper extends ContextThemeWrapper {
+public class TwidereContextThemeWrapper extends ContextThemeWrapper implements ITwidereContextWrapper {
 
 	private final TwidereAccentHelper mAccentHelper;
 
@@ -35,14 +36,15 @@ public class TwidereContextThemeWrapper extends ContextThemeWrapper {
 	private final boolean mIsActionBarContext;
 
 	public TwidereContextThemeWrapper(final Context base, final int themeResource, final int accentColor) {
-	this(base,themeResource,accentColor,false);
+		this(base, themeResource, accentColor, false);
 	}
+
 	public TwidereContextThemeWrapper(final Context base, final int themeResource, final int accentColor,
 			final boolean isActionBarContext) {
 		super(base, themeResource);
 		mThemeResourceId = themeResource;
 		mAccentColor = accentColor;
-		mAccentHelper = new TwidereAccentHelper(accentColor, themeResource);
+		mAccentHelper = new TwidereAccentHelper(accentColor);
 		mIsActionBarContext = isActionBarContext;
 	}
 
@@ -55,6 +57,7 @@ public class TwidereContextThemeWrapper extends ContextThemeWrapper {
 		return mAccentHelper.getResources(this, super.getResources());
 	}
 
+	@Override
 	public int getThemeResourceId() {
 		return mThemeResourceId;
 	}

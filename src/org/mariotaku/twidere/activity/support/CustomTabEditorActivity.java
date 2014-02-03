@@ -49,7 +49,6 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.AccountsSpinnerAdapter;
 import org.mariotaku.twidere.adapter.ArrayAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.content.TwidereContextWrapper;
 import org.mariotaku.twidere.fragment.support.BaseSupportDialogFragment;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
@@ -244,7 +243,6 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
-		final Context context = new TwidereContextWrapper(this, getResources());
 		final Intent intent = getIntent();
 		final String type = mTabType = intent.getStringExtra(EXTRA_TYPE);
 		if (type == null) {
@@ -254,10 +252,10 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		mTabId = intent.getLongExtra(EXTRA_ID, -1);
 		setTitle(isEditMode() ? R.string.edit_tab : R.string.add_tab);
 		setContentView(R.layout.custom_tab_editor);
-		mTabTypeName.setText(getTabTypeName(context, type));
-		mTabIconsAdapter = new CustomTabIconsAdapter(context);
+		mTabTypeName.setText(getTabTypeName(this, type));
+		mTabIconsAdapter = new CustomTabIconsAdapter(this);
 		mTabIconsAdapter.setData(getIconMap());
-		mAccountsAdapter = new AccountsSpinnerAdapter(context);
+		mAccountsAdapter = new AccountsSpinnerAdapter(this);
 		mAccountSpinner.setAdapter(mAccountsAdapter);
 		mTabIconSpinner.setAdapter(mTabIconsAdapter);
 		final String icon_key;

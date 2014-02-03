@@ -83,8 +83,8 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 		final Bundle args = getArguments();
 		mThemeColor = ThemeUtils.getUserThemeColor(getActivity());
 		mAdapter = new SupportTabsAdapter(getActivity(), getChildFragmentManager(), null, 1);
-		mAdapter.addTab(SearchStatusesFragment.class, args, getString(R.string.statuses), R.drawable.ic_tab_twitter, 0);
-		mAdapter.addTab(SearchUsersFragment.class, args, getString(R.string.users), R.drawable.ic_tab_person, 1);
+		mAdapter.addTab(SearchStatusesFragment.class, args, getString(R.string.statuses), R.drawable.ic_iconic_action_twitter, 0);
+		mAdapter.addTab(SearchUsersFragment.class, args, getString(R.string.users), R.drawable.ic_iconic_action_user, 1);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOnPageChangeListener(this);
 		mViewPager.setOffscreenPageLimit(2);
@@ -98,7 +98,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 			final Drawable icon = mAdapter.getPageIcon(i);
 			v.setImageDrawable(new DropShadowDrawable(getResources(), icon, 3, Color.BLACK, Color.WHITE));
 			if (i == current) {
-				v.setColorFilter(mThemeColor, Mode.MULTIPLY);
+				v.setColorFilter(mThemeColor, Mode.SRC_ATOP);
 			} else {
 				v.clearColorFilter();
 			}
@@ -125,7 +125,7 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.search, container, false);
+		return inflater.inflate(R.layout.fragment_search, container, false);
 	}
 
 	@Override

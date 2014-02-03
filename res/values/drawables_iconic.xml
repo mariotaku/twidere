@@ -24,7 +24,7 @@
 	<item name="ic_iconic_action_reply" type="drawable"/>
 	<item name="ic_iconic_action_copy" type="drawable"/>
 	<item name="ic_iconic_action_translate" type="drawable"/>
-	<item name="ic_iconic_action_profile" type="drawable"/>
+	<item name="ic_iconic_action_user" type="drawable"/>
 	<item name="ic_iconic_action_accounts" type="drawable"/>
 	<item name="ic_iconic_action_accept" type="drawable"/>
 	<item name="ic_iconic_action_mark" type="drawable"/>
@@ -36,6 +36,21 @@
 	<item name="ic_iconic_action_message" type="drawable"/>
 	<item name="ic_iconic_action_home" type="drawable"/>
 	<item name="ic_iconic_action_mention" type="drawable"/>
+	<item name="ic_iconic_action_hashtag" type="drawable"/>
+	<item name="ic_iconic_action_trends" type="drawable"/>
+	<item name="ic_iconic_action_list" type="drawable"/>
+	<item name="ic_iconic_action_staggered" type="drawable"/>
+	<item name="ic_iconic_action_neko" type="drawable"/>
+	<item name="ic_iconic_action_tab" type="drawable"/>
+	<item name="ic_iconic_action_extension" type="drawable"/>
+	<item name="ic_iconic_action_card" type="drawable"/>
+	<item name="ic_iconic_action_refresh" type="drawable"/>
+	<item name="ic_iconic_action_grid" type="drawable"/>
+	<item name="ic_iconic_action_about" type="drawable"/>
+	<item name="ic_iconic_action_more" type="drawable"/>
+	<item name="ic_iconic_action_open_source" type="drawable"/>
+	<item name="ic_iconic_action_notification" type="drawable"/>
+	<item name="ic_iconic_action_interface" type="drawable"/>
 	<item name="ic_iconic_twidere" type="drawable"/>
 
 </resources>

@@ -33,20 +33,17 @@ public class TwidereAccentHelper extends AccentHelper implements Constants {
 
 	private DividerPainter mDividerPainter;
 	private final int mAccentColor;
-	private final int mThemeResources;
 	private Resources mResources;
 
-	public TwidereAccentHelper(final int color, final int theme) {
+	public TwidereAccentHelper(final int color) {
 		super(color);
 		mAccentColor = color;
-		mThemeResources = theme;
 	}
 
 	@Override
 	public Resources getResources(final Context c, final Resources resources) {
 		if (mResources != null) return mResources;
-		return mResources = new TwidereAccentResources(c, super.getResources(c, resources), mAccentColor,
-				mThemeResources);
+		return mResources = new TwidereAccentResources(c, super.getResources(c, resources), mAccentColor);
 	}
 
 	@Override

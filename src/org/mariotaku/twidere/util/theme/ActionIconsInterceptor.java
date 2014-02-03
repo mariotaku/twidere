@@ -9,7 +9,7 @@ import com.atermenji.android.iconicdroid.IconicFontDrawable;
 import com.atermenji.android.iconicdroid.icon.Icon;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
+import org.mariotaku.twidere.content.iface.ITwidereContextWrapper;
 import org.mariotaku.twidere.content.res.iface.IThemedResources.DrawableInterceptor;
 import org.mariotaku.twidere.graphic.icon.TwidereIcon;
 import org.mariotaku.twidere.util.ThemeUtils;
@@ -39,13 +39,13 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		sIconMap.put(R.drawable.ic_iconic_action_outbox, new IconSpec(TwidereIcon.OUTBOX, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_copy, new IconSpec(TwidereIcon.COPY, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_translate, new IconSpec(TwidereIcon.TRANSLATE, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_profile, new IconSpec(TwidereIcon.USER, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_user, new IconSpec(TwidereIcon.USER, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_accounts, new IconSpec(TwidereIcon.USERS, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_send, new IconSpec(TwidereIcon.SEND, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_edit, new IconSpec(TwidereIcon.EDIT, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_accept, new IconSpec(TwidereIcon.ACCEPT, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_cancel, new IconSpec(TwidereIcon.CANCEL, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_preferences, new IconSpec(TwidereIcon.SETTINGS, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_preferences, new IconSpec(TwidereIcon.PREFERENCES, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_mylocation, new IconSpec(TwidereIcon.LOCATION, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_mute, new IconSpec(TwidereIcon.MUTE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_quote, new IconSpec(TwidereIcon.QUOTE, 0.75f));
@@ -53,6 +53,21 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		sIconMap.put(R.drawable.ic_iconic_action_twitter, new IconSpec(TwidereIcon.TWITTER, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_home, new IconSpec(TwidereIcon.HOME, 0.9375f));
 		sIconMap.put(R.drawable.ic_iconic_action_mention, new IconSpec(TwidereIcon.AT, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_hashtag, new IconSpec(TwidereIcon.HASHTAG, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_trends, new IconSpec(TwidereIcon.TRENDS, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_list, new IconSpec(TwidereIcon.LIST, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_staggered, new IconSpec(TwidereIcon.STAGGERED, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_neko, new IconSpec(TwidereIcon.NEKO, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_tab, new IconSpec(TwidereIcon.TAB, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_extension, new IconSpec(TwidereIcon.EXTENSION, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_card, new IconSpec(TwidereIcon.CARD, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_refresh, new IconSpec(TwidereIcon.REFRESH, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_grid, new IconSpec(TwidereIcon.GRID, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_about, new IconSpec(TwidereIcon.ABOUT, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_more, new IconSpec(TwidereIcon.MORE, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_open_source, new IconSpec(TwidereIcon.OPEN_SOURCE, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_notification, new IconSpec(TwidereIcon.NOTIFICATION, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_interface, new IconSpec(TwidereIcon.INTERFACE, 0.75f));
 
 		sIconMap.put(R.drawable.ic_iconic_action_mark, new IconSpec(TwidereIcon.ACCEPT, 0.75f));
 	}
@@ -65,8 +80,8 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 
 	public ActionIconsInterceptor(final Context context, final DisplayMetrics dm) {
 		mContext = context;
-		if (context instanceof TwidereContextThemeWrapper) {
-			final int resId = ((TwidereContextThemeWrapper) context).getThemeResourceId();
+		if (context instanceof ITwidereContextWrapper) {
+			final int resId = ((ITwidereContextWrapper) context).getThemeResourceId();
 			mIconColor = ThemeUtils.getActionIconColor(resId);
 		} else {
 			mIconColor = ThemeUtils.getActionIconColor(context);

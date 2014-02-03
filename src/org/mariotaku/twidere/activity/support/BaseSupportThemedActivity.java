@@ -77,7 +77,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	@Override
 	public final Resources getThemedResources() {
 		if (mAccentHelper == null) {
-			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this), getThemeResourceId());
+			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this));
 		}
 		return mAccentHelper.getResources(this, super.getResources());
 	}

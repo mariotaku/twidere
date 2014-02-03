@@ -27,15 +27,17 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.theme.TwidereResourceHelper;
 
 @SuppressLint("Registered")
 public class BaseSupportDialogActivity extends BaseSupportThemedActivity implements Constants, IThemedActivity {
 
+	private final TwidereResourceHelper mResourceHelper = new TwidereResourceHelper();
 	private boolean mInstanceStateSaved;
 
 	@Override
 	public Resources getResources() {
-		return getDefaultResources();
+		return mResourceHelper.getResources(this, getDefaultResources());
 	}
 
 	@Override

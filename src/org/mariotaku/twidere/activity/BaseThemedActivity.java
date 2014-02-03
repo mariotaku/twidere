@@ -25,7 +25,6 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.view.MenuInflater;
 
 import com.negusoft.holoaccent.AccentHelper;
 
@@ -42,7 +41,6 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	private int mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha;
 	private String mCurrentThemeFontFamily;
 	private AccentHelper mAccentHelper;
-	private MenuInflater mMenuInflater;
 
 	@Override
 	public void finish() {
@@ -61,12 +59,6 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	}
 
 	@Override
-	public MenuInflater getMenuInflater() {
-		if (mMenuInflater != null) return mMenuInflater;
-		return mMenuInflater = new MenuInflater(AccentThemeFixer.getThemedContext(this));
-	}
-
-	@Override
 	public Resources getResources() {
 		return getThemedResources();
 	}
@@ -82,7 +74,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	@Override
 	public final Resources getThemedResources() {
 		if (mAccentHelper == null) {
-			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this), getThemeResourceId());
+			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this));
 		}
 		return mAccentHelper.getResources(this, super.getResources());
 	}

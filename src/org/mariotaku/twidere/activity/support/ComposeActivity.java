@@ -876,7 +876,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			final Drawable iconAddImage = itemAddImageSubmenu.getIcon();
 			iconAddImage.mutate();
 			if (hasMedia) {
-				iconAddImage.setColorFilter(activatedColor, Mode.MULTIPLY);
+				iconAddImage.setColorFilter(activatedColor, Mode.SRC_ATOP);
 			} else {
 				iconAddImage.clearColorFilter();
 			}
@@ -885,7 +885,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (itemAddImage != null) {
 			final Drawable iconAddImage = itemAddImage.getIcon().mutate();
 			if (mMediaType == ATTACHED_IMAGE_TYPE_IMAGE) {
-				iconAddImage.setColorFilter(activatedColor, Mode.MULTIPLY);
+				iconAddImage.setColorFilter(activatedColor, Mode.SRC_ATOP);
 				itemAddImage.setTitle(R.string.remove_image);
 			} else {
 				iconAddImage.clearColorFilter();
@@ -896,7 +896,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (itemTakePhoto != null) {
 			final Drawable iconTakePhoto = itemTakePhoto.getIcon().mutate();
 			if (mMediaType == ATTACHED_IMAGE_TYPE_PHOTO) {
-				iconTakePhoto.setColorFilter(activatedColor, Mode.MULTIPLY);
+				iconTakePhoto.setColorFilter(activatedColor, Mode.SRC_ATOP);
 				itemTakePhoto.setTitle(R.string.remove_photo);
 			} else {
 				iconTakePhoto.clearColorFilter();
@@ -908,7 +908,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			final Drawable iconAttachLocation = itemAttachLocation.getIcon().mutate();
 			final boolean attach_location = mPreferences.getBoolean(KEY_ATTACH_LOCATION, false);
 			if (attach_location && getLocation()) {
-				iconAttachLocation.setColorFilter(activatedColor, Mode.MULTIPLY);
+				iconAttachLocation.setColorFilter(activatedColor, Mode.SRC_ATOP);
 				itemAttachLocation.setTitle(R.string.remove_location);
 				itemAttachLocation.setChecked(true);
 			} else {
@@ -937,7 +937,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 				final Drawable iconToggleSensitive = itemToggleSensitive.getIcon().mutate();
 				if (mIsPossiblySensitive) {
 					itemToggleSensitive.setTitle(R.string.remove_sensitive_mark);
-					iconToggleSensitive.setColorFilter(activatedColor, Mode.MULTIPLY);
+					iconToggleSensitive.setColorFilter(activatedColor, Mode.SRC_ATOP);
 				} else {
 					itemToggleSensitive.setTitle(R.string.mark_as_sensitive);
 					iconToggleSensitive.clearColorFilter();

@@ -42,14 +42,6 @@
 		<item name="android:background">?android:attr/selectableItemBackground</item>
 	</style>
 
-	<style name="Widget.Twidere.ActionButton.Colored" parent="android:Widget.Holo.Light.ActionButton">
-		<item name="android:background">@drawable/list_selector_white</item>
-	</style>
-
-	<style name="Widget.Twidere.Light.ActionButton.Colored" parent="android:Widget.Holo.ActionButton">
-		<item name="android:background">@drawable/list_selector_light_white</item>
-	</style>
-
 	<style name="Animation.Twidere.Activity" parent="android:Animation.Activity">
 		<item name="android:activityOpenEnterAnimation">@anim/activity_open_enter</item>
 		<item name="android:activityOpenExitAnimation">@anim/activity_open_exit</item>

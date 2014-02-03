@@ -12,8 +12,7 @@ public class TwidereAccentResources extends AccentResources implements IThemedRe
 
 	private final Helper mHelper;
 
-	public TwidereAccentResources(final Context context, final Resources res, final int accentColor,
-			final int themeResource) {
+	public TwidereAccentResources(final Context context, final Resources res, final int accentColor) {
 		super(context, res, accentColor);
 		mHelper = new Helper(this, context);
 	}

@@ -488,7 +488,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			finish();
 			return;
 		}
-		setContentView(R.layout.home);
+		setContentView(R.layout.activity_home);
 		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONCREATE));
 		final boolean refreshOnStart = mPreferences.getBoolean(KEY_REFRESH_ON_START, false);
 		mTabDisplayOption = getTabDisplayOptionInt(this);

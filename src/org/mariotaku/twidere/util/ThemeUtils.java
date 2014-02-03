@@ -47,6 +47,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
 import org.mariotaku.twidere.content.TwidereContextWrapper;
+import org.mariotaku.twidere.content.iface.ITwidereContextWrapper;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.iface.ICardItemView;
 
@@ -192,10 +193,13 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_Light_SolidBackground:
 			case R.style.Theme_Twidere_Light_Transparent:
 			case R.style.Theme_Twidere_Light_Compose:
+			case R.style.Theme_Twidere_Light_Dialog:
 			case R.style.Theme_Twidere_Colored:
 			case R.style.Theme_Twidere_Colored_SolidBackground:
 			case R.style.Theme_Twidere_Colored_Transparent:
 			case R.style.Theme_Twidere_Colored_Compose:
+			case R.style.Theme_Twidere_ActionBar_Colored_Light:
+			case R.style.Theme_Twidere_Settings_Light:
 				return 0x99333333;
 		}
 		return 0xCCFFFFFF;
@@ -306,6 +310,12 @@ public class ThemeUtils implements Constants {
 		} finally {
 			a.recycle();
 		}
+	}
+
+	public static Context getSettingsContextForActionIcons(final Context baseContext) {
+		final int themeRes = ThemeUtils.isDarkTheme(baseContext) ? R.style.Theme_Twidere_Settings_Dark
+				: R.style.Theme_Twidere_Settings_Light;
+		return new TwidereContextWrapper(baseContext, baseContext.getResources(), themeRes);
 	}
 
 	public static int getSettingsThemeResource(final Context context) {
@@ -544,6 +554,8 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static boolean isDarkTheme(final Context context) {
+		if (context instanceof ITwidereContextWrapper)
+			return isDarkTheme(((ITwidereContextWrapper) context).getThemeResourceId());
 		return isDarkTheme(getThemeResource(context));
 	}
 

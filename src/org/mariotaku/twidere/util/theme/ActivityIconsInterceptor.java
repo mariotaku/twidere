@@ -32,9 +32,9 @@ public class ActivityIconsInterceptor implements DrawableInterceptor {
 		mContext = context;
 		if (context instanceof TwidereContextThemeWrapper) {
 			final int resId = ((TwidereContextThemeWrapper) context).getThemeResourceId();
-			mIconColor = 0xFF << 24 | ThemeUtils.getActionIconColor(resId);
+			mIconColor = ThemeUtils.getActionIconColor(resId);
 		} else {
-			mIconColor = 0xFF << 24 | ThemeUtils.getActionIconColor(context);
+			mIconColor = ThemeUtils.getActionIconColor(context);
 		}
 		mDensity = dm.density;
 		mIconSize = Math.round(mDensity * MENU_ICON_SIZE_DP);

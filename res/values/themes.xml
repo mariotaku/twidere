@@ -28,6 +28,7 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
+		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.Dark</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -61,6 +62,7 @@
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
+		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.Light</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>
@@ -212,13 +214,11 @@
 	<style name="Theme.Twidere.ActionBar.Colored.Light" parent="Theme.Twidere.Light">
 		<item name="accentColor">@color/accent_white</item>
 		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
-		<item name="android:actionButtonStyle">@style/Widget.Twidere.Light.ActionButton.Colored</item>
 	</style>
 
 	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="Theme.Twidere.Dark">
 		<item name="accentColor">@color/accent_white</item>
 		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
-		<item name="android:actionButtonStyle">@style/Widget.Twidere.ActionButton.Colored</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">

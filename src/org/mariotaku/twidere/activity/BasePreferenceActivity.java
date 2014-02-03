@@ -27,10 +27,11 @@ import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.theme.TwidereResourceHelper;
 
-public abstract class BasePreferenceActivity extends PreferenceActivity implements Constants {
+public abstract class BasePreferenceActivity extends PreferenceActivity implements Constants, IThemedActivity {
 
 	private final TwidereResourceHelper mResourceHelper = new TwidereResourceHelper();
 	private int mCurrentThemeResource;
@@ -42,19 +43,52 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 	}
 
 	@Override
+	public int getCurrentThemeResourceId() {
+		return mCurrentThemeResource;
+	}
+
+	@Override
+	public Resources getDefaultResources() {
+		return super.getResources();
+	}
+
+	@Override
 	public Resources getResources() {
+		return getThemedResources();
+	}
+
+	@Override
+	public int getThemeBackgroundAlpha() {
+		return 0;
+	}
+
+	@Override
+	public int getThemeColor() {
+		return 0;
+	}
+
+	@Override
+	public Resources getThemedResources() {
 		return mResourceHelper.getResources(this, super.getResources());
 	}
 
+	@Override
+	public String getThemeFontFamily() {
+		return VALUE_THEME_FONT_FAMILY_REGULAR;
+	}
+
+	@Override
 	public int getThemeResourceId() {
 		return ThemeUtils.getSettingsThemeResource(this);
 	}
 
+	@Override
 	public void navigateUpFromSameTask() {
 		NavUtils.navigateUpFromSameTask(this);
 		overrideCloseAnimationIfNeeded();
 	}
 
+	@Override
 	public void overrideCloseAnimationIfNeeded() {
 		if (shouldOverrideActivityAnimation()) {
 			ThemeUtils.overrideActivityCloseAnimation(this);
@@ -63,6 +97,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 		}
 	}
 
+	@Override
 	public boolean shouldOverrideActivityAnimation() {
 		return true;
 	}

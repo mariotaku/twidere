@@ -3128,7 +3128,7 @@ public final class Utils implements Constants {
 			final Drawable icon = retweet.getIcon().mutate();
 			retweet.setVisible(!status.user_is_protected || isMyRetweet);
 			if (isMyRetweet) {
-				icon.setColorFilter(activatedColor, Mode.MULTIPLY);
+				icon.setColorFilter(activatedColor, Mode.SRC_ATOP);
 				retweet.setTitle(R.string.cancel_retweet);
 			} else {
 				icon.clearColorFilter();
@@ -3139,7 +3139,7 @@ public final class Utils implements Constants {
 		if (itemRetweetSubmenu != null) {
 			final Drawable icon = itemRetweetSubmenu.getIcon().mutate();
 			if (isMyRetweet) {
-				icon.setColorFilter(activatedColor, Mode.MULTIPLY);
+				icon.setColorFilter(activatedColor, Mode.SRC_ATOP);
 			} else {
 				icon.clearColorFilter();
 			}
@@ -3148,7 +3148,7 @@ public final class Utils implements Constants {
 		if (favorite != null) {
 			final Drawable icon = favorite.getIcon().mutate();
 			if (status.is_favorite) {
-				icon.setColorFilter(activatedColor, Mode.MULTIPLY);
+				icon.setColorFilter(activatedColor, Mode.SRC_ATOP);
 				favorite.setTitle(R.string.unfavorite);
 			} else {
 				icon.clearColorFilter();

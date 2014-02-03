@@ -224,7 +224,7 @@ public class FileSelectorDialogFragment extends BaseSupportDialogFragment implem
 			final Drawable icon = mResources
 					.getDrawable(file.isDirectory() ? R.drawable.ic_folder : R.drawable.ic_file);
 			icon.mutate();
-			icon.setColorFilter(mActionIconColor, PorterDuff.Mode.MULTIPLY);
+			icon.setColorFilter(mActionIconColor, PorterDuff.Mode.SRC_ATOP);
 			text.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
 			return view;
 		}
