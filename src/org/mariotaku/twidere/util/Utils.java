@@ -1014,8 +1014,7 @@ public final class Utils implements Constants {
 				+ status.getId();
 		final ContentResolver resolver = context.getContentResolver();
 		resolver.delete(CachedStatuses.CONTENT_URI, where, null);
-		resolver.insert(CachedStatuses.CONTENT_URI,
-				ContentValuesCreator.makeStatusContentValues(status, account_id));
+		resolver.insert(CachedStatuses.CONTENT_URI, ContentValuesCreator.makeStatusContentValues(status, account_id));
 		return new ParcelableStatus(status, account_id, false);
 	}
 
@@ -1418,13 +1417,6 @@ public final class Utils implements Constants {
 		return new File(context.getCacheDir(), cacheDirName);
 	}
 
-	public static String getReasonablySmallTwitterProfileImage(final String url) {
-		if (url == null) return null;
-		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
-			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_reasonably_small");
-		return url;
-	}
-	
 	public static String getBiggerTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
@@ -1880,6 +1872,13 @@ public final class Utils implements Constants {
 			quote_format = DEFAULT_QUOTE_FORMAT;
 		}
 		return quote_format.replace(FORMAT_PATTERN_NAME, screen_name).replace(FORMAT_PATTERN_TEXT, text);
+	}
+
+	public static String getReasonablySmallTwitterProfileImage(final String url) {
+		if (url == null) return null;
+		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
+			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_reasonably_small");
+		return url;
 	}
 
 	public static HttpResponse getRedirectedHttpResponse(final HttpClientWrapper client, final String url)

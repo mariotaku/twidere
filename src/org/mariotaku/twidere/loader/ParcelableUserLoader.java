@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.support.v4.content.AsyncTaskLoader;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.provider.TweetStore.CachedUsers;

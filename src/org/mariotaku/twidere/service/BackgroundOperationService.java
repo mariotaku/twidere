@@ -45,7 +45,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 
 import com.twitter.Extractor;
-import com.twitter.Validator;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -67,6 +66,7 @@ import org.mariotaku.twidere.util.ImageUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.TweetShortenerInterface;
+import org.mariotaku.twidere.util.TwidereValidator;
 import org.mariotaku.twidere.util.TwitterErrorCodes;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.io.ContentLengthInputStream;
@@ -87,7 +87,7 @@ import java.util.List;
 
 public class BackgroundOperationService extends IntentService implements Constants {
 
-	private final Validator mValidator = new Validator();
+	private TwidereValidator mValidator;
 	private final Extractor extractor = new Extractor();
 
 	private Handler mHandler;
@@ -113,6 +113,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		final TwidereApplication app = TwidereApplication.getInstance(this);
 		mHandler = new Handler();
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+		mValidator = new TwidereValidator(this);
 		mResolver = getContentResolver();
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mTwitter = app.getTwitterWrapper();
@@ -368,33 +369,34 @@ public class BackgroundOperationService extends IntentService implements Constan
 			if (mUseUploader && imageFile != null && imageFile.exists() && uploadResultUri == null)
 				throw new ImageUploadException(this);
 
-			final String unshortened_content = mUseUploader && uploadResultUri != null ? getImageUploadStatus(this,
+			final String unshortenedContent = mUseUploader && uploadResultUri != null ? getImageUploadStatus(this,
 					uploadResultUri.toString(), pstatus.text) : pstatus.text;
 
-			final boolean should_shorten = mValidator.getTweetLength(unshortened_content) > Validator.MAX_TWEET_LENGTH;
-			final String screen_name = getAccountScreenName(this, pstatus.account_ids[0]);
-			final String shortened_content;
+			final boolean shouldShorten = mValidator.getTweetLength(unshortenedContent) > mValidator
+					.getMaxTweetLength();
+			final String screenName = getAccountScreenName(this, pstatus.account_ids[0]);
+			final String shortenedContent;
 			try {
 				if (mShortener != null) {
 					mShortener.waitForService();
 				}
-				shortened_content = should_shorten && mUseShortener ? mShortener.shorten(unshortened_content,
-						screen_name, pstatus.in_reply_to_status_id) : null;
+				shortenedContent = shouldShorten && mUseShortener ? mShortener.shorten(unshortenedContent, screenName,
+						pstatus.in_reply_to_status_id) : null;
 			} catch (final Exception e) {
 				throw new TweetShortenException(this);
 			}
 
-			if (should_shorten) {
+			if (shouldShorten) {
 				if (!mUseShortener)
 					throw new StatusTooLongException(this);
-				else if (unshortened_content == null) throw new TweetShortenException(this);
+				else if (unshortenedContent == null) throw new TweetShortenException(this);
 			}
 			if (!mUseUploader && imageFile != null && imageFile.exists()) {
 				Utils.downscaleImageIfNeeded(imageFile, 95);
 			}
 			for (final long account_id : pstatus.account_ids) {
-				final StatusUpdate status = new StatusUpdate(should_shorten && mUseShortener ? shortened_content
-						: unshortened_content);
+				final StatusUpdate status = new StatusUpdate(shouldShorten && mUseShortener ? shortenedContent
+						: unshortenedContent);
 				status.setInReplyToStatusId(pstatus.in_reply_to_status_id);
 				if (pstatus.location != null) {
 					status.setLocation(ParcelableLocation.toGeoLocation(pstatus.location));

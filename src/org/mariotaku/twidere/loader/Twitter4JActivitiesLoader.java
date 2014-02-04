@@ -27,7 +27,6 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import org.mariotaku.jsonserializer.JSONFileIO;
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 

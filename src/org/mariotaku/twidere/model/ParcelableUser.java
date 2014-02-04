@@ -22,7 +22,6 @@ package org.mariotaku.twidere.model;
 import static org.mariotaku.twidere.util.HtmlEscapeHelper.toPlainText;
 import static org.mariotaku.twidere.util.Utils.formatExpandedUserDescription;
 import static org.mariotaku.twidere.util.Utils.formatUserDescription;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 
 import android.content.ContentValues;
 import android.database.Cursor;

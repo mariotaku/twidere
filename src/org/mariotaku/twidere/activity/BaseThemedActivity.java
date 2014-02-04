@@ -34,7 +34,6 @@ import org.mariotaku.twidere.util.CompareUtils;
 import org.mariotaku.twidere.util.StrictModeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.Utils;
-import org.mariotaku.twidere.util.theme.AccentThemeFixer;
 import org.mariotaku.twidere.util.theme.TwidereAccentHelper;
 
 public abstract class BaseThemedActivity extends Activity implements IThemedActivity {
@@ -140,7 +139,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 		}
 		setTheme();
 		super.onCreate(savedInstanceState);
-//		AccentThemeFixer.fixActionBar(getActionBar(), this);
+		// AccentThemeFixer.fixActionBar(getActionBar(), this);
 		setActionBarBackground();
 	}
 

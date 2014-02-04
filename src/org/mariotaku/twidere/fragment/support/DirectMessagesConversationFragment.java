@@ -59,8 +59,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.twitter.Validator;
-
 import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
@@ -78,6 +76,7 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.TwidereValidator;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.util.List;
@@ -87,7 +86,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		OnMenuItemClickListener, TextWatcher, OnClickListener, Panes.Right, OnItemSelectedListener,
 		OnEditorActionListener, MenuButtonClickListener {
 
-	private final Validator mValidator = new Validator();
+	private TwidereValidator mValidator;
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private SharedPreferences mPreferences;
 
@@ -134,6 +133,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		super.onActivityCreated(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mTwitterWrapper = getTwitterWrapper();
+		mValidator = new TwidereValidator(getActivity());
 		mLocale = getResources().getConfiguration().locale;
 		mAdapter = new DirectMessagesConversationAdapter(getActivity());
 		setListAdapter(mAdapter);
@@ -410,7 +410,7 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	private void updateTextCount() {
 		if (mTextCountView == null) return;
-		final int max = Validator.MAX_TWEET_LENGTH;
+		final int max = mValidator.getMaxTweetLength();
 		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
 		final int count = mValidator.getTweetLength(text);
 		final float hue = count < max ? count >= max - 10 ? 5 * (max - count) : 50 : 0;

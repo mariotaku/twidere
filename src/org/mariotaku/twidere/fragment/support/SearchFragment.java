@@ -83,7 +83,8 @@ public class SearchFragment extends BaseSupportFragment implements Panes.Left, O
 		final Bundle args = getArguments();
 		mThemeColor = ThemeUtils.getUserThemeColor(getActivity());
 		mAdapter = new SupportTabsAdapter(getActivity(), getChildFragmentManager(), null, 1);
-		mAdapter.addTab(SearchStatusesFragment.class, args, getString(R.string.statuses), R.drawable.ic_iconic_action_twitter, 0);
+		mAdapter.addTab(SearchStatusesFragment.class, args, getString(R.string.statuses),
+				R.drawable.ic_iconic_action_twitter, 0);
 		mAdapter.addTab(SearchUsersFragment.class, args, getString(R.string.users), R.drawable.ic_iconic_action_user, 1);
 		mViewPager.setAdapter(mAdapter);
 		mViewPager.setOnPageChangeListener(this);

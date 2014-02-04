@@ -51,14 +51,18 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 	private static final OptionItem[] MORE_OPTION_ITEMS = new OptionItem[4];
 
 	static {
-		ACCOUNT_OPTIONS[0] = new OptionItem(R.string.view_user_profile, R.drawable.ic_iconic_action_user, MENU_VIEW_PROFILE);
+		ACCOUNT_OPTIONS[0] = new OptionItem(R.string.view_user_profile, R.drawable.ic_iconic_action_user,
+				MENU_VIEW_PROFILE);
 		ACCOUNT_OPTIONS[1] = new OptionItem(android.R.string.search_go, R.drawable.ic_iconic_action_search, MENU_SEARCH);
 		ACCOUNT_OPTIONS[2] = new OptionItem(R.string.statuses, R.drawable.ic_iconic_action_quote, MENU_STATUSES);
 		ACCOUNT_OPTIONS[3] = new OptionItem(R.string.favorites, R.drawable.ic_iconic_action_star, MENU_FAVORITES);
 		ACCOUNT_OPTIONS[4] = new OptionItem(R.string.users_lists, R.drawable.ic_iconic_action_list, MENU_LISTS);
-		ACCOUNT_OPTIONS[5] = new OptionItem(R.string.lists_following_me, R.drawable.ic_iconic_action_list, MENU_LIST_MEMBERSHIPS);
-		ACCOUNT_OPTIONS[6] = new OptionItem(R.string.set_color, R.drawable.ic_iconic_action_color_palette, MENU_SET_COLOR);
-		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_as_default, R.drawable.ic_iconic_action_accept, MENU_SET_AS_DEFAULT);
+		ACCOUNT_OPTIONS[5] = new OptionItem(R.string.lists_following_me, R.drawable.ic_iconic_action_list,
+				MENU_LIST_MEMBERSHIPS);
+		ACCOUNT_OPTIONS[6] = new OptionItem(R.string.set_color, R.drawable.ic_iconic_action_color_palette,
+				MENU_SET_COLOR);
+		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_as_default, R.drawable.ic_iconic_action_accept,
+				MENU_SET_AS_DEFAULT);
 		ACCOUNT_OPTIONS[8] = new OptionItem(R.string.delete, R.drawable.ic_iconic_action_delete, MENU_DELETE);
 		MORE_OPTION_ITEMS[0] = new OptionItem(R.string.add_account, R.drawable.ic_iconic_action_add, MENU_ADD_ACCOUNT);
 		MORE_OPTION_ITEMS[1] = new OptionItem(R.string.drafts, R.drawable.ic_iconic_action_save, MENU_DRAFTS);
