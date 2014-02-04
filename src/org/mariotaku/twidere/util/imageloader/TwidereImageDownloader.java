@@ -34,8 +34,10 @@ import android.net.Uri;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.util.MediaPreviewUtils;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.io.ContentLengthInputStream;
 
 import twitter4j.TwitterException;
@@ -87,32 +89,43 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 	private boolean mFastImageLoading;
 	private String mUserAgent;
 	private final boolean mFullImage;
+	private final String mTwitterProfileImageSize;
 
-	public TwidereImageDownloader(final Context context, final boolean full_image) {
+	public TwidereImageDownloader(final Context context, final boolean fullImage) {
 		mContext = context;
 		mResolver = context.getContentResolver();
-		mFullImage = full_image;
+		mFullImage = fullImage;
+		mTwitterProfileImageSize = String.format("_%s", context.getString(R.string.profile_image_size));
 		reloadConnectivitySettings();
 	}
 
 	@Override
-	public InputStream getStream(final String uri_string, final Object extras) throws IOException {
-		if (uri_string == null) return null;
-		final Uri uri = Uri.parse(uri_string);
+	public InputStream getStream(final String uriString, final Object extras) throws IOException {
+		if (uriString == null) return null;
+		final Uri uri = Uri.parse(uriString);
 		final String scheme = uri.getScheme();
 		if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
 				|| ContentResolver.SCHEME_FILE.equals(scheme)) return mResolver.openInputStream(uri);
-		final PreviewMedia media = MediaPreviewUtils.getAllAvailableImage(uri_string, mFullImage);
+		final PreviewMedia media = MediaPreviewUtils.getAllAvailableImage(uriString, mFullImage);
 		try {
-			return getStream(media != null ? media.url : uri_string);
+			final String mediaUrl = media != null ? media.url : uriString;
+			if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(uriString).matches())
+				return getStream(replaceLast(mediaUrl, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES,
+						mTwitterProfileImageSize));
+			else
+				return getStream(mediaUrl);
 		} catch (final TwitterException e) {
-			final int status_code = e.getStatusCode();
-			if (status_code != -1 && PATTERN_TWITTER_PROFILE_IMAGES.matcher(uri_string).matches()
-					&& !uri_string.contains("_normal."))
-				return getStream(replaceLast(uri_string, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_normal"),
-						extras);
-			throw new IOException(String.format(Locale.US, "Error downloading image %s, error code: %d", uri_string,
-					status_code));
+			final int statusCode = e.getStatusCode();
+			if (statusCode != -1 && PATTERN_TWITTER_PROFILE_IMAGES.matcher(uriString).matches()
+					&& !uriString.contains("_normal.")) {
+				try {
+					return getStream(Utils.getNormalTwitterProfileImage(uriString));
+				} catch (final TwitterException e2) {
+
+				}
+			}
+			throw new IOException(String.format(Locale.US, "Error downloading image %s, error code: %d", uriString,
+					statusCode));
 		}
 	}
 

@@ -60,7 +60,7 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 	public final ParcelableUserList[] target_object_user_lists;
 	public final ParcelableStatus[] target_object_statuses;
 
-	public ParcelableActivity(final Activity activity, final long account_id, final boolean large_profile_image) {
+	public ParcelableActivity(final Activity activity, final long account_id) {
 		this.account_id = account_id;
 		activity_timestamp = getTime(activity.getCreatedAt());
 		action = activity.getAction().getActionId();
@@ -69,7 +69,7 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 		final int sources_size = activity.getSourcesSize();
 		sources = new ParcelableUser[sources_size];
 		for (int i = 0; i < sources_size; i++) {
-			sources[i] = new ParcelableUser(activity.getSources()[i], account_id, large_profile_image);
+			sources[i] = new ParcelableUser(activity.getSources()[i], account_id);
 		}
 		final int targets_size = activity.getTargetsSize();
 		if (action == ACTION_FOLLOW || action == ACTION_MENTION || action == ACTION_LIST_MEMBER_ADDED) {
@@ -77,23 +77,21 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 			target_statuses = null;
 			target_user_lists = null;
 			for (int i = 0; i < targets_size; i++) {
-				target_users[i] = new ParcelableUser(activity.getTargetUsers()[i], account_id, large_profile_image);
+				target_users[i] = new ParcelableUser(activity.getTargetUsers()[i], account_id);
 			}
 		} else if (action == ACTION_LIST_CREATED) {
 			target_user_lists = new ParcelableUserList[targets_size];
 			target_statuses = null;
 			target_users = null;
 			for (int i = 0; i < targets_size; i++) {
-				target_user_lists[i] = new ParcelableUserList(activity.getTargetUserLists()[i], account_id,
-						large_profile_image);
+				target_user_lists[i] = new ParcelableUserList(activity.getTargetUserLists()[i], account_id);
 			}
 		} else {
 			target_statuses = new ParcelableStatus[targets_size];
 			target_users = null;
 			target_user_lists = null;
 			for (int i = 0; i < targets_size; i++) {
-				target_statuses[i] = new ParcelableStatus(activity.getTargetStatuses()[i], account_id, false,
-						large_profile_image);
+				target_statuses[i] = new ParcelableStatus(activity.getTargetStatuses()[i], account_id, false);
 			}
 		}
 		final int target_objects_size = activity.getTargetObjectsSize();
@@ -101,8 +99,7 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 			target_object_user_lists = new ParcelableUserList[target_objects_size];
 			target_object_statuses = null;
 			for (int i = 0; i < target_objects_size; i++) {
-				target_object_user_lists[i] = new ParcelableUserList(activity.getTargetObjectUserLists()[i],
-						account_id, large_profile_image);
+				target_object_user_lists[i] = new ParcelableUserList(activity.getTargetObjectUserLists()[i], account_id);
 			}
 		} else if (action == ACTION_LIST_CREATED) {
 			target_object_user_lists = null;
@@ -112,7 +109,7 @@ public class ParcelableActivity implements Comparable<ParcelableActivity>, JSONP
 			target_object_user_lists = null;
 			for (int i = 0; i < target_objects_size; i++) {
 				target_object_statuses[i] = new ParcelableStatus(activity.getTargetObjectStatuses()[i], account_id,
-						false, large_profile_image);
+						false);
 			}
 		}
 	}

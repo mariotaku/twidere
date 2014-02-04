@@ -15,7 +15,6 @@
 		android:layout_height="match_parent"
 		android:layout_gravity="center"
 		android:contentDescription="@string/compose"
-		android:scaleType="center"
-		android:src="@drawable/ic_menu_status_compose"/>
+		android:scaleType="center"/>
 
 </merge>

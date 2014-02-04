@@ -22,10 +22,10 @@ package org.mariotaku.twidere.activity.support;
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
-import android.view.Window;
 
 import com.negusoft.holoaccent.AccentHelper;
 
@@ -44,6 +44,8 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	private String mCurrentThemeFontFamily;
 
 	private AccentHelper mAccentHelper;
+
+	private Theme mTheme;
 
 	@Override
 	public void finish() {
@@ -64,6 +66,19 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	@Override
 	public Resources getResources() {
 		return getThemedResources();
+	}
+
+	@Override
+	public Theme getTheme() {
+		if (mTheme == null) {
+			mTheme = getResources().newTheme();
+			mTheme.setTo(super.getTheme());
+			final int getThemeResourceId = getThemeResourceId();
+			if (getThemeResourceId != 0) {
+				mTheme.applyStyle(getThemeResourceId, true);
+			}
+		}
+		return mTheme;
 	}
 
 	@Override
@@ -118,7 +133,6 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		AccentThemeFixer.fixWindow(this);
 		if (Utils.isDebugBuild()) {
 			StrictModeUtils.detectAllVmPolicy();
 			StrictModeUtils.detectAllThreadPolicy();
@@ -129,7 +143,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		}
 		setTheme();
 		super.onCreate(savedInstanceState);
-		AccentThemeFixer.fixActionBar(getActionBar(), this);
+//		AccentThemeFixer.fixActionBar(getActionBar(), this);
 		setActionBarBackground();
 	}
 

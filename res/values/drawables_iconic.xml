@@ -51,6 +51,8 @@
 	<item name="ic_iconic_action_open_source" type="drawable"/>
 	<item name="ic_iconic_action_notification" type="drawable"/>
 	<item name="ic_iconic_action_interface" type="drawable"/>
+	<item name="ic_iconic_action_block" type="drawable"/>
+	<item name="ic_iconic_action_warning" type="drawable"/>
 	<item name="ic_iconic_twidere" type="drawable"/>
 
 </resources>

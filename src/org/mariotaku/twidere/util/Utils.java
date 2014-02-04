@@ -1013,11 +1013,10 @@ public final class Utils implements Constants {
 		final String where = Statuses.ACCOUNT_ID + " = " + account_id + " AND " + Statuses.STATUS_ID + " = "
 				+ status.getId();
 		final ContentResolver resolver = context.getContentResolver();
-		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		resolver.delete(CachedStatuses.CONTENT_URI, where, null);
 		resolver.insert(CachedStatuses.CONTENT_URI,
-				ContentValuesCreator.makeStatusContentValues(status, account_id, large_profile_image));
-		return new ParcelableStatus(status, account_id, false, large_profile_image);
+				ContentValuesCreator.makeStatusContentValues(status, account_id));
+		return new ParcelableStatus(status, account_id, false);
 	}
 
 	public static ParcelableStatus findStatusInDatabases(final Context context, final long account_id,
@@ -1419,6 +1418,13 @@ public final class Utils implements Constants {
 		return new File(context.getCacheDir(), cacheDirName);
 	}
 
+	public static String getReasonablySmallTwitterProfileImage(final String url) {
+		if (url == null) return null;
+		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())
+			return replaceLast(url, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES, "_reasonably_small");
+		return url;
+	}
+	
 	public static String getBiggerTwitterProfileImage(final String url) {
 		if (url == null) return null;
 		if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(url).matches())

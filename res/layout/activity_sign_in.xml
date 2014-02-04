@@ -93,7 +93,6 @@
 		android:layout_gravity="bottom|right"
 		android:layout_weight="0"
 		android:contentDescription="@string/set_color"
-		android:onClick="onClick"
-		android:src="@drawable/ic_menu_color_palette"/>
+		android:onClick="onClick"/>
 
 </merge>

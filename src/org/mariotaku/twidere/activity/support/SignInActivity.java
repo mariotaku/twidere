@@ -480,7 +480,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		if (mUserColor != null) {
 			mSetColorButton.setImageBitmap(ColorPickerView.getColorPreviewBitmap(this, mUserColor));
 		} else {
-			mSetColorButton.setImageResource(R.drawable.ic_menu_color_palette);
+			mSetColorButton.setImageResource(R.drawable.ic_iconic_action_color_palette);
 		}
 	}
 

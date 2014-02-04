@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.util.theme;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
@@ -41,8 +42,8 @@ public class ActivityIconsInterceptor implements DrawableInterceptor {
 	}
 
 	@Override
-	public Drawable getDrawable(final int id) {
-		final ActivityIconsInterceptor.IconSpec spec = sIconMap.get(id, null);
+	public Drawable getDrawable(final Resources res, final int resId) {
+		final ActivityIconsInterceptor.IconSpec spec = sIconMap.get(resId, null);
 		if (spec == null) return null;
 		final IconicFontDrawable drawable = new IconicFontDrawable(mContext, spec.icon);
 		drawable.setIconPadding(Math.round(mIconSize * (1 - spec.contentFactor)) / 2);
@@ -50,11 +51,6 @@ public class ActivityIconsInterceptor implements DrawableInterceptor {
 		drawable.setIntrinsicHeight(mIconSize);
 		drawable.setIconColor(mIconColor);
 		return drawable;
-	}
-
-	@Override
-	public boolean shouldIntercept(final int id) {
-		return sIconMap.indexOfKey(id) >= 0;
 	}
 
 	private static class IconSpec {

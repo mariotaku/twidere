@@ -3,22 +3,22 @@
 	android:title="@string/hints">
 
 	<Preference
-		android:icon="@drawable/ic_menu_accounts"
+		android:icon="@drawable/ic_iconic_action_accounts"
 		android:order="11"
 		android:summary="@string/wizard_hint_compose_select_account"
 		android:title="@string/select_account"/>
 	<Preference
-		android:icon="@drawable/ic_menu_quote"
+		android:icon="@drawable/ic_iconic_action_quote"
 		android:order="12"
 		android:summary="@string/wizard_hint_quote_format"
 		android:title="@string/quote_format"/>
 	<Preference
-		android:icon="@drawable/ic_menu_mute"
+		android:icon="@drawable/ic_iconic_action_mute"
 		android:order="13"
 		android:summary="@string/wizard_hint_filters"
 		android:title="@string/filters"/>
 	<Preference
-		android:icon="@drawable/ic_menu_refresh"
+		android:icon="@drawable/ic_iconic_action_refresh"
 		android:order="14"
 		android:summary="@string/wizard_hint_rate_limit"
 		android:title="@string/rate_limit"/>

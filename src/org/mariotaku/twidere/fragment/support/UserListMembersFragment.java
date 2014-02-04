@@ -136,7 +136,6 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 		private final long account_id, user_id;
 		private final int list_id;
 		private final String screen_name, list_name;
-		private final boolean hires_profile_image;
 
 		private GetUserListTask(final long account_id, final int list_id, final String list_name, final long user_id,
 				final String screen_name) {
@@ -145,7 +144,6 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 			this.list_id = list_id;
 			this.screen_name = screen_name;
 			this.list_name = list_name;
-			hires_profile_image = getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
@@ -162,7 +160,7 @@ public class UserListMembersFragment extends CursorSupportUsersListFragment impl
 					list = twitter.showUserList(list_name, screen_name);
 				} else
 					return null;
-				return new ParcelableUserList(list, account_id, hires_profile_image);
+				return new ParcelableUserList(list, account_id);
 			} catch (final TwitterException e) {
 				e.printStackTrace();
 				return null;

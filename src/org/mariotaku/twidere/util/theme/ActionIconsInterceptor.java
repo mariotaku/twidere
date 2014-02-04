@@ -1,6 +1,7 @@
 package org.mariotaku.twidere.util.theme;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
@@ -68,6 +69,8 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		sIconMap.put(R.drawable.ic_iconic_action_open_source, new IconSpec(TwidereIcon.OPEN_SOURCE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_notification, new IconSpec(TwidereIcon.NOTIFICATION, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_interface, new IconSpec(TwidereIcon.INTERFACE, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_block, new IconSpec(TwidereIcon.BLOCK, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_warning, new IconSpec(TwidereIcon.WARNING, 0.75f));
 
 		sIconMap.put(R.drawable.ic_iconic_action_mark, new IconSpec(TwidereIcon.ACCEPT, 0.75f));
 	}
@@ -91,8 +94,8 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 	}
 
 	@Override
-	public Drawable getDrawable(final int id) {
-		final ActionIconsInterceptor.IconSpec spec = sIconMap.get(id, null);
+	public Drawable getDrawable(final Resources res, final int resId) {
+		final ActionIconsInterceptor.IconSpec spec = sIconMap.get(resId, null);
 		if (spec == null) return null;
 		final IconicFontDrawable drawable = new IconicFontDrawable(mContext, spec.icon);
 		drawable.setIconPadding(Math.round(mIconSize * (1 - spec.contentFactor)) / 2);
@@ -100,11 +103,6 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		drawable.setIntrinsicHeight(mIconSize);
 		drawable.setIconColor(mIconColor);
 		return drawable;
-	}
-
-	@Override
-	public boolean shouldIntercept(final int id) {
-		return sIconMap.indexOfKey(id) >= 0;
 	}
 
 	private static class IconSpec {

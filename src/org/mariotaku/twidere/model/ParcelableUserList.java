@@ -19,8 +19,6 @@
 
 package org.mariotaku.twidere.model;
 
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -97,17 +95,16 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		subscribers_count = in.readInt();
 	}
 
-	public ParcelableUserList(final UserList list, final long account_id, final boolean large_profile_image) {
-		this(list, account_id, 0, large_profile_image);
+	public ParcelableUserList(final UserList list, final long account_id) {
+		this(list, account_id, 0);
+	}
+
+	public ParcelableUserList(final UserList list, final long account_id, final long position) {
+		this(list, account_id, position, list.isFollowing());
 	}
 
 	public ParcelableUserList(final UserList list, final long account_id, final long position,
-			final boolean large_profile_image) {
-		this(list, account_id, position, list.isFollowing(), large_profile_image);
-	}
-
-	public ParcelableUserList(final UserList list, final long account_id, final long position,
-			final boolean is_following, final boolean large_profile_image) {
+			final boolean is_following) {
 		final User user = list.getUser();
 		this.position = position;
 		this.account_id = account_id;
@@ -119,9 +116,7 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 		user_id = user.getId();
 		user_name = user.getName();
 		user_screen_name = user.getScreenName();
-		final String user_profile_image_url_orig = ParseUtils.parseString(user.getProfileImageUrlHttps());
-		user_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(user_profile_image_url_orig)
-				: user_profile_image_url_orig;
+		user_profile_image_url = ParseUtils.parseString(user.getProfileImageUrlHttps());
 		members_count = list.getMemberCount();
 		subscribers_count = list.getSubscriberCount();
 	}

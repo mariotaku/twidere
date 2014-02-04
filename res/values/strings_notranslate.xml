@@ -11,5 +11,6 @@
 	<string name="font_family_condensed">Condensed</string>
 	<string name="font_family_light">Light</string>
 	<string name="font_family_thin">Thin</string>
+	<string name="profile_image_size">normal</string>
 
 </resources>

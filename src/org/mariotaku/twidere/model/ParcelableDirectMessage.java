@@ -116,8 +116,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 				.getString(indices.recipient_profile_image_url) : null;
 	}
 
-	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing,
-			final boolean large_profile_image) {
+	public ParcelableDirectMessage(final DirectMessage message, final long account_id, final boolean is_outgoing) {
 		this.account_id = account_id;
 		this.is_outgoing = is_outgoing;
 		final User sender = message.getSender(), recipient = message.getRecipient();
@@ -135,10 +134,8 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_name = recipient != null ? recipient.getName() : null;
 		sender_screen_name = sender != null ? sender.getScreenName() : null;
 		recipient_screen_name = recipient != null ? recipient.getScreenName() : null;
-		sender_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(sender_profile_image_url_string)
-				: sender_profile_image_url_string;
-		recipient_profile_image_url = large_profile_image ? getBiggerTwitterProfileImage(recipient_profile_image_url_string)
-				: recipient_profile_image_url_string;
+		sender_profile_image_url = sender_profile_image_url_string;
+		recipient_profile_image_url = recipient_profile_image_url_string;
 		text_unescaped = toPlainText(text_html);
 	}
 

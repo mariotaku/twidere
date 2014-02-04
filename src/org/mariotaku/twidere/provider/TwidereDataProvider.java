@@ -26,7 +26,6 @@ import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountNotificationId;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
-import static org.mariotaku.twidere.util.Utils.getBiggerTwitterProfileImage;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getNotificationUri;
 import static org.mariotaku.twidere.util.Utils.getTableId;
@@ -812,7 +811,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 			replyIntent.putExtra(EXTRA_NOTIFICATION_ACCOUNT, accountId);
 			replyIntent.putExtra(EXTRA_STATUS, firstItem);
 			replyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			notifBuilder.addAction(R.drawable.ic_menu_reply, context.getString(R.string.reply),
+			notifBuilder.addAction(R.drawable.ic_action_reply, context.getString(R.string.reply),
 					PendingIntent.getActivity(context, 0, replyIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 			final NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle(notifBuilder);
 			bigTextStyle.bigText(stripMentionText(firstItem.text_unescaped,
@@ -902,12 +901,9 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 	private Bitmap getProfileImageForNotification(final String profile_image_url) {
 		final Context context = getContext();
 		final Resources res = context.getResources();
-		final boolean hires_profile_image = res.getBoolean(R.bool.hires_profile_image);
 		final int w = res.getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
 		final int h = res.getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
-		final File profile_image_file = mImagePreloader
-				.getCachedImageFile(hires_profile_image ? getBiggerTwitterProfileImage(profile_image_url)
-						: profile_image_url);
+		final File profile_image_file = mImagePreloader.getCachedImageFile(profile_image_url);
 		final Bitmap profile_image = profile_image_file != null && profile_image_file.isFile() ? BitmapFactory
 				.decodeFile(profile_image_file.getPath()) : null;
 		if (profile_image != null) return Bitmap.createScaledBitmap(profile_image, w, h, true);

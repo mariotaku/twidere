@@ -51,8 +51,6 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 	private final boolean mIsFirstLoad;
 	private final int mTabPosition;
 
-	private final boolean mHiResProfileImage;
-
 	private final Object[] mSavedActivitiesFileArgs;
 
 	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
@@ -66,7 +64,6 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 		}
 		mTabPosition = tabPosition;
 		mSavedActivitiesFileArgs = save_file_args;
-		mHiResProfileImage = context.getResources().getBoolean(R.bool.hires_profile_image);
 	}
 
 	@Override
@@ -95,7 +92,7 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 		if (activities == null) return new CopyOnWriteArrayList<ParcelableActivity>(mData);
 		final List<ParcelableActivity> result = new ArrayList<ParcelableActivity>();
 		for (final Activity activity : activities) {
-			result.add(new ParcelableActivity(activity, mAccountId, mHiResProfileImage));
+			result.add(new ParcelableActivity(activity, mAccountId));
 		}
 		Collections.sort(result);
 		saveCachedData(serializationFile, result);

@@ -3,36 +3,36 @@
 
 	<item
 		android:id="@id/mention"
-		android:icon="@drawable/ic_menu_mention"
+		android:icon="@drawable/ic_iconic_action_mention"
 		android:title="@string/mention_this_user"/>
 	<item
 		android:id="@id/send_direct_message"
-		android:icon="@drawable/ic_menu_compose"
+		android:icon="@drawable/ic_iconic_action_new_message"
 		android:title="@string/send_direct_message"
 		android:visible="false"/>
 	<item
 		android:id="@id/add_to_list"
-		android:icon="@android:drawable/ic_menu_add"
+		android:icon="@drawable/ic_iconic_action_list"
 		android:title="@string/add_to_list"/>
 	<item
 		android:id="@id/set_color"
-		android:icon="@drawable/ic_menu_color_palette"
+		android:icon="@drawable/ic_iconic_action_color_palette"
 		android:title="@string/set_color"/>
 	<item
 		android:id="@id/set_nickname"
-		android:icon="@android:drawable/ic_menu_edit"
+		android:icon="@drawable/ic_iconic_action_edit"
 		android:title="@string/set_nickname"/>
 	<item
 		android:id="@id/mute_user"
-		android:icon="@drawable/ic_menu_mute"
+		android:icon="@drawable/ic_iconic_action_mute"
 		android:title="@string/mute_user"/>
 	<item
 		android:id="@id/block"
-		android:icon="@drawable/ic_menu_block"
+		android:icon="@drawable/ic_iconic_action_block"
 		android:title="@string/block"/>
 	<item
 		android:id="@id/report_spam"
-		android:icon="@drawable/ic_menu_report_user"
+		android:icon="@drawable/ic_iconic_action_warning"
 		android:title="@string/report_for_spam"/>
 
 </menu>

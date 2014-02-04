@@ -168,10 +168,9 @@ public class SettingsActivity extends BasePreferenceActivity {
 					break;
 				}
 				default: {
-					final boolean is_switch_item = convertView != null
-							&& convertView.findViewById(android.R.id.toggle) != null;
-					final boolean should_create_new = convertView instanceof TextView || is_switch_item;
-					view = super.getView(position, should_create_new ? null : convertView, parent);
+					final boolean viewChanged = convertView != null
+							&& !(convertView.getTag() instanceof HeaderViewHolder);
+					view = super.getView(position, viewChanged ? null : convertView, parent);
 					final HeaderViewHolder holder;
 					final Object tag = view.getTag();
 					if (tag instanceof HeaderViewHolder) {
@@ -190,7 +189,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 						holder.summary.setVisibility(View.GONE);
 					}
 					if (header.iconRes != 0) {
-						holder.icon.setImageResource(header.iconRes);
+						holder.icon.setImageDrawable(mResources.getDrawable(header.iconRes));
 					} else {
 						holder.icon.setImageDrawable(null);
 					}

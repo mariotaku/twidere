@@ -232,21 +232,17 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		private final UserListSelectorActivity mActivity;
 		private final long mAccountId;
 		private final String mScreenName;
-		private final boolean mLargeProfileImage;
 
 		GetUserListsTask(final UserListSelectorActivity activity, final long account_id, final String screen_name) {
 			mActivity = activity;
 			mAccountId = account_id;
 			mScreenName = screen_name;
-			mLargeProfileImage = activity.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
 		protected SingleResponse<List<ParcelableUserList>> doInBackground(final Void... params) {
 			final Twitter twitter = getTwitterInstance(mActivity, mAccountId, false);
-			if (twitter == null) {
-				SingleResponse.nullInstance();
-			}
+			if (twitter == null) return SingleResponse.nullInstance();
 			try {
 				final ResponseList<UserList> lists = twitter.getUserLists(mScreenName);
 				final List<ParcelableUserList> data = new ArrayList<ParcelableUserList>();
@@ -257,7 +253,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 						if (!is_my_account && user.getId() == mAccountId) {
 							is_my_account = true;
 						}
-						data.add(new ParcelableUserList(item, mAccountId, mLargeProfileImage));
+						data.add(new ParcelableUserList(item, mAccountId));
 					}
 				}
 				final SingleResponse<List<ParcelableUserList>> result = SingleResponse.withData(data);
@@ -298,13 +294,11 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 		private final UserListSelectorActivity mActivity;
 		private final long mAccountId;
 		private final String mName;
-		private final boolean mLargeProfileImage;
 
 		SearchUsersTask(final UserListSelectorActivity activity, final long account_id, final String name) {
 			mActivity = activity;
 			mAccountId = account_id;
 			mName = name;
-			mLargeProfileImage = activity.getResources().getBoolean(R.bool.hires_profile_image);
 		}
 
 		@Override
@@ -315,7 +309,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 				final ResponseList<User> lists = twitter.searchUsers(mName, 1);
 				final List<ParcelableUser> data = new ArrayList<ParcelableUser>();
 				for (final User item : lists) {
-					data.add(new ParcelableUser(item, mAccountId, mLargeProfileImage));
+					data.add(new ParcelableUser(item, mAccountId));
 				}
 				return SingleResponse.withData(data);
 			} catch (final TwitterException e) {

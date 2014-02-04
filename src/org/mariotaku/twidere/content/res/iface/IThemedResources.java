@@ -18,17 +18,18 @@ public interface IThemedResources {
 
 	public void addDrawableInterceptor(final DrawableInterceptor interceptor);
 
-	public static interface DrawableInterceptor {
-		public Drawable getDrawable(int id);
+	public interface DrawableInterceptor {
 
-		public boolean shouldIntercept(int id);
+		public Drawable getDrawable(final Resources res, final int resId);
 	}
 
 	public static final class Helper {
 
 		private final ArrayList<DrawableInterceptor> mDrawableInterceptors = new ArrayList<DrawableInterceptor>();
+		private final Resources mResources;
 
 		public Helper(final Resources res, final Context context) {
+			mResources = res;
 			final DisplayMetrics dm = res.getDisplayMetrics();
 			addDrawableInterceptor(new ActionIconsInterceptor(context, dm));
 			addDrawableInterceptor(new ActivityIconsInterceptor(context, dm));
@@ -39,9 +40,10 @@ public interface IThemedResources {
 			mDrawableInterceptors.add(interceptor);
 		}
 
-		public Drawable getDrawable(final int id) throws NotFoundException {
+		public Drawable getDrawable(final int resId) throws NotFoundException {
 			for (final DrawableInterceptor interceptor : mDrawableInterceptors) {
-				if (interceptor.shouldIntercept(id)) return interceptor.getDrawable(id);
+				final Drawable d = interceptor.getDrawable(mResources, resId);
+				if (d != null) return d;
 			}
 			return null;
 		}

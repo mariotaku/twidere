@@ -8,14 +8,11 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.LayoutInflater.Factory2;
 import android.view.View;
-import android.view.ViewGroup;
 
 import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
-import org.xmlpull.v1.XmlPullParser;
 
 import java.lang.reflect.Field;
 
@@ -35,22 +32,6 @@ public class AccentThemeFixer {
 		} catch (final IllegalArgumentException e) {
 			e.printStackTrace();
 		}
-		return false;
-	}
-
-	public static boolean fixWindow(final Activity activity) {
-//		try {
-//			final LayoutInflater inflater = new DelegatedLayoutInflater(activity);
-//			inflater.setFactory2(new FactoryWrapper(activity));
-//			setFieldValue(activity.getWindow(), "mLayoutInflater", inflater);
-//			return true;
-//		} catch (final NoSuchFieldException e) {
-//			e.printStackTrace();
-//		} catch (final IllegalAccessException e) {
-//			e.printStackTrace();
-//		} catch (final IllegalArgumentException e) {
-//			e.printStackTrace();
-//		}
 		return false;
 	}
 
@@ -96,40 +77,6 @@ public class AccentThemeFixer {
 		@Override
 		public View onCreateView(final View parent, final String name, final Context context, final AttributeSet attrs) {
 			return null;
-		}
-
-	}
-
-	static class DelegatedLayoutInflater extends PhoneLayoutInflater {
-
-		private static final String LOGTAG = "Twidere";
-
-		protected DelegatedLayoutInflater(final Context context) {
-			super(context);
-		}
-
-		@Override
-		public View inflate(final int resource, final ViewGroup root) {
-			Log.d(LOGTAG, String.format("inflate, %s", getContext().getResources().getResourceName(resource)));
-			return super.inflate(resource, root);
-		}
-
-		@Override
-		public View inflate(final int resource, final ViewGroup root, final boolean attachToRoot) {
-			Log.d(LOGTAG, String.format("inflate, %s", getContext().getResources().getResourceName(resource)));
-			return super.inflate(resource, root, attachToRoot);
-		}
-
-		@Override
-		public View inflate(final XmlPullParser parser, final ViewGroup root) {
-			Log.d(LOGTAG, String.format("inflate, %s", parser.getName()));
-			return super.inflate(parser, root);
-		}
-
-		@Override
-		public View inflate(final XmlPullParser parser, final ViewGroup root, final boolean attachToRoot) {
-			Log.d(LOGTAG, String.format("inflate, %s", parser.getName()));
-			return super.inflate(parser, root, attachToRoot);
 		}
 
 	}

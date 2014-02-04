@@ -23,6 +23,7 @@ import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 
@@ -41,6 +42,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	private int mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha;
 	private String mCurrentThemeFontFamily;
 	private AccentHelper mAccentHelper;
+	private Theme mTheme;
 
 	@Override
 	public void finish() {
@@ -61,6 +63,19 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	@Override
 	public Resources getResources() {
 		return getThemedResources();
+	}
+
+	@Override
+	public Theme getTheme() {
+		if (mTheme == null) {
+			mTheme = getResources().newTheme();
+			mTheme.setTo(super.getTheme());
+			final int getThemeResourceId = getThemeResourceId();
+			if (getThemeResourceId != 0) {
+				mTheme.applyStyle(getThemeResourceId, true);
+			}
+		}
+		return mTheme;
 	}
 
 	@Override
@@ -125,7 +140,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 		}
 		setTheme();
 		super.onCreate(savedInstanceState);
-		AccentThemeFixer.fixActionBar(getActionBar(), this);
+//		AccentThemeFixer.fixActionBar(getActionBar(), this);
 		setActionBarBackground();
 	}
 

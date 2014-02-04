@@ -25,7 +25,6 @@ import android.content.Context;
 import android.net.Uri;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.model.ListResponse;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
@@ -101,12 +100,10 @@ public class TwitterWrapper implements Constants {
 	public static SingleResponse<ParcelableUser> updateProfile(final Context context, final long account_id,
 			final String name, final String url, final String location, final String description) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
-		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		if (twitter != null) {
 			try {
 				final User user = twitter.updateProfile(name, url, location, description);
-				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image),
-						null);
+				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id), null);
 			} catch (final TwitterException e) {
 				return new SingleResponse<ParcelableUser>(null, e);
 			}
@@ -140,15 +137,13 @@ public class TwitterWrapper implements Constants {
 	public static SingleResponse<ParcelableUser> updateProfileImage(final Context context, final long account_id,
 			final Uri image_uri, final boolean delete_image) {
 		final Twitter twitter = getTwitterInstance(context, account_id, false);
-		final boolean large_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		if (twitter != null && image_uri != null && "file".equals(image_uri.getScheme())) {
 			try {
 				final User user = twitter.updateProfileImage(new File(image_uri.getPath()));
 				// Wait for 5 seconds, see
 				// https://dev.twitter.com/docs/api/1.1/post/account/update_profile_image
 				Thread.sleep(5000L);
-				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, large_profile_image),
-						null);
+				return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id), null);
 			} catch (final TwitterException e) {
 				return new SingleResponse<ParcelableUser>(null, e);
 			} catch (final InterruptedException e) {

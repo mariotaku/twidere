@@ -25,23 +25,17 @@ public class WhiteDrawableInterceptor implements DrawableInterceptor {
 	}
 
 	@Override
-	public Drawable getDrawable(final int id) {
-		if (id == R.drawable.solid_pressed_white_intercepted)
+	public Drawable getDrawable(final Resources res, final int resId) {
+		if (resId == R.drawable.solid_pressed_white_intercepted)
 			return new ColorDrawable(mAccentPalette.getAccentColor(PRESSED_ALPHA));
-		if (id == R.drawable.solid_focused_white_intercepted)
+		if (resId == R.drawable.solid_focused_white_intercepted)
 			return new ColorDrawable(mAccentPalette.getAccentColor(FOCUSED_ALPHA));
-		if (id == R.drawable.rect_focused_background_white_intercepted) {
+		if (resId == R.drawable.rect_focused_background_white_intercepted) {
 			final int backColor = mAccentPalette.getAccentColor(0x55);
 			final int borderColor = mAccentPalette.getAccentColor(0xAA);
 			return new RectDrawable(mResources, backColor, 2f, borderColor);
 		}
 		return null;
-	}
-
-	@Override
-	public boolean shouldIntercept(final int id) {
-		return id == R.drawable.solid_pressed_white_intercepted || id == R.drawable.solid_focused_white_intercepted
-				|| id == R.drawable.rect_focused_background_white_intercepted;
 	}
 
 }

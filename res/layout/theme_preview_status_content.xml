@@ -22,43 +22,11 @@
 			android:layout_alignTop="@+id/status_content"/>
 	</RelativeLayout>
 
-	<TableRow
+	<org.mariotaku.menucomponent.widget.MenuBar
 		android:id="@+id/actionbar_split"
 		android:layout_width="match_parent"
 		android:layout_height="?android:actionBarSize"
-		android:layout_weight="0">
-
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:contentDescription="@string/reply"
-			android:scaleType="centerInside"
-			android:src="@drawable/ic_menu_reply"/>
-
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:contentDescription="@string/retweet"
-			android:scaleType="centerInside"
-			android:src="@drawable/ic_menu_retweet"/>
-
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:contentDescription="@string/favorite"
-			android:scaleType="centerInside"
-			android:src="@drawable/ic_menu_star"/>
-
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:contentDescription="@string/more"
-			android:scaleType="centerInside"
-			android:src="@drawable/ic_menu_more"/>
-	</TableRow>
+		android:layout_weight="0"
+		android:max="@integer/max_action_buttons_bottom"/>
 
 </LinearLayout>

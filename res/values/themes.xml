@@ -214,11 +214,13 @@
 	<style name="Theme.Twidere.ActionBar.Colored.Light" parent="Theme.Twidere.Light">
 		<item name="accentColor">@color/accent_white</item>
 		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
+		<item name="android:actionBarItemBackground">@drawable/list_selector_light_white</item>
 	</style>
 
 	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="Theme.Twidere.Dark">
 		<item name="accentColor">@color/accent_white</item>
 		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
+		<item name="android:actionBarItemBackground">@drawable/list_selector_white</item>
 	</style>
 
 	<style name="Theme.Twidere.Dark.Dialog" parent="android:Theme.Holo.Dialog">
@@ -462,6 +464,8 @@
 		<item name="cardItemMessageProfileImageOutgoingBackground">@drawable/bg_card_item_message_profile_image_outgoing_light</item>
 		<item name="listMenuOverflowButton">@drawable/ic_menu_moreoverflow_card_light</item>
 	</style>
+
+	<style name="Theme.Twidere.Settings.Light.DarkActionBar.DarkIcon"/>
 
 	<style name="Theme.Twidere.Wizard" parent="Theme.Twidere.Settings.Light">
 		<item name="android:windowNoTitle">true</item>

@@ -3,51 +3,51 @@
 
 	<item
 		android:id="@id/reply"
-		android:icon="@drawable/ic_menu_reply"
+		android:icon="@drawable/ic_iconic_action_reply"
 		android:showAsAction="always"
 		android:title="@string/reply"/>
 	<item
 		android:id="@+id/mute_submenu"
-		android:icon="@drawable/ic_menu_mute"
+		android:icon="@drawable/ic_iconic_action_mute"
 		android:showAsAction="ifRoom"
 		android:title="@string/mute_user">
 		<menu>
 			<item
 				android:id="@id/mute_user"
-				android:icon="@drawable/ic_menu_mute"
+				android:icon="@drawable/ic_iconic_action_mute"
 				android:title="@string/mute_user"/>
 			<item
-				android:icon="@android:drawable/ic_menu_close_clear_cancel"
+				android:icon="@drawable/ic_iconic_action_cancel"
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
 	<item
 		android:id="@+id/block_submenu"
-		android:icon="@drawable/ic_menu_block"
+		android:icon="@drawable/ic_iconic_action_block"
 		android:showAsAction="ifRoom"
 		android:title="@string/block">
 		<menu>
 			<item
 				android:id="@id/block"
-				android:icon="@drawable/ic_menu_block"
+				android:icon="@drawable/ic_iconic_action_block"
 				android:title="@string/block"/>
 			<item
-				android:icon="@android:drawable/ic_menu_close_clear_cancel"
+				android:icon="@drawable/ic_iconic_action_cancel"
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>
 	<item
 		android:id="@+id/report_spam_submenu"
-		android:icon="@drawable/ic_menu_report_user"
+		android:icon="@drawable/ic_iconic_action_warning"
 		android:showAsAction="ifRoom"
 		android:title="@string/report_for_spam">
 		<menu>
 			<item
 				android:id="@id/report_spam"
-				android:icon="@drawable/ic_menu_report_user"
+				android:icon="@drawable/ic_iconic_action_warning"
 				android:title="@string/report_for_spam"/>
 			<item
-				android:icon="@android:drawable/ic_menu_close_clear_cancel"
+				android:icon="@drawable/ic_iconic_action_cancel"
 				android:title="@android:string/cancel"/>
 		</menu>
 	</item>

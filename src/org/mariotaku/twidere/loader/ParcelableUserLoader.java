@@ -42,7 +42,7 @@ import twitter4j.User;
 public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<ParcelableUser>> implements Constants {
 
 	private final ContentResolver resolver;
-	private final boolean omit_intent_extra, hires_profile_image, load_from_cache;
+	private final boolean omit_intent_extra, load_from_cache;
 	private final Bundle extras;
 	private final long account_id, user_id;
 	private final String screen_name;
@@ -52,7 +52,6 @@ public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<P
 			final boolean load_from_cache) {
 		super(context);
 		resolver = context.getContentResolver();
-		hires_profile_image = context.getResources().getBoolean(R.bool.hires_profile_image);
 		this.omit_intent_extra = omit_intent_extra;
 		this.load_from_cache = load_from_cache;
 		this.extras = extras;
@@ -96,11 +95,11 @@ public final class ParcelableUserLoader extends AsyncTaskLoader<SingleResponse<P
 				user = twitter.showUser(screen_name);
 			} else
 				return new SingleResponse<ParcelableUser>(null, null);
-			final ContentValues values = makeCachedUserContentValues(user, hires_profile_image);
+			final ContentValues values = makeCachedUserContentValues(user);
 			final String where = CachedUsers.USER_ID + " = " + user.getId() + " OR " + CachedUsers.SCREEN_NAME + " = ?";
 			resolver.delete(CachedUsers.CONTENT_URI, where, new String[] { user.getScreenName() });
 			resolver.insert(CachedUsers.CONTENT_URI, values);
-			return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id, hires_profile_image), null);
+			return new SingleResponse<ParcelableUser>(new ParcelableUser(user, account_id), null);
 		} catch (final TwitterException e) {
 			return new SingleResponse<ParcelableUser>(null, e);
 		}

@@ -174,50 +174,50 @@ public class MediaPreviewUtils {
 			PATTERN_IMGUR, PATTERN_IMGLY, PATTERN_YFROG, PATTERN_LOCKERZ, PATTERN_PLIXI, PATTERN_TWITGOO,
 			PATTERN_MOBYPICTURE, PATTERN_PHOTOZOU };
 
-	public static PreviewMedia getAllAvailableImage(final String link, final boolean use_full) {
+	public static PreviewMedia getAllAvailableImage(final String link, final boolean fullImage) {
 		if (link == null) return null;
 		Matcher m;
 		m = PATTERN_TWITTER_IMAGES.matcher(link);
-		if (m.matches()) return getTwitterImage(link, use_full);
+		if (m.matches()) return getTwitterImage(link, fullImage);
 		m = PATTERN_INSTAGRAM.matcher(link);
-		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), link, use_full);
+		if (m.matches()) return getInstagramImage(matcherGroup(m, INSTAGRAM_GROUP_ID), link, fullImage);
 		m = PATTERN_GOOGLE_IMAGES.matcher(link);
 		if (m.matches())
 			return getGoogleImage(matcherGroup(m, GOOGLE_IMAGES_GROUP_SERVER), matcherGroup(m, GOOGLE_IMAGES_GROUP_ID),
-					use_full);
+					fullImage);
 		m = PATTERN_GOOGLE_PROXY_IMAGES.matcher(link);
 		if (m.matches())
 			return getGoogleProxyImage(matcherGroup(m, GOOGLE_PROXY_IMAGES_GROUP_SERVER),
-					matcherGroup(m, GOOGLE_PROXY_IMAGES_GROUP_ID), use_full);
+					matcherGroup(m, GOOGLE_PROXY_IMAGES_GROUP_ID), fullImage);
 		m = PATTERN_SINA_WEIBO_IMAGES.matcher(link);
-		if (m.matches()) return getSinaWeiboImage(link, use_full);
+		if (m.matches()) return getSinaWeiboImage(link, fullImage);
 		m = PATTERN_TWITPIC.matcher(link);
-		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), link, use_full);
+		if (m.matches()) return getTwitpicImage(matcherGroup(m, TWITPIC_GROUP_ID), link, fullImage);
 		m = PATTERN_IMGUR.matcher(link);
-		if (m.matches()) return getImgurImage(matcherGroup(m, IMGUR_GROUP_ID), link, use_full);
+		if (m.matches()) return getImgurImage(matcherGroup(m, IMGUR_GROUP_ID), link, fullImage);
 		m = PATTERN_IMGLY.matcher(link);
-		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), link, use_full);
+		if (m.matches()) return getImglyImage(matcherGroup(m, IMGLY_GROUP_ID), link, fullImage);
 		m = PATTERN_YFROG.matcher(link);
-		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), link, use_full);
+		if (m.matches()) return getYfrogImage(matcherGroup(m, YFROG_GROUP_ID), link, fullImage);
 		m = PATTERN_LOCKERZ.matcher(link);
-		if (m.matches()) return getLockerzAndPlixiImage(link, use_full);
+		if (m.matches()) return getLockerzAndPlixiImage(link, fullImage);
 		m = PATTERN_PLIXI.matcher(link);
-		if (m.matches()) return getLockerzAndPlixiImage(link, use_full);
+		if (m.matches()) return getLockerzAndPlixiImage(link, fullImage);
 		m = PATTERN_TWITGOO.matcher(link);
-		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), link, use_full);
+		if (m.matches()) return getTwitgooImage(matcherGroup(m, TWITGOO_GROUP_ID), link, fullImage);
 		m = PATTERN_MOBYPICTURE.matcher(link);
-		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), link, use_full);
+		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), link, fullImage);
 		m = PATTERN_PHOTOZOU.matcher(link);
-		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID), link, use_full);
+		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID), link, fullImage);
 		return null;
 	}
 
-	public static PreviewMedia[] getImagesInStatus(final String status_string, final boolean use_full) {
+	public static PreviewMedia[] getImagesInStatus(final String status_string, final boolean fullImage) {
 		if (status_string == null) return new PreviewMedia[0];
 		final List<PreviewMedia> images = new ArrayList<PreviewMedia>();
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
 		for (final HtmlLink link : extractor.grabLinks(status_string)) {
-			final PreviewMedia spec = getAllAvailableImage(link.getLink(), use_full);
+			final PreviewMedia spec = getAllAvailableImage(link.getLink(), fullImage);
 			if (spec != null) {
 				images.add(spec);
 			}
@@ -274,89 +274,89 @@ public class MediaPreviewUtils {
 		return links;
 	}
 
-	private static PreviewMedia getGoogleImage(final String server, final String id, final boolean use_full) {
+	private static PreviewMedia getGoogleImage(final String server, final String id, final boolean fullImage) {
 		if (isEmpty(server) || isEmpty(id)) return null;
 		final String full = "https://" + server + id + "/s0/full";
-		final String preview = use_full ? full : "https://" + server + id + "/s480/full";
+		final String preview = fullImage ? full : "https://" + server + id + "/s480/full";
 		return PreviewMedia.newImage(preview, full);
 	}
 
-	private static PreviewMedia getGoogleProxyImage(final String server, final String id, final boolean use_full) {
+	private static PreviewMedia getGoogleProxyImage(final String server, final String id, final boolean fullImage) {
 		if (isEmpty(server) || isEmpty(id)) return null;
 		final String full = "https://" + server + "/proxy/" + id + "=s0";
-		final String preview = use_full ? full : "https://" + server + "/proxy/" + id + "=s480";
+		final String preview = fullImage ? full : "https://" + server + "/proxy/" + id + "=s480";
 		return PreviewMedia.newImage(preview, full);
 	}
 
-	private static PreviewMedia getImglyImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getImglyImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("http://img.ly/show/%s/%s", use_full ? "full" : "medium", id);
+		final String preview = String.format("http://img.ly/show/%s/%s", fullImage ? "full" : "medium", id);
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getImgurImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getImgurImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = use_full ? String.format("http://i.imgur.com/%s.jpg", id) : String.format(
+		final String preview = fullImage ? String.format("http://i.imgur.com/%s.jpg", id) : String.format(
 				"http://i.imgur.com/%sl.jpg", id);
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getInstagramImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getInstagramImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("https://instagr.am/p/%s/media/?size=%s", id, use_full ? "l" : "t");
+		final String preview = String.format("https://instagr.am/p/%s/media/?size=%s", id, fullImage ? "l" : "t");
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getLockerzAndPlixiImage(final String url, final boolean use_full) {
+	private static PreviewMedia getLockerzAndPlixiImage(final String url, final boolean fullImage) {
 		if (isEmpty(url)) return null;
 		final String preview = String.format("https://api.plixi.com/api/tpapi.svc/imagefromurl?url=%s&size=%s", url,
-				use_full ? "big" : "small");
+				fullImage ? "big" : "small");
 		return PreviewMedia.newImage(preview, url);
 
 	}
 
-	private static PreviewMedia getMobyPictureImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getMobyPictureImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("http://moby.to/%s:%s", id, use_full ? "full" : "thumb");
+		final String preview = String.format("http://moby.to/%s:%s", id, fullImage ? "full" : "thumb");
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getPhotozouImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getPhotozouImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("http://photozou.jp/p/%s/%s", use_full ? "img" : "thumb", id);
+		final String preview = String.format("http://photozou.jp/p/%s/%s", fullImage ? "img" : "thumb", id);
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getSinaWeiboImage(final String url, final boolean use_full) {
+	private static PreviewMedia getSinaWeiboImage(final String url, final boolean fullImage) {
 		if (isEmpty(url)) return null;
 		final String full = url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/", "/woriginal/");
-		final String preview = use_full ? full : url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/",
+		final String preview = fullImage ? full : url.replaceAll("\\/" + SINA_WEIBO_IMAGES_AVAILABLE_SIZES + "\\/",
 				"/bmiddle/");
 		return PreviewMedia.newImage(preview, full);
 	}
 
-	private static PreviewMedia getTwitgooImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getTwitgooImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("http://twitgoo.com/show/%s/%s", use_full ? "img" : "thumb", id);
+		final String preview = String.format("http://twitgoo.com/show/%s/%s", fullImage ? "img" : "thumb", id);
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getTwitpicImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getTwitpicImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("http://twitpic.com/show/%s/%s", use_full ? "large" : "thumb", id);
+		final String preview = String.format("http://twitpic.com/show/%s/%s", fullImage ? "large" : "thumb", id);
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getTwitterImage(final String url, final boolean use_full) {
+	private static PreviewMedia getTwitterImage(final String url, final boolean fullImage) {
 		if (isEmpty(url)) return null;
 		final String full = (url + ":large").replaceFirst("https?://", "https://");
-		final String preview = use_full ? full : (url + ":small").replaceFirst("https?://", "https://");
+		final String preview = fullImage ? full : (url + ":small").replaceFirst("https?://", "https://");
 		return PreviewMedia.newImage(preview, full);
 	}
 
-	private static PreviewMedia getYfrogImage(final String id, final String orig, final boolean use_full) {
+	private static PreviewMedia getYfrogImage(final String id, final String orig, final boolean fullImage) {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("http://yfrog.com/%s:%s", id, use_full ? "medium" : "iphone");
+		final String preview = String.format("http://yfrog.com/%s:%s", id, fullImage ? "medium" : "iphone");
 		return PreviewMedia.newImage(preview, orig);
 
 	}

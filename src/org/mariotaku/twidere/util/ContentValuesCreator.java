@@ -96,7 +96,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 		return values;
 	}
 
-	public static ContentValues makeCachedUserContentValues(final User user, final boolean large_profile_image) {
+	public static ContentValues makeCachedUserContentValues(final User user) {
 		if (user == null || user.getId() <= 0) return null;
 		final String profile_image_url = ParseUtils.parseString(user.getProfileImageUrlHttps());
 		final String url = ParseUtils.parseString(user.getURL());
@@ -105,8 +105,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 		values.put(CachedUsers.USER_ID, user.getId());
 		values.put(CachedUsers.NAME, user.getName());
 		values.put(CachedUsers.SCREEN_NAME, user.getScreenName());
-		values.put(CachedUsers.PROFILE_IMAGE_URL,
-				large_profile_image ? Utils.getBiggerTwitterProfileImage(profile_image_url) : profile_image_url);
+		values.put(CachedUsers.PROFILE_IMAGE_URL, profile_image_url);
 		values.put(CachedUsers.CREATED_AT, user.getCreatedAt().getTime());
 		values.put(CachedUsers.IS_PROTECTED, user.isProtected());
 		values.put(CachedUsers.IS_VERIFIED, user.isVerified());
@@ -128,7 +127,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 	}
 
 	public static ContentValues makeDirectMessageContentValues(final DirectMessage message, final long account_id,
-			final boolean is_outgoing, final boolean large_profile_image) {
+			final boolean is_outgoing) {
 		if (message == null || message.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		final User sender = message.getSender(), recipient = message.getRecipient();
@@ -147,12 +146,8 @@ public final class ContentValuesCreator implements TwidereConstants {
 		values.put(DirectMessages.SENDER_SCREEN_NAME, sender.getScreenName());
 		values.put(DirectMessages.RECIPIENT_NAME, recipient.getName());
 		values.put(DirectMessages.RECIPIENT_SCREEN_NAME, recipient.getScreenName());
-		values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL,
-				large_profile_image ? Utils.getBiggerTwitterProfileImage(sender_profile_image_url)
-						: sender_profile_image_url);
-		values.put(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL,
-				large_profile_image ? Utils.getBiggerTwitterProfileImage(recipient_profile_image_url)
-						: recipient_profile_image_url);
+		values.put(DirectMessages.SENDER_PROFILE_IMAGE_URL, sender_profile_image_url);
+		values.put(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL, recipient_profile_image_url);
 		return values;
 	}
 
@@ -220,8 +215,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 		return values;
 	}
 
-	public static ContentValues makeStatusContentValues(final Status orig, final long account_id,
-			final boolean largeProfileImage) {
+	public static ContentValues makeStatusContentValues(final Status orig, final long account_id) {
 		if (orig == null || orig.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
 		values.put(Statuses.ACCOUNT_ID, account_id);
@@ -250,8 +244,7 @@ public final class ContentValuesCreator implements TwidereConstants {
 			values.put(Statuses.USER_SCREEN_NAME, screenName);
 			values.put(Statuses.IS_PROTECTED, user.isProtected());
 			values.put(Statuses.IS_VERIFIED, user.isVerified());
-			values.put(Statuses.USER_PROFILE_IMAGE_URL,
-					largeProfileImage ? Utils.getBiggerTwitterProfileImage(profileImageUrl) : profileImageUrl);
+			values.put(Statuses.USER_PROFILE_IMAGE_URL, profileImageUrl);
 			values.put(CachedUsers.IS_FOLLOWING, user.isFollowing());
 		}
 		if (status.getCreatedAt() != null) {

@@ -25,28 +25,29 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.twitter.Validator;
 
+import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
 
 import java.util.Locale;
 
-public class ComposeTextCountView extends TextView {
+public class SendButton extends Button {
 
 	private final int mTextColor;
 	private final Locale mLocale;
 
-	public ComposeTextCountView(final Context context) {
+	public SendButton(final Context context) {
 		this(context, null);
 	}
 
-	public ComposeTextCountView(final Context context, final AttributeSet attrs) {
+	public SendButton(final Context context, final AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public ComposeTextCountView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public SendButton(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		if (isInEditMode()) {
 			mTextColor = 0;
@@ -59,6 +60,7 @@ public class ComposeTextCountView extends TextView {
 			mLocale = getResources().getConfiguration().locale;
 			setTextColor(mTextColor);
 		}
+		setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_iconic_action_send, 0);
 	}
 
 	public void setTextCount(final int count) {

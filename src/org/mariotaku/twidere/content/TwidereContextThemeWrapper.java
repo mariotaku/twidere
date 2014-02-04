@@ -21,6 +21,7 @@ package org.mariotaku.twidere.content;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.view.ContextThemeWrapper;
 
 import org.mariotaku.twidere.content.iface.ITwidereContextWrapper;
@@ -32,6 +33,7 @@ public class TwidereContextThemeWrapper extends ContextThemeWrapper implements I
 
 	private final int mThemeResourceId;
 	private final int mAccentColor;
+	private Theme mTheme;
 
 	private final boolean mIsActionBarContext;
 
@@ -55,6 +57,19 @@ public class TwidereContextThemeWrapper extends ContextThemeWrapper implements I
 	@Override
 	public Resources getResources() {
 		return mAccentHelper.getResources(this, super.getResources());
+	}
+
+	@Override
+	public Theme getTheme() {
+		if (mTheme == null) {
+			mTheme = getResources().newTheme();
+			mTheme.setTo(super.getTheme());
+			final int getThemeResourceId = getThemeResourceId();
+			if (getThemeResourceId != 0) {
+				mTheme.applyStyle(getThemeResourceId, true);
+			}
+		}
+		return mTheme;
 	}
 
 	@Override

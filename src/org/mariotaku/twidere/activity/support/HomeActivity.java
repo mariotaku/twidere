@@ -205,21 +205,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		super.onBackPressed();
 	}
 
-	// @Override
-	// public void onBackStackChanged() {
-	// super.onBackStackChanged();
-	// if (!isDualPaneMode()) return;
-	// final FragmentManager fm = getSupportFragmentManager();
-	// setPagingEnabled(!isLeftPaneUsed());
-	// final int count = fm.getBackStackEntryCount();
-	// if (count == 0) {
-	// showLeftPane();
-	// }
-	// updateActionsButton();
-	// updateActionsButtonStyle();
-	// updateSlidingMenuTouchMode();
-	// }
-
 	@Override
 	public void onClick(final View v) {
 		switch (v.getId()) {
