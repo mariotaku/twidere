@@ -29,9 +29,11 @@ public class ActivityIconsInterceptor implements DrawableInterceptor {
 	private final int mIconColor;
 	private final float mDensity;
 
-	public ActivityIconsInterceptor(final Context context, final DisplayMetrics dm) {
+	public ActivityIconsInterceptor(final Context context, final DisplayMetrics dm, final int overrideThemeRes) {
 		mContext = context;
-		if (context instanceof TwidereContextThemeWrapper) {
+		if (overrideThemeRes != 0) {
+			mIconColor = ThemeUtils.getActionIconColor(overrideThemeRes);
+		} else if (context instanceof TwidereContextThemeWrapper) {
 			final int resId = ((TwidereContextThemeWrapper) context).getThemeResourceId();
 			mIconColor = ThemeUtils.getActionIconColor(resId);
 		} else {

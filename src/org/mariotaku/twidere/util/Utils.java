@@ -3124,7 +3124,7 @@ public final class Utils implements Constants {
 		if (context == null || menu == null || status == null) return;
 		final int activatedColor = ThemeUtils.getUserThemeColor(context);
 		final boolean isMyRetweet = isMyRetweet(status);
-		final MenuItem delete = menu.findItem(R.id.delete_submenu);
+		final MenuItem delete = menu.findItem(MENU_DELETE);
 		if (delete != null) {
 			delete.setVisible(status.account_id == status.user_id && !isMyRetweet);
 		}

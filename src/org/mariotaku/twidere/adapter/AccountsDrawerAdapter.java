@@ -61,12 +61,12 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 				MENU_LIST_MEMBERSHIPS);
 		ACCOUNT_OPTIONS[6] = new OptionItem(R.string.set_color, R.drawable.ic_iconic_action_color_palette,
 				MENU_SET_COLOR);
-		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_as_default, R.drawable.ic_iconic_action_accept,
+		ACCOUNT_OPTIONS[7] = new OptionItem(R.string.set_as_default, R.drawable.ic_iconic_action_ok,
 				MENU_SET_AS_DEFAULT);
 		ACCOUNT_OPTIONS[8] = new OptionItem(R.string.delete, R.drawable.ic_iconic_action_delete, MENU_DELETE);
 		MORE_OPTION_ITEMS[0] = new OptionItem(R.string.add_account, R.drawable.ic_iconic_action_add, MENU_ADD_ACCOUNT);
 		MORE_OPTION_ITEMS[1] = new OptionItem(R.string.drafts, R.drawable.ic_iconic_action_save, MENU_DRAFTS);
-		MORE_OPTION_ITEMS[2] = new OptionItem(R.string.filters, R.drawable.ic_iconic_action_mute, MENU_FILTERS);
+		MORE_OPTION_ITEMS[2] = new OptionItem(R.string.filters, R.drawable.ic_iconic_action_speaker_muted, MENU_FILTERS);
 		MORE_OPTION_ITEMS[3] = new OptionItem(R.string.settings, R.drawable.ic_iconic_action_preferences, MENU_SETTINGS);
 		GROUPS[0] = new GroupItem(R.string.accounts, R.layout.accounts_drawer_item_child_accounts, GROUP_ID_ACCOUNTS);
 		GROUPS[1] = new GroupItem(R.string.account_options, R.layout.menu_list_item, GROUP_ID_ACCOUNT_OPTIONS);

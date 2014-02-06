@@ -7,14 +7,27 @@ import com.atermenji.android.iconicdroid.icon.Icon;
 import com.atermenji.android.iconicdroid.util.TypefaceManager.IconicTypeface;
 
 public enum TwidereIcon implements Icon {
-	TWIDERE(0xF000), WEB(0xF001), COMPOSE(0xF002), COLOR_PALETTE(0xF003), CAMERA(0xF004), NEW_MESSAGE(0xF005), SERVER(
-			0xF006), GALLERY(0xF007), SAVE(0xF008), STAR(0xF009), SEARCH(0xF00A), RETWEET(0xF00B), REPLY(0xF00C), DELETE(
-			0xF00D), ADD(0xF00E), SHARE(0xF00F), INBOX(0xF010), OUTBOX(0xF011), COPY(0xF012), TRANSLATE(0xF013), USER(
-			0xF014), USERS(0xF015), CONVERSATION(0xF016), SEND(0xF017), EDIT(0xF018), ACCEPT(0xF019), CANCEL(0xF01A), PREFERENCES(
-			0xF01B), LOCATION(0xF01C), MUTE(0xF01D), QUOTE(0xF01E), MESSAGE(0xF01F), TWITTER(0xF020), HOME(0xF021), AT(
-			0xF022), HASHTAG(0xF023), TRENDS(0xF024), LIST(0xF025), STAGGERED(0xF026), NEKO(0xF027), TAB(0xF028), EXTENSION(
-			0xF029), CARD(0xF02A), REFRESH(0xF02B), GRID(0xF02C), ABOUT(0xF02D), MORE(0xF02E), OPEN_SOURCE(0xF02F), NOTIFICATION(
-			0xF030), INTERFACE(0xF031), BLOCK(0xF032), WARNING(0xF033);
+	// Brand icons
+	TWIDERE(0xF000), OPEN_SOURCE(0xF001), TWITTER(0xF002), TRANSLATE(0xF003),
+
+	ADD(0xF020), EDIT(0xF021), SAVE(0xF022), DELETE(0xF023), OK(0xF024), CANCEL(0xF025), REFRESH(0xF026), MORE(0xF027), COPY(
+			0xF028), CUT(0xF029), PASTE(0xF02A), SELECT_ALL(0xF02B), STAR(0xF02C), SEND(0xF02D), SHARE(0xF02E), NEW_MESSAGE(
+			0xF02F), CHECKED(0xF030),
+
+	PREFERENCES(0xF040), SEARCH(0xF041), INFO(0xF042), HELP(0xF043), COLLAPSE(0xF044), EXPAND(0xF045), PREVIOUS(0xF046), NEXT(
+			0xF047), MIC(0xF048), MIC_MUTED(0xF049), SPEAKER(0xF04A), SPEAKER_MUTED(0xF04B), LOCK(0xF04C), UNLOCK(
+			0xF04D), WARNING(0xF04E), ERROR(0xF04F),
+
+	NOTIFICATION(0xF050), LOCATION_OFF(0xF058), LOCATION_SEARCHING(0xF059), LOCATION_FOUND(0xF05A), CAMERA(0xF05C), CAMCORDER(
+			0xF05D), GALLERY(0xF05E),
+
+	USER(0xF068), USERS(0xF069), USER_GROUP(0xF06A),
+
+	HOME(0xF080), MESSAGE(0xF081), INBOX(0xF082), OUTBOX(0xF083), LIST(0xF084), GRID(0xF085), STACK(0xF086), STAGGERED(
+			0xF087), REPLY(0xF088), RETWEET(0xF089), QUOTE(0xF08A), AT(0xF08B), COMPOSE(0xF08C), HEART(0xF08D), COLOR_PALETTE(
+			0xF08E), BLOCK(0xF08F), HASHTAG(0xF090), TRENDS(0xF091),
+
+	TAB(0xF0A0), EXTENSION(0xF0A1), CARD(0xF0A2), INTERFACE(0xF0A3), WEB(0xF0A4), SERVER(0xF0A5), STORAGE(0xF0A6);
 
 	private final int mIconUtfValue;
 
@@ -24,7 +37,7 @@ public enum TwidereIcon implements Icon {
 
 	@Override
 	public IconicTypeface getIconicTypeface() {
-		return TwidereIconTypefaces.SINGLETON;
+		return TwidereIconTypeface.SINGLETON;
 	}
 
 	@Override
@@ -32,9 +45,9 @@ public enum TwidereIcon implements Icon {
 		return mIconUtfValue;
 	}
 
-	private static final class TwidereIconTypefaces implements IconicTypeface {
+	private static final class TwidereIconTypeface implements IconicTypeface {
 
-		static final TwidereIconTypefaces SINGLETON = new TwidereIconTypefaces();
+		static final TwidereIconTypeface SINGLETON = new TwidereIconTypeface();
 
 		private Typeface mTypeface;
 
@@ -43,7 +56,6 @@ public enum TwidereIcon implements Icon {
 			if (mTypeface == null) {
 				mTypeface = Typeface.createFromAsset(context.getAssets(), "fonts/TwidereIconic.ttf");
 			}
-
 			return mTypeface;
 		}
 	}

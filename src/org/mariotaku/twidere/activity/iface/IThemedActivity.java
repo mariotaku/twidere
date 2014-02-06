@@ -25,6 +25,8 @@ import org.mariotaku.twidere.content.iface.ITwidereContextWrapper;
 
 public interface IThemedActivity extends ITwidereContextWrapper {
 
+	public Resources getAccentResources();
+
 	public int getCurrentThemeResourceId();
 
 	public Resources getDefaultResources();
@@ -32,8 +34,6 @@ public interface IThemedActivity extends ITwidereContextWrapper {
 	public int getThemeBackgroundAlpha();
 
 	public int getThemeColor();
-
-	public Resources getThemedResources();
 
 	public String getThemeFontFamily();
 

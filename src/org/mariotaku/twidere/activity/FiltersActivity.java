@@ -85,7 +85,7 @@ public class FiltersActivity extends BaseActivity implements TabListener, OnPage
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		setContentView(R.layout.filters);
+		setContentView(R.layout.activity_filters);
 		mActionBar = getActionBar();
 		mAdapter = new TabsAdapter(this, getFragmentManager(), null);
 		mActionBar.setDisplayHomeAsUpEnabled(true);

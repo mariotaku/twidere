@@ -53,6 +53,9 @@
 			android:name="com.google.android.backup.api_key"
 			android:value="AEdPqrEAAAAIKbKATV1AGbLB4kem3w8QaPVJSPVVumbMHxkfwA"/>
 		<meta-data
+			android:name="com.google.android.gms.version"
+			android:value="@integer/google_play_services_version"/>
+		<meta-data
 			android:name="com.google.android.maps.v2.API_KEY"
 			android:value="AIzaSyCVdCIMFFxdNqHnCPrJ9yKUzoTfs8jhYGc"/>
 		<meta-data
@@ -479,6 +482,19 @@
 			android:name=".activity.support.DataImportActivity"
 			android:label="@string/import_settings"
 			android:theme="@android:style/Theme.NoDisplay"/>
+		<activity
+			android:name=".activity.support.EmojiPickerActivity"
+			android:label="Emoji picker"
+			android:theme="@style/Theme.Blank.Dialog"
+			android:windowSoftInputMode="stateAlwaysHidden">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+
+				<category android:name="android.intent.category.LAUNCHER"/>
+				<category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
 		<activity
 			android:name=".activity.TestActivity"
 			android:icon="@drawable/ic_iconic_twidere"

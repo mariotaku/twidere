@@ -25,29 +25,28 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.widget.Button;
+import android.widget.TextView;
 
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereValidator;
 
 import java.util.Locale;
 
-public class SendButton extends Button {
+public class StatusTextCountView extends TextView {
 
 	private final int mTextColor;
 	private final Locale mLocale;
 	private final TwidereValidator mValidator;
 
-	public SendButton(final Context context) {
+	public StatusTextCountView(final Context context) {
 		this(context, null);
 	}
 
-	public SendButton(final Context context, final AttributeSet attrs) {
-		this(context, attrs, 0);
+	public StatusTextCountView(final Context context, final AttributeSet attrs) {
+		this(context, attrs, android.R.attr.textViewStyle);
 	}
 
-	public SendButton(final Context context, final AttributeSet attrs, final int defStyle) {
+	public StatusTextCountView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		mValidator = new TwidereValidator(context);
 		if (isInEditMode()) {
@@ -61,7 +60,6 @@ public class SendButton extends Button {
 			mLocale = getResources().getConfiguration().locale;
 			setTextColor(mTextColor);
 		}
-		setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_iconic_action_send, 0);
 	}
 
 	public void setTextCount(final int count) {

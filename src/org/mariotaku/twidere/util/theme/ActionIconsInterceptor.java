@@ -41,14 +41,14 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		sIconMap.put(R.drawable.ic_iconic_action_copy, new IconSpec(TwidereIcon.COPY, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_translate, new IconSpec(TwidereIcon.TRANSLATE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_user, new IconSpec(TwidereIcon.USER, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_accounts, new IconSpec(TwidereIcon.USERS, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_accounts, new IconSpec(TwidereIcon.USER_GROUP, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_send, new IconSpec(TwidereIcon.SEND, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_edit, new IconSpec(TwidereIcon.EDIT, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_accept, new IconSpec(TwidereIcon.ACCEPT, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_ok, new IconSpec(TwidereIcon.OK, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_cancel, new IconSpec(TwidereIcon.CANCEL, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_preferences, new IconSpec(TwidereIcon.PREFERENCES, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_mylocation, new IconSpec(TwidereIcon.LOCATION, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_mute, new IconSpec(TwidereIcon.MUTE, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_mylocation, new IconSpec(TwidereIcon.LOCATION_FOUND, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_speaker_muted, new IconSpec(TwidereIcon.SPEAKER_MUTED, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_quote, new IconSpec(TwidereIcon.QUOTE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_message, new IconSpec(TwidereIcon.MESSAGE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_twitter, new IconSpec(TwidereIcon.TWITTER, 0.75f));
@@ -58,21 +58,20 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		sIconMap.put(R.drawable.ic_iconic_action_trends, new IconSpec(TwidereIcon.TRENDS, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_list, new IconSpec(TwidereIcon.LIST, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_staggered, new IconSpec(TwidereIcon.STAGGERED, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_neko, new IconSpec(TwidereIcon.NEKO, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_tab, new IconSpec(TwidereIcon.TAB, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_extension, new IconSpec(TwidereIcon.EXTENSION, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_card, new IconSpec(TwidereIcon.CARD, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_refresh, new IconSpec(TwidereIcon.REFRESH, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_grid, new IconSpec(TwidereIcon.GRID, 0.75f));
-		sIconMap.put(R.drawable.ic_iconic_action_about, new IconSpec(TwidereIcon.ABOUT, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_about, new IconSpec(TwidereIcon.INFO, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_more, new IconSpec(TwidereIcon.MORE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_open_source, new IconSpec(TwidereIcon.OPEN_SOURCE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_notification, new IconSpec(TwidereIcon.NOTIFICATION, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_interface, new IconSpec(TwidereIcon.INTERFACE, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_block, new IconSpec(TwidereIcon.BLOCK, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_warning, new IconSpec(TwidereIcon.WARNING, 0.75f));
-
-		sIconMap.put(R.drawable.ic_iconic_action_mark, new IconSpec(TwidereIcon.ACCEPT, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_heart, new IconSpec(TwidereIcon.HEART, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_checked, new IconSpec(TwidereIcon.CHECKED, 0.75f));
 	}
 
 	private static int MENU_ICON_SIZE_DP = 32;
@@ -81,9 +80,11 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 	private final int mIconColor;
 	private final float mDensity;
 
-	public ActionIconsInterceptor(final Context context, final DisplayMetrics dm) {
+	public ActionIconsInterceptor(final Context context, final DisplayMetrics dm, final int overrideThemeRes) {
 		mContext = context;
-		if (context instanceof ITwidereContextWrapper) {
+		if (overrideThemeRes != 0) {
+			mIconColor = ThemeUtils.getActionIconColor(overrideThemeRes);
+		} else if (context instanceof ITwidereContextWrapper) {
 			final int resId = ((ITwidereContextWrapper) context).getThemeResourceId();
 			mIconColor = ThemeUtils.getActionIconColor(resId);
 		} else {

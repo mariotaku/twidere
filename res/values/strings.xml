@@ -507,6 +507,8 @@
 	<string name="delete_user_list_confirm_message">Delete list <xliff:g id="name">%s</xliff:g>? This can\' be undone.</string>
 	<string name="unsubscribe_from_user_list">Unsubscribe from list <xliff:g id="name">%s</xliff:g></string>
 	<string name="unsubscribe_from_user_list_confirm_message">Unsubscribe from list <xliff:g id="name">%s</xliff:g>? You can re-subscribe this list later.</string>
+	<string name="delete_tweet">Delete tweet</string>
+	<string name="delete_tweet_confirm_message">Delete this tweet?</string>
 	<string name="delete_saved_search">Delete saved search \"<xliff:g id="name">%s</xliff:g>\"</string>
 	<string name="delete_saved_search_confirm_message">Delete saved search \"<xliff:g id="name">%s</xliff:g>\"? You can re-save this search shortly.</string>
 	<string name="signing_in_error_browser_sign_in_hint">Error while signing in, you may need to use browser sign in method. (This will ignore custom API settings during sign in)</string>

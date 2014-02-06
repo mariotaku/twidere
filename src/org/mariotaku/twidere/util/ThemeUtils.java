@@ -43,6 +43,8 @@ import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
 import org.mariotaku.twidere.content.TwidereContextWrapper;
 import org.mariotaku.twidere.content.iface.ITwidereContextWrapper;
+import org.mariotaku.twidere.content.res.TwidereAccentResources;
+import org.mariotaku.twidere.content.res.TwidereResources;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -140,6 +142,11 @@ public class ThemeUtils implements Constants {
 		return null;
 	}
 
+	public static Resources getAccentResourcesForActionIcons(final Context baseContext, final int themeRes,
+			final int accentColor) {
+		return new TwidereAccentResources(baseContext, baseContext.getResources(), themeRes, accentColor);
+	}
+
 	@Deprecated
 	public static Drawable getActionBarBackground(final Context context, final boolean applyAlpha) {
 		final TypedArray a = context.obtainStyledAttributes(null, new int[] { android.R.attr.background },
@@ -216,6 +223,14 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_Colored_Compose:
 			case R.style.Theme_Twidere_ActionBar_Colored_Light:
 			case R.style.Theme_Twidere_Settings_Light:
+			case R.style.Theme_Twidere_Light_DarkActionBar_DarkIcon:
+			case R.style.Theme_Twidere_Light_DarkActionBar_SolidBackground_DarkIcon:
+			case R.style.Theme_Twidere_Light_DarkActionBar_Transparent_DarkIcon:
+			case R.style.Theme_Twidere_Light_DarkActionBar_Compose_DarkIcon:
+			case R.style.Theme_Twidere_Colored_DarkActionBar_DarkIcon:
+			case R.style.Theme_Twidere_Colored_DarkActionBar_SolidBackground_DarkIcon:
+			case R.style.Theme_Twidere_Colored_DarkActionBar_Transparent_DarkIcon:
+			case R.style.Theme_Twidere_Colored_DarkActionBar_Compose_DarkIcon:
 			case R.style.Theme_Twidere_Settings_Light_DarkActionBar_DarkIcon:
 				return 0x99333333;
 		}
@@ -250,6 +265,10 @@ public class ThemeUtils implements Constants {
 					: R.style.Theme_Twidere_Light_Compose;
 		else if (VALUE_THEME_NAME_DARK.equals(name)) return R.style.Theme_Twidere_Dark_Compose;
 		return R.style.Theme_Twidere_Colored_Compose;
+	}
+
+	public static Context getContextForActionIcons(final Context baseContext, final int baseThemeRes) {
+		return new TwidereContextWrapper(baseContext, getThemeResActionIcons(baseThemeRes));
 	}
 
 	public static boolean getDarkActionBarOption(final Context context) {
@@ -320,6 +339,10 @@ public class ThemeUtils implements Constants {
 		return context.getResources();
 	}
 
+	public static Resources getResourcesForActionIcons(final Context baseContext, final int themeRes) {
+		return new TwidereResources(baseContext, baseContext.getResources(), themeRes);
+	}
+
 	public static Drawable getSelectableItemBackgroundDrawable(final Context context) {
 		final TypedArray a = context.obtainStyledAttributes(new int[] { android.R.attr.selectableItemBackground });
 		try {
@@ -327,21 +350,6 @@ public class ThemeUtils implements Constants {
 		} finally {
 			a.recycle();
 		}
-	}
-
-	public static Context getSettingsContextForActionIcons(final Context baseContext) {
-		final int baseThemeRes = getSettingsThemeResource(baseContext), themeRes;
-		switch (baseThemeRes) {
-			case R.style.Theme_Twidere_Settings_Light_DarkActionBar: {
-				themeRes = R.style.Theme_Twidere_Settings_Light_DarkActionBar_DarkIcon;
-				break;
-			}
-			default: {
-				themeRes = baseThemeRes;
-				break;
-			}
-		}
-		return new TwidereContextWrapper(baseContext, themeRes);
 	}
 
 	public static int getSettingsThemeResource(final Context context) {
@@ -425,6 +433,11 @@ public class ThemeUtils implements Constants {
 		return new TwidereContextWrapper(context, res);
 	}
 
+	public static Context getThemedContextForActionIcons(final Context baseContext, final int baseThemeRes,
+			final int accentColor) {
+		return new TwidereContextThemeWrapper(baseContext, getThemeResActionIcons(baseThemeRes), accentColor);
+	}
+
 	public static String getThemeFontFamily(final Context context) {
 		if (context == null) return VALUE_THEME_FONT_FAMILY_REGULAR;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -437,6 +450,39 @@ public class ThemeUtils implements Constants {
 		if (context == null) return VALUE_THEME_NAME_TWIDERE;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		return pref != null ? pref.getString(KEY_THEME, VALUE_THEME_NAME_TWIDERE) : VALUE_THEME_NAME_TWIDERE;
+	}
+
+	public static int getThemeResActionIcons(final int baseThemeRes) {
+		switch (baseThemeRes) {
+			case R.style.Theme_Twidere_Light_DarkActionBar: {
+				return R.style.Theme_Twidere_Light_DarkActionBar_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Light_DarkActionBar_SolidBackground: {
+				return R.style.Theme_Twidere_Light_DarkActionBar_SolidBackground_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Light_DarkActionBar_Transparent: {
+				return R.style.Theme_Twidere_Light_DarkActionBar_Transparent_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Light_DarkActionBar_Compose: {
+				return R.style.Theme_Twidere_Light_DarkActionBar_Compose_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Colored_DarkActionBar: {
+				return R.style.Theme_Twidere_Colored_DarkActionBar_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Colored_DarkActionBar_SolidBackground: {
+				return R.style.Theme_Twidere_Colored_DarkActionBar_SolidBackground_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Colored_DarkActionBar_Transparent: {
+				return R.style.Theme_Twidere_Colored_DarkActionBar_Transparent_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Colored_DarkActionBar_Compose: {
+				return R.style.Theme_Twidere_Colored_DarkActionBar_Compose_DarkIcon;
+			}
+			case R.style.Theme_Twidere_Settings_Light_DarkActionBar: {
+				return R.style.Theme_Twidere_Settings_Light_DarkActionBar_DarkIcon;
+			}
+		}
+		return baseThemeRes;
 	}
 
 	public static int getThemeResource(final Context context) {

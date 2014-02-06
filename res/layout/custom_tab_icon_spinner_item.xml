@@ -7,6 +7,7 @@
 		android:id="@android:id/icon"
 		android:layout_width="48dp"
 		android:layout_height="48dp"
-		android:scaleType="centerInside"/>
+		android:contentDescription="@string/icon"
+		android:padding="@dimen/element_spacing_small"/>
 
 </FrameLayout>

@@ -26,11 +26,17 @@ import org.mariotaku.twidere.content.res.TwidereResources;
 
 public class TwidereResourceHelper {
 
+	private final int mOverrideThemeRes;
+
 	private Resources mResources;
+
+	public TwidereResourceHelper(final int overrideThemeRes) {
+		mOverrideThemeRes = overrideThemeRes;
+	}
 
 	public Resources getResources(final Context c, final Resources resources) {
 		if (mResources != null) return mResources;
-		return mResources = new TwidereResources(c, resources);
+		return mResources = new TwidereResources(c, resources, mOverrideThemeRes);
 	}
 
 }

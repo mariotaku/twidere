@@ -22,7 +22,6 @@ package org.mariotaku.twidere.fragment.support;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.buildDirectMessageConversationUri;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
-import static org.mariotaku.twidere.util.Utils.getLocalizedNumber;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
 
 import android.app.Activity;
@@ -32,9 +31,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -53,7 +52,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -61,6 +59,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.AccountsSpinnerAdapter;
 import org.mariotaku.twidere.adapter.DirectMessagesConversationAdapter;
@@ -78,6 +77,7 @@ import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereValidator;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
+import org.mariotaku.twidere.view.StatusTextCountView;
 
 import java.util.List;
 import java.util.Locale;
@@ -92,8 +92,8 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	private ListView mListView;
 	private EditText mEditText;
-	private TextView mTextCountView;
-	private ImageButton mSendButton;
+	private StatusTextCountView mTextCountView;
+	private View mSendView;
 	private View mConversationContainer, mRecipientSelectorContainer, mRecipientSelector;
 	private Spinner mAccountSpinner;
 
@@ -155,8 +155,8 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mAccountSpinner.setAdapter(new AccountsSpinnerAdapter(getActivity(), accounts));
 		mAccountSpinner.setOnItemSelectedListener(this);
 
-		mSendButton.setOnClickListener(this);
-		mSendButton.setEnabled(false);
+		mSendView.setOnClickListener(this);
+		mSendView.setEnabled(false);
 		mRecipientSelector.setOnClickListener(this);
 		if (savedInstanceState != null) {
 			final long accountId = savedInstanceState.getLong(EXTRA_ACCOUNT_ID, -1);
@@ -226,15 +226,22 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.messages_conversation, null);
+		final View view = inflater.inflate(R.layout.fragment_messages_conversation, null);
 		final FrameLayout listContainer = (FrameLayout) view.findViewById(R.id.list_container);
 		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.MATCH_PARENT);
 		listContainer.addView(super.onCreateView(inflater, container, savedInstanceState), lp);
 		final ViewGroup inputSendContainer = (ViewGroup) view.findViewById(R.id.input_send_container);
-		ViewAccessor.setBackground(inputSendContainer, ThemeUtils.getActionBarSplitBackground(getActivity(), true));
-		final Context actionBarContext = ThemeUtils.getActionBarContext(getActivity());
-		View.inflate(actionBarContext, R.layout.messages_conversation_input_send, inputSendContainer);
+		final FragmentActivity activity = getActivity();
+		final int themeRes;
+		if (activity instanceof IThemedActivity) {
+			themeRes = ((IThemedActivity) activity).getThemeResourceId();
+		} else {
+			themeRes = ThemeUtils.getThemeResource(activity);
+		}
+		ViewAccessor.setBackground(inputSendContainer, ThemeUtils.getActionBarSplitBackground(activity, themeRes));
+		final Context actionBarContext = ThemeUtils.getActionBarContext(activity);
+		View.inflate(actionBarContext, R.layout.fragment_messages_conversation_input_send, inputSendContainer);
 		return view;
 	}
 
@@ -336,8 +343,8 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	@Override
 	public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
 		updateTextCount();
-		if (mSendButton == null || s == null) return;
-		mSendButton.setEnabled(mValidator.isValidTweet(s.toString()));
+		if (mSendView == null || s == null) return;
+		mSendView.setEnabled(mValidator.isValidTweet(s.toString()));
 	}
 
 	@Override
@@ -349,8 +356,8 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		mRecipientSelector = view.findViewById(R.id.recipient_selector);
 		mAccountSpinner = (Spinner) view.findViewById(R.id.account_selector);
 		mEditText = (EditText) inputSendContainer.findViewById(R.id.edit_text);
-		mTextCountView = (TextView) inputSendContainer.findViewById(R.id.text_count);
-		mSendButton = (ImageButton) inputSendContainer.findViewById(R.id.send);
+		mTextCountView = (StatusTextCountView) inputSendContainer.findViewById(R.id.text_count);
+		mSendView = inputSendContainer.findViewById(R.id.send);
 		mRecipientSelector = view.findViewById(R.id.recipient_selector);
 	}
 
@@ -409,14 +416,9 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 	}
 
 	private void updateTextCount() {
-		if (mTextCountView == null) return;
-		final int max = mValidator.getMaxTweetLength();
-		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
-		final int count = mValidator.getTweetLength(text);
-		final float hue = count < max ? count >= max - 10 ? 5 * (max - count) : 50 : 0;
-		final float[] hsv = new float[] { hue, 1.0f, 1.0f };
-		mTextCountView.setTextColor(count >= max - 10 ? Color.HSVToColor(0x80, hsv) : 0x80808080);
-		mTextCountView.setText(getLocalizedNumber(mLocale, max - count));
+		if (mTextCountView == null || mEditText == null) return;
+		final int count = mValidator.getTweetLength(ParseUtils.parseString(mEditText.getText()));
+		mTextCountView.setTextCount(count);
 	}
 
 }

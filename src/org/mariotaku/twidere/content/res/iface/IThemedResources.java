@@ -28,11 +28,11 @@ public interface IThemedResources {
 		private final ArrayList<DrawableInterceptor> mDrawableInterceptors = new ArrayList<DrawableInterceptor>();
 		private final Resources mResources;
 
-		public Helper(final Resources res, final Context context) {
+		public Helper(final Resources res, final Context context, final int overrideThemeRes) {
 			mResources = res;
 			final DisplayMetrics dm = res.getDisplayMetrics();
-			addDrawableInterceptor(new ActionIconsInterceptor(context, dm));
-			addDrawableInterceptor(new ActivityIconsInterceptor(context, dm));
+			addDrawableInterceptor(new ActionIconsInterceptor(context, dm, overrideThemeRes));
+			addDrawableInterceptor(new ActivityIconsInterceptor(context, dm, overrideThemeRes));
 			addDrawableInterceptor(new WhiteDrawableInterceptor(res));
 		}
 

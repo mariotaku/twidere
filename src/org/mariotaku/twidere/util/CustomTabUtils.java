@@ -102,18 +102,13 @@ public class CustomTabUtils implements Constants {
 		}
 
 		CUSTOM_TABS_ICON_NAME_MAP.put("accounts", R.drawable.ic_iconic_action_accounts);
-		CUSTOM_TABS_ICON_NAME_MAP.put("fire", R.drawable.ic_iconic_action_list);
-		CUSTOM_TABS_ICON_NAME_MAP.put("hamster", R.drawable.ic_iconic_action_list);
 		CUSTOM_TABS_ICON_NAME_MAP.put("hashtag", R.drawable.ic_iconic_action_hashtag);
-		CUSTOM_TABS_ICON_NAME_MAP.put("heart", R.drawable.ic_iconic_action_list);
+		CUSTOM_TABS_ICON_NAME_MAP.put("heart", R.drawable.ic_iconic_action_heart);
 		CUSTOM_TABS_ICON_NAME_MAP.put("home", R.drawable.ic_iconic_action_home);
 		CUSTOM_TABS_ICON_NAME_MAP.put("list", R.drawable.ic_iconic_action_list);
 		CUSTOM_TABS_ICON_NAME_MAP.put("mention", R.drawable.ic_iconic_action_mention);
 		CUSTOM_TABS_ICON_NAME_MAP.put("message", R.drawable.ic_iconic_action_message);
-		CUSTOM_TABS_ICON_NAME_MAP.put("neko", R.drawable.ic_iconic_action_neko);
-		CUSTOM_TABS_ICON_NAME_MAP.put("pin", R.drawable.ic_iconic_action_list);
 		CUSTOM_TABS_ICON_NAME_MAP.put("quote", R.drawable.ic_iconic_action_quote);
-		CUSTOM_TABS_ICON_NAME_MAP.put("ribbon", R.drawable.ic_iconic_action_list);
 		CUSTOM_TABS_ICON_NAME_MAP.put("search", R.drawable.ic_iconic_action_search);
 		CUSTOM_TABS_ICON_NAME_MAP.put("staggered", R.drawable.ic_iconic_action_staggered);
 		CUSTOM_TABS_ICON_NAME_MAP.put("star", R.drawable.ic_iconic_action_star);
@@ -251,21 +246,24 @@ public class CustomTabUtils implements Constants {
 		return CUSTOM_TABS_CONFIGURATION_MAP.get(key);
 	}
 
-	public static Drawable getTabIconDrawable(final Context context, final Object icon_obj) {
-		if (context == null) return null;
-		final Resources res = context.getResources();
-		if (icon_obj instanceof Integer) {
+	public static Drawable getTabIconDrawable(final Context context, final Object iconObj) {
+		return getTabIconDrawable(context.getResources(), iconObj);
+	}
+
+	public static Drawable getTabIconDrawable(final Resources res, final Object iconObj) {
+		if (res == null) return null;
+		if (iconObj instanceof Integer) {
 			try {
-				return res.getDrawable((Integer) icon_obj);
+				return res.getDrawable((Integer) iconObj);
 			} catch (final Resources.NotFoundException e) {
 				// Ignore.
 			}
-		} else if (icon_obj instanceof Bitmap)
-			return new BitmapDrawable(res, (Bitmap) icon_obj);
-		else if (icon_obj instanceof Drawable)
-			return (Drawable) icon_obj;
-		else if (icon_obj instanceof File) {
-			final Bitmap b = getTabIconFromFile((File) icon_obj, res);
+		} else if (iconObj instanceof Bitmap)
+			return new BitmapDrawable(res, (Bitmap) iconObj);
+		else if (iconObj instanceof Drawable)
+			return (Drawable) iconObj;
+		else if (iconObj instanceof File) {
+			final Bitmap b = getTabIconFromFile((File) iconObj, res);
 			if (b != null) return new BitmapDrawable(res, b);
 		}
 		return res.getDrawable(R.drawable.ic_iconic_action_list);

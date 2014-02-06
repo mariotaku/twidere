@@ -10,9 +10,9 @@ public class TwidereResources extends Resources implements IThemedResources {
 
 	private final Helper mHelper;
 
-	public TwidereResources(final Context context, final Resources res) {
+	public TwidereResources(final Context context, final Resources res, final int overrideThemeRes) {
 		super(res.getAssets(), res.getDisplayMetrics(), res.getConfiguration());
-		mHelper = new Helper(this, context);
+		mHelper = new Helper(this, context, overrideThemeRes);
 	}
 
 	@Override

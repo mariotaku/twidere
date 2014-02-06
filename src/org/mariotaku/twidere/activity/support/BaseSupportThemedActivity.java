@@ -22,7 +22,6 @@ package org.mariotaku.twidere.activity.support;
 import static org.mariotaku.twidere.util.Utils.restartActivity;
 
 import android.content.res.Resources;
-import android.content.res.Resources.Theme;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
@@ -44,12 +43,18 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	private AccentHelper mAccentHelper;
 
-	private Theme mTheme;
-
 	@Override
 	public void finish() {
 		super.finish();
 		overrideCloseAnimationIfNeeded();
+	}
+
+	@Override
+	public final Resources getAccentResources() {
+		if (mAccentHelper == null) {
+			mAccentHelper = new TwidereAccentHelper(getThemeResourceId(), getThemeColor());
+		}
+		return mAccentHelper.getResources(this, super.getResources());
 	}
 
 	@Override
@@ -64,20 +69,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	@Override
 	public Resources getResources() {
-		return getThemedResources();
-	}
-
-	@Override
-	public Theme getTheme() {
-		if (mTheme == null) {
-			mTheme = getResources().newTheme();
-			mTheme.setTo(super.getTheme());
-			final int getThemeResourceId = getThemeResourceId();
-			if (getThemeResourceId != 0) {
-				mTheme.applyStyle(getThemeResourceId, true);
-			}
-		}
-		return mTheme;
+		return getAccentResources();
 	}
 
 	@Override
@@ -87,14 +79,6 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	@Override
 	public abstract int getThemeColor();
-
-	@Override
-	public final Resources getThemedResources() {
-		if (mAccentHelper == null) {
-			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this));
-		}
-		return mAccentHelper.getResources(this, super.getResources());
-	}
 
 	@Override
 	public String getThemeFontFamily() {
@@ -142,7 +126,6 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		}
 		setTheme();
 		super.onCreate(savedInstanceState);
-		// AccentThemeFixer.fixActionBar(getActionBar(), this);
 		setActionBarBackground();
 	}
 

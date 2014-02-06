@@ -729,7 +729,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case MENU_DELETE: {
-				mTwitterWrapper.destroyStatusAsync(mStatus.account_id, mStatus.id);
+				DestroyStatusDialogFragment.show(getFragmentManager(), mStatus);
 				break;
 			}
 			case MENU_ADD_TO_FILTER: {

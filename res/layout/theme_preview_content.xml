@@ -43,7 +43,7 @@
 				android:contentDescription="@string/app_name"
 				android:padding="4dp"
 				android:scaleType="centerInside"
-				android:src="@drawable/ic_launcher"/>
+				android:src="@drawable/ic_launcher_twidere_iconic"/>
 
 			<TextView
 				android:id="@+id/actionbar_title"

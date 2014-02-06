@@ -57,6 +57,7 @@ import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -451,9 +452,9 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			final ImageView icon = (ImageView) view.findViewById(android.R.id.icon);
 			final int value = item.getValue();
 			if (value > 0) {
-				icon.setImageDrawable(mResources.getDrawable(value));
+				ViewAccessor.setBackground(icon, mResources.getDrawable(value));
 			} else {
-				icon.setImageDrawable(null);
+				ViewAccessor.setBackground(icon, null);
 			}
 		}
 

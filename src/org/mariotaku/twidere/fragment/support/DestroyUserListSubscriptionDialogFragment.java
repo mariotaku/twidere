@@ -71,9 +71,9 @@ public class DestroyUserListSubscriptionDialogFragment extends BaseSupportDialog
 	}
 
 	public static DestroyUserListSubscriptionDialogFragment show(final FragmentManager fm,
-			final ParcelableUserList user_list) {
+			final ParcelableUserList userList) {
 		final Bundle args = new Bundle();
-		args.putParcelable(EXTRA_USER_LIST, user_list);
+		args.putParcelable(EXTRA_USER_LIST, userList);
 		final DestroyUserListSubscriptionDialogFragment f = new DestroyUserListSubscriptionDialogFragment();
 		f.setArguments(args);
 		f.show(fm, FRAGMENT_TAG);

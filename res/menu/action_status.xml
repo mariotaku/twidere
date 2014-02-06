@@ -41,27 +41,21 @@
 		android:icon="@drawable/ic_iconic_action_copy"
 		android:title="@android:string/copy"/>
 	<item
+		android:id="@id/translate"
+		android:icon="@drawable/ic_iconic_action_translate"
+		android:title="@string/translate"/>
+	<item
 		android:id="@id/add_to_filter"
-		android:icon="@drawable/ic_iconic_action_mute"
+		android:icon="@drawable/ic_iconic_action_speaker_muted"
 		android:title="@string/add_to_filter"/>
 	<item
-		android:id="@+id/delete_submenu"
+		android:id="@id/delete"
 		android:icon="@drawable/ic_iconic_action_delete"
 		android:title="@string/delete"
-		android:visible="false">
-		<menu>
-			<item
-				android:id="@id/delete"
-				android:icon="@drawable/ic_iconic_action_delete"
-				android:title="@string/delete"/>
-			<item
-				android:icon="@drawable/ic_iconic_action_cancel"
-				android:title="@android:string/cancel"/>
-		</menu>
-	</item>
+		android:visible="false"/>
 	<item
 		android:id="@id/multi_select"
-		android:icon="@drawable/ic_menu_mark"
+		android:icon="@drawable/ic_iconic_action_checked"
 		android:title="@string/multi_select"/>
 
 </menu>

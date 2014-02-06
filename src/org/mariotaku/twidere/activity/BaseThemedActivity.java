@@ -50,6 +50,14 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 	}
 
 	@Override
+	public final Resources getAccentResources() {
+		if (mAccentHelper == null) {
+			mAccentHelper = new TwidereAccentHelper(getThemeResourceId(), getThemeColor());
+		}
+		return mAccentHelper.getResources(this, super.getResources());
+	}
+
+	@Override
 	public final int getCurrentThemeResourceId() {
 		return mCurrentThemeResource;
 	}
@@ -61,7 +69,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 
 	@Override
 	public Resources getResources() {
-		return getThemedResources();
+		return getAccentResources();
 	}
 
 	@Override
@@ -84,14 +92,6 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 
 	@Override
 	public abstract int getThemeColor();
-
-	@Override
-	public final Resources getThemedResources() {
-		if (mAccentHelper == null) {
-			mAccentHelper = new TwidereAccentHelper(ThemeUtils.getUserThemeColor(this));
-		}
-		return mAccentHelper.getResources(this, super.getResources());
-	}
 
 	@Override
 	public String getThemeFontFamily() {

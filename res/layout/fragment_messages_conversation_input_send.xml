@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:gravity="bottom"
+	android:orientation="horizontal">
+
+	<org.mariotaku.twidere.view.StatusComposeEditText
+		android:id="@+id/edit_text"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:completionThreshold="1"
+		android:gravity="left|bottom"
+		android:hint="@string/type_to_compose"
+		android:imeOptions="actionDone"
+		android:inputType="textMultiLine"
+		android:maxHeight="140dp"
+		android:minHeight="64dp"
+		android:singleLine="false"/>
+
+	<LinearLayout
+		android:id="@+id/send"
+		style="?android:borderlessButtonStyle"
+		android:layout_width="@dimen/action_button_size"
+		android:layout_height="wrap_content"
+		android:layout_weight="0"
+		android:gravity="bottom"
+		android:orientation="vertical">
+
+		<org.mariotaku.twidere.view.StatusTextCountView
+			android:id="@+id/text_count"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom|right"
+			android:drawableBottom="@drawable/ic_menu_send"
+			android:gravity="center"
+			android:paddingBottom="8dp"
+			android:paddingRight="8dp"
+			android:singleLine="true"
+			android:textAllCaps="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:textColorPrimary"
+			android:textStyle="bold"/>
+	</LinearLayout>
+
+</LinearLayout>

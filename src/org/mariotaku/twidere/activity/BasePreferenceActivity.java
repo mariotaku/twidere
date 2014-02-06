@@ -34,7 +34,7 @@ import org.mariotaku.twidere.util.theme.TwidereResourceHelper;
 
 public abstract class BasePreferenceActivity extends PreferenceActivity implements Constants, IThemedActivity {
 
-	private final TwidereResourceHelper mResourceHelper = new TwidereResourceHelper();
+	private TwidereResourceHelper mResourceHelper;
 	private int mCurrentThemeResource;
 	private Theme mTheme;
 
@@ -42,6 +42,14 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 	public void finish() {
 		super.finish();
 		overrideCloseAnimationIfNeeded();
+	}
+
+	@Override
+	public Resources getAccentResources() {
+		if (mResourceHelper == null) {
+			mResourceHelper = new TwidereResourceHelper(getThemeResourceId());
+		}
+		return mResourceHelper.getResources(this, super.getResources());
 	}
 
 	@Override
@@ -56,7 +64,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 
 	@Override
 	public Resources getResources() {
-		return getThemedResources();
+		return getAccentResources();
 	}
 
 	@Override
@@ -80,11 +88,6 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 	@Override
 	public int getThemeColor() {
 		return 0;
-	}
-
-	@Override
-	public Resources getThemedResources() {
-		return mResourceHelper.getResources(this, super.getResources());
 	}
 
 	@Override

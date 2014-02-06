@@ -126,7 +126,7 @@ import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereValidator;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
-import org.mariotaku.twidere.view.SendButton;
+import org.mariotaku.twidere.view.StatusTextCountView;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import org.mariotaku.twidere.view.iface.IColorLabelView;
 
@@ -186,7 +186,10 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private DraftItem mDraftItem;
 	private long mInReplyToStatusId;
 	private String mOriginalText;
-	private SendButton mSendView, mBottomSendView;
+	private View mSendView, mBottomSendView;
+	private StatusTextCountView mSendTextCountView, mBottomSendTextCountView;
+
+	private boolean mBottomSendButton;
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -200,7 +203,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 	@Override
 	public Resources getResources() {
-		return getThemedResources();
+		return getAccentResources();
 	}
 
 	@Override
@@ -423,8 +426,10 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		mAccountSelector = (Gallery) findViewById(R.id.account_selector);
 		final View composeActionBar = findViewById(R.id.compose_actionbar);
 		final View composeBottomBar = findViewById(R.id.compose_bottombar);
-		mSendView = (SendButton) composeActionBar.findViewById(R.id.send);
-		mBottomSendView = (SendButton) composeBottomBar.findViewById(R.id.send);
+		mSendView = composeActionBar.findViewById(R.id.send);
+		mBottomSendView = composeBottomBar.findViewById(R.id.send);
+		mSendTextCountView = (StatusTextCountView) mSendView.findViewById(R.id.status_text_count);
+		mBottomSendTextCountView = (StatusTextCountView) mBottomSendView.findViewById(R.id.status_text_count);
 		ViewAccessor.setBackground(findViewById(R.id.compose_content), getWindowContentOverlayForCompose(this));
 		ViewAccessor.setBackground(composeActionBar, getActionBarBackground(this, getCurrentThemeResourceId()));
 	}
@@ -476,8 +481,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	public boolean onLongClick(final View v) {
 		switch (v.getId()) {
 			case R.id.send: {
-				final boolean bottomSendButton = mPreferences.getBoolean(KEY_BOTTOM_SEND_BUTTON, false);
-				showMenuItemToast(v, getString(R.string.send), bottomSendButton);
+				showMenuItemToast(v, getString(R.string.send), mBottomSendButton);
 				return true;
 			}
 		}
@@ -545,6 +549,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		super.onCreate(savedInstanceState);
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mPreferences = SharedPreferencesWrapper.getInstance(this, SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mBottomSendButton = mPreferences.getBoolean(KEY_BOTTOM_SEND_BUTTON, false);
 		mTwitterWrapper = getTwidereApplication().getTwitterWrapper();
 		mResolver = getContentResolver();
 		mImageLoader = getTwidereApplication().getImageLoaderWrapper();
@@ -610,8 +615,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 		reloadAttachedImageThumbnail();
 
-		final boolean bottomSendButton = mPreferences.getBoolean(KEY_BOTTOM_SEND_BUTTON, false);
-		final boolean useBottomMenu = isSingleAccount() || !bottomSendButton;
+		final boolean useBottomMenu = isSingleAccount() || !mBottomSendButton;
 		if (useBottomMenu) {
 			mBottomMenuBar.inflate(R.menu.menu_compose);
 		} else {
@@ -619,13 +623,15 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		}
 		mBottomMenuBar.setVisibility(useBottomMenu ? View.VISIBLE : View.GONE);
 		mActionMenuBar.setVisibility(useBottomMenu ? View.GONE : View.VISIBLE);
-		mSendView.setVisibility(bottomSendButton ? View.GONE : View.VISIBLE);
-		mBottomSendDivider.setVisibility(bottomSendButton ? View.VISIBLE : View.GONE);
-		mBottomSendView.setVisibility(bottomSendButton ? View.VISIBLE : View.GONE);
+		mSendView.setVisibility(mBottomSendButton ? View.GONE : View.VISIBLE);
+		mBottomSendDivider.setVisibility(mBottomSendButton ? View.VISIBLE : View.GONE);
+		mBottomSendView.setVisibility(mBottomSendButton ? View.VISIBLE : View.GONE);
+		mSendView.setOnClickListener(this);
+		mBottomSendView.setOnClickListener(this);
 		mSendView.setOnLongClickListener(this);
 		mBottomSendView.setOnLongClickListener(this);
 		final Menu menu = mBottomMenuBar.getMenu(), actionBarMenu = mActionMenuBar.getMenu();
-		final Menu showingMenu = bottomSendButton ? actionBarMenu : menu;
+		final Menu showingMenu = mBottomSendButton ? actionBarMenu : menu;
 		if (showingMenu != null) {
 			final Intent compose_extensions_intent = new Intent(INTENT_ACTION_EXTENSION_COMPOSE);
 			addIntentToMenu(this, showingMenu, compose_extensions_intent, MENU_GROUP_COMPOSE_EXTENSION);
@@ -651,7 +657,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			bottomMenuContainerParams.weight = 0;
 			bottomMenuContainerParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
 			maxItemsShown = res.getInteger(R.integer.max_compose_menu_buttons_bottom);
-			mAccountSelectorDivider.setVisibility(bottomSendButton ? View.GONE : View.VISIBLE);
+			mAccountSelectorDivider.setVisibility(mBottomSendButton ? View.GONE : View.VISIBLE);
 		}
 		mBottomMenuContainer.setLayoutParams(bottomMenuContainerParams);
 		mBottomMenuBar.setMaxItemsShown(maxItemsShown);
@@ -1080,16 +1086,13 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	}
 
 	private void updateTextCount() {
-		final boolean bottomSendButton = mPreferences.getBoolean(KEY_BOTTOM_SEND_BUTTON, false);
-		final View sendItemView = bottomSendButton ? mBottomSendView : mSendView;
-		if (sendItemView != null && mEditText != null) {
-			final SendButton sendTextCountView = (SendButton) sendItemView.findViewById(R.id.send);
-			sendItemView.setOnClickListener(this);
+		final StatusTextCountView textCountView = mBottomSendButton ? mBottomSendTextCountView : mSendTextCountView;
+		if (textCountView != null && mEditText != null) {
 			final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
 			final String text = hasMedia() && text_orig != null ? mImageUploaderUsed ? getImageUploadStatus(this,
 					FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
-			final int validated_count = text != null ? mValidator.getTweetLength(text) : 0;
-			sendTextCountView.setTextCount(validated_count);
+			final int validatedCount = text != null ? mValidator.getTweetLength(text) : 0;
+			textCountView.setTextCount(validatedCount);
 		}
 	}
 
