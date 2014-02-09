@@ -22,6 +22,7 @@ package org.mariotaku.twidere.util;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -34,6 +35,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import org.mariotaku.refreshnow.widget.RefreshNowProgressIndicator.IndicatorConfig;
@@ -438,6 +440,19 @@ public class ThemeUtils implements Constants {
 		return new TwidereContextThemeWrapper(baseContext, getThemeResActionIcons(baseThemeRes), accentColor);
 	}
 
+	public static LayoutInflater getThemedLayoutInflaterForActionIcons(final Context context) {
+		final int themeRes, accentColor;
+		if (context instanceof IThemedActivity) {
+			themeRes = ((IThemedActivity) context).getThemeResourceId();
+			accentColor = ((IThemedActivity) context).getThemeColor();
+		} else {
+			themeRes = getSettingsThemeResource(context);
+			accentColor = getUserThemeColor(context);
+		}
+		final Context theme = getThemedContextForActionIcons(context, themeRes, accentColor);
+		return LayoutInflater.from(theme);
+	}
+
 	public static String getThemeFontFamily(final Context context) {
 		if (context == null) return VALUE_THEME_FONT_FAMILY_REGULAR;
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -665,6 +680,7 @@ public class ThemeUtils implements Constants {
 			case R.style.Theme_Twidere_Colored_SolidBackground:
 			case R.style.Theme_Twidere_Colored_Transparent:
 			case R.style.Theme_Twidere_Colored_Compose:
+			case R.style.Theme_Twidere_Settings_Light:
 				return true;
 		}
 		return false;
@@ -688,6 +704,31 @@ public class ThemeUtils implements Constants {
 				return true;
 		}
 		return false;
+	}
+
+	public static void notifyStatusBarColorChanged(final Context context, final int themeResource,
+			final int accentColor, final int backgroundAlpha) {
+		final Intent intent = new Intent("com.mohammadag.colouredstatusbar.ChangeStatusBarColor");
+		if (isColoredActionBar(themeResource)) {
+			intent.putExtra("status_bar_color", backgroundAlpha << 24 | accentColor);
+		} else {
+			if (isLightActionBar(themeResource)) {
+				intent.putExtra("status_bar_color", backgroundAlpha << 24 | 0xFFDDDDDD);
+			} else {
+				intent.putExtra("status_bar_color", backgroundAlpha << 24 | 0xFF222222);
+			}
+		}
+		if (isLightActionBar(themeResource)) {
+			intent.putExtra("status_bar_icons_color", Color.DKGRAY);
+		} else {
+			intent.putExtra("status_bar_icons_color", Color.WHITE);
+		}
+		// Please note that these are not yet implemented!!!
+		// You're free to include them in your code so that when they
+		// are implemented, your app will work out of the box.
+		intent.putExtra("navigation_bar_color", Color.BLACK);
+		intent.putExtra("navigation_bar_icon_color", Color.WHITE);
+		context.sendOrderedBroadcast(intent, null);
 	}
 
 	public static void overrideActivityCloseAnimation(final Activity activity) {

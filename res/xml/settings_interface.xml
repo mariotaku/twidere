@@ -8,11 +8,6 @@
 		android:key="unread_count"
 		android:title="@string/unread_count"/>
 	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
-		android:defaultValue="true"
-		android:key="separate_retweet_action"
-		android:summary="@string/separate_retweet_action_summary"
-		android:title="@string/separate_retweet_action"/>
-	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="false"
 		android:key="bottom_send_button"
 		android:title="@string/bottom_send_button"/>

@@ -88,7 +88,6 @@ public interface Constants extends TwidereConstants {
 	public static final int MENU_COPY = R.id.copy;
 	public static final int MENU_TOGGLE_SENSITIVE = R.id.toggle_sensitive;
 	public static final int MENU_REVOKE = R.id.revoke;
-	public static final int MENU_IMPORT_FROM = R.id.import_from;
 	public static final int MENU_ADD_TO_LIST = R.id.add_to_list;
 	public static final int MENU_DELETE_FROM_LIST = R.id.delete_from_list;
 	public static final int MENU_STATUSES = R.id.statuses;

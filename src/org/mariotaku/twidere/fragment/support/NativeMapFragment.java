@@ -29,9 +29,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.util.MapInterface;
+import org.mariotaku.twidere.fragment.iface.IMapFragment;
 
-public class NativeMapFragment extends SupportMapFragment implements Constants, MapInterface {
+public class NativeMapFragment extends SupportMapFragment implements Constants, IMapFragment {
 
 	private GoogleMap mMapView;
 

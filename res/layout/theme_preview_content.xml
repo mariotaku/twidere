@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mariotaku.twidere.view.ExtendedRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/theme_preview_content"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<View
 		android:id="@+id/theme_preview_window_wallpaper"
@@ -41,7 +38,7 @@
 				android:layout_marginTop="4dp"
 				android:adjustViewBounds="true"
 				android:contentDescription="@string/app_name"
-				android:padding="4dp"
+				android:padding="@dimen/element_spacing_small"
 				android:scaleType="centerInside"
 				android:src="@drawable/ic_launcher_twidere_iconic"/>
 
@@ -49,8 +46,6 @@
 				android:id="@+id/actionbar_title"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:fontFamily="sans-serif"
-				android:paddingLeft="4dp"
 				android:singleLine="true"
 				android:text="@string/app_name"
 				android:textAppearance="?android:textAppearanceMedium"/>
@@ -59,4 +54,4 @@
 		<include layout="@layout/theme_preview_status_content"/>
 	</LinearLayout>
 
-</org.mariotaku.twidere.view.ExtendedRelativeLayout>
+</merge>

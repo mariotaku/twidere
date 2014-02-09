@@ -148,6 +148,8 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 		super.onResume();
 		if (isThemeChanged()) {
 			restart();
+		} else {
+			ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha);
 		}
 	}
 
@@ -164,6 +166,7 @@ public abstract class BaseThemedActivity extends Activity implements IThemedActi
 		mCurrentThemeColor = getThemeColor();
 		mCurrentThemeFontFamily = getThemeFontFamily();
 		mCurrentThemeBackgroundAlpha = getThemeBackgroundAlpha();
+		ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha);
 		setTheme(mCurrentThemeResource);
 		if (ThemeUtils.isTransparentBackground(mCurrentThemeResource)) {
 			getWindow().setBackgroundDrawable(ThemeUtils.getWindowBackground(this));

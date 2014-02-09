@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.mariotaku.twidere.view.ColorLabelLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.mariotaku.twidere.view.ColorLabelRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/account_content"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="?android:activatedBackgroundIndicator"
 	android:descendantFocusability="blocksDescendants"
-	android:gravity="center_vertical"
-	android:orientation="vertical"
 	android:padding="@dimen/element_spacing_small"
 	app:ignorePadding="true">
 
 	<LinearLayout
+		android:id="@+id/profile_container"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
 		android:gravity="center_vertical"
 		android:minHeight="?android:listPreferredItemHeightSmall"
 		android:orientation="horizontal"
@@ -72,14 +73,17 @@
 	</LinearLayout>
 
 	<View
+		android:id="@+id/profile_divider"
 		android:layout_width="match_parent"
 		android:layout_height="0.4dp"
+		android:layout_below="@+id/profile_container"
 		android:layout_margin="@dimen/element_spacing_small"
 		android:background="#40808080"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:layout_below="@+id/profile_divider"
 		android:gravity="center_vertical"
 		android:orientation="horizontal"
 		android:padding="@dimen/element_spacing_small">
@@ -99,4 +103,4 @@
 			android:layout_gravity="right"/>
 	</LinearLayout>
 
-</org.mariotaku.twidere.view.ColorLabelLinearLayout>
+</org.mariotaku.twidere.view.ColorLabelRelativeLayout>

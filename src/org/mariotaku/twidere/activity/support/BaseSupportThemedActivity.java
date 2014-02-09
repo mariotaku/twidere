@@ -134,6 +134,8 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		super.onResume();
 		if (isThemeChanged()) {
 			restart();
+		} else {
+			ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha);
 		}
 	}
 
@@ -154,6 +156,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		mCurrentThemeColor = getThemeColor();
 		mCurrentThemeFontFamily = getThemeFontFamily();
 		mCurrentThemeBackgroundAlpha = getThemeBackgroundAlpha();
+		ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha);
 		setTheme(mCurrentThemeResource);
 		if (shouldSetWindowBackground() && ThemeUtils.isTransparentBackground(mCurrentThemeResource)) {
 			getWindow().setBackgroundDrawable(ThemeUtils.getWindowBackground(this));

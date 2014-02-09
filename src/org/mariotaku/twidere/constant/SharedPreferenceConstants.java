@@ -104,7 +104,6 @@ public interface SharedPreferenceConstants {
 	public static final int DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int DEFAULT_LOAD_ITEM_LIMIT = 20;
 	public static final boolean DEFAULT_HARDWARE_ACCELERATION = true;
-	public static final boolean DEFAULT_SEPARATE_RETWEET_ACTION = true;
 
 	@Preference(type = INT, hasDefault = true, defaultInt = DEFAULT_DATABASE_ITEM_LIMIT)
 	public static final String KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
@@ -197,9 +196,8 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_COMPOSE_ACCOUNTS = "compose_accounts";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_TCP_DNS_QUERY = "tcp_dns_query";
+	@Preference(type = STRING, hasDefault = true, defaultString = "8.8.8.8")
 	public static final String KEY_DNS_SERVER = "dns_server";
-	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = DEFAULT_SEPARATE_RETWEET_ACTION)
-	public static final String KEY_SEPARATE_RETWEET_ACTION = "separate_retweet_action";
 	public static final String KEY_CONNECTION_TIMEOUT = "connection_timeout";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
 	public static final String KEY_NAME_FIRST = "name_first";

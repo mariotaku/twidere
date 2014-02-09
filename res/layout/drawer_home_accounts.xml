@@ -10,6 +10,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		class="org.mariotaku.twidere.fragment.support.AccountsDrawerFragment"
-		tools:layout="@layout/accounts_drawer"/>
+		tools:layout="@layout/fragment_accounts_drawer"/>
 
 </org.mariotaku.twidere.view.LeftDrawerFrameLayout>

@@ -17,9 +17,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.util;
+package org.mariotaku.twidere.fragment.iface;
 
-public interface MapInterface {
+public interface IMapFragment {
 
 	public void center();
 

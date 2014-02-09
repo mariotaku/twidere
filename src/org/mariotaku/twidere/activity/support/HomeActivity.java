@@ -46,7 +46,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,18 +53,20 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.SparseArray;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ProgressBar;
@@ -149,7 +150,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	private ExtendedViewPager mViewPager;
 	private TabPageIndicator mIndicator;
-	private SlidingMenu mSlidingMenu;
+	private HomeSlidingMenu mSlidingMenu;
 	private View mEmptyTabHint;
 	private ProgressBar mSmartBarProgress;
 	private HomeActionsActionView mActionsButton, mBottomActionsButton;
@@ -157,8 +158,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	private Fragment mCurrentVisibleFragment;
 	private UpdateUnreadCountTask mUpdateUnreadCountTask;
-
-	private final Rect mRect = new Rect();
 
 	private int mTabDisplayOption;
 
@@ -219,7 +218,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	@Override
 	public void onClosed() {
-		updatePullToRefreshLayoutScroll(0, true);
+		updateDrawerPercentOpen(0, true);
 	}
 
 	@Override
@@ -229,7 +228,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		mEmptyTabHint = findViewById(R.id.empty_tab_hint);
 		mBottomActionsButton = (HomeActionsActionView) findViewById(R.id.actions_button_bottom);
 		if (mSlidingMenu == null) {
-			mSlidingMenu = new SlidingMenu(this);
+			mSlidingMenu = new HomeSlidingMenu(this);
 		}
 	}
 
@@ -282,7 +281,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	@Override
 	public void onOpened() {
-		updatePullToRefreshLayoutScroll(1, true);
+		updateDrawerPercentOpen(1, true);
 	}
 
 	@Override
@@ -385,9 +384,9 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	public void onWindowFocusChanged(final boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (mSlidingMenu != null && mSlidingMenu.isMenuShowing()) {
-			updatePullToRefreshLayoutScroll(1, false);
+			updateDrawerPercentOpen(1, false);
 		} else {
-			updatePullToRefreshLayoutScroll(0, false);
+			updateDrawerPercentOpen(0, false);
 		}
 	}
 
@@ -604,17 +603,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		return mLeftDrawerContainer;
 	}
 
-	private View getPullToRefreshHeaderView(final Fragment f) {
-		return null;
-		// if (f.getActivity() == null || !(f instanceof
-		// IBasePullToRefreshFragment)) return null;
-		// final IBasePullToRefreshFragment ptrf = (IBasePullToRefreshFragment)
-		// f;
-		// final PullToRefreshLayout l = ptrf.getPullToRefreshLayout();
-		// if (l == null) return null;
-		// return l.getHeaderView();
-	}
-
 	private int handleIntent(final Intent intent, final boolean firstCreate) {
 		// use packge's class loader to prevent BadParcelException
 		intent.setExtrasClassLoader(getClassLoader());
@@ -702,18 +690,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		return true;
 	}
 
-	private void setPullToRefreshLayoutScroll(final WindowManager wm, final Fragment f, final int scrollX,
-			final int statusBarHeight, final boolean horizontalScroll) {
-		if (f == null || f.isDetached() || f.getActivity() == null) return;
-		final View headerView = getPullToRefreshHeaderView(f);
-		if (headerView != null) {
-			headerView.setScrollX(scrollX);
-			if (!horizontalScroll) {
-				updatePullToRefreshY(wm, headerView, statusBarHeight);
-			}
-		}
-	}
-
 	private void setTabPosition(final int initial_tab) {
 		final boolean remember_position = mPreferences.getBoolean(KEY_REMEMBER_POSITION, true);
 		if (initial_tab >= 0) {
@@ -737,14 +713,15 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	private void setupSlidingMenu() {
 		if (mSlidingMenu == null) return;
 		final int marginThreshold = getResources().getDimensionPixelSize(R.dimen.default_sliding_menu_margin_threshold);
-		mSlidingMenu.setMode(SlidingMenu.LEFT);
+		mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
 		mSlidingMenu.setShadowWidthRes(R.dimen.default_sliding_menu_shadow_width);
 		mSlidingMenu.setShadowDrawable(R.drawable.shadow_holo);
 		mSlidingMenu.setBehindWidthRes(R.dimen.left_drawer_width);
 		mSlidingMenu.setTouchmodeMarginThreshold(marginThreshold);
 		mSlidingMenu.setFadeDegree(0.5f);
 		mSlidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
-		mSlidingMenu.setMenu(R.layout.home_left_drawer_container);
+		mSlidingMenu.setMenu(R.layout.drawer_home_accounts);
+		mSlidingMenu.setSecondaryMenu(R.layout.drawer_home_quick_menu);
 		mSlidingMenu.setOnOpenedListener(this);
 		mSlidingMenu.setOnClosedListener(this);
 		mLeftDrawerContainer = (LeftDrawerFrameLayout) mSlidingMenu.getMenu().findViewById(R.id.left_drawer_container);
@@ -842,26 +819,18 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		mBottomActionsButton.setLayoutParams(compose_lp);
 	}
 
-	private void updatePullToRefreshLayoutScroll(final float percentOpen, final boolean horizontalScroll) {
-		final Window w = getWindow();
-		final WindowManager wm = getWindowManager();
-		final View decorView = w.getDecorView();
-		decorView.getWindowVisibleDisplayFrame(mRect);
-		final int statusBarHeight = mRect.top;
+	private void updateDrawerPercentOpen(final float percentOpen, final boolean horizontalScroll) {
 		final LeftDrawerFrameLayout ld = getLeftDrawerContainer();
 		if (ld == null) return;
-		final int scrollX = -Math.round(percentOpen * ld.getMeasuredWidth());
 		ld.setPercentOpen(percentOpen);
-		for (int i = 0, j = mAttachedFragments.size(); i < j; i++) {
-			final Fragment f = mAttachedFragments.valueAt(i);
-			setPullToRefreshLayoutScroll(wm, f, scrollX, statusBarHeight, horizontalScroll);
-		}
 	}
 
 	private void updateSlidingMenuTouchMode() {
 		if (mViewPager == null || mSlidingMenu == null) return;
 		final int position = mViewPager.getCurrentItem();
-		final int mode = !mViewPager.isEnabled() || position == 0 ? SlidingMenu.TOUCHMODE_FULLSCREEN
+		final boolean pagingEnabled = mViewPager.isEnabled();
+		final boolean atFirstOrLast = position == 0 || position == mPagerAdapter.getCount() - 1;
+		final int mode = !pagingEnabled || atFirstOrLast ? SlidingMenu.TOUCHMODE_FULLSCREEN
 				: SlidingMenu.TOUCHMODE_MARGIN;
 		mSlidingMenu.setTouchModeAbove(mode);
 	}
@@ -871,15 +840,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		if (useBottomActionItems) {
 			invalidateOptionsMenu();
 		}
-	}
-
-	private static void updatePullToRefreshY(final WindowManager wm, final View view, final int y) {
-		if (view == null || wm == null || view.getWindowToken() == null) return;
-		final ViewGroup.LayoutParams lp = view.getLayoutParams();
-		if (!(lp instanceof WindowManager.LayoutParams)) return;
-		final WindowManager.LayoutParams wlp = (WindowManager.LayoutParams) lp;
-		wlp.y = y;
-		wm.updateViewLayout(view, wlp);
 	}
 
 	private static final class AccountChangeObserver extends ContentObserver {
@@ -902,6 +862,54 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		}
 	}
 
+	private static class HomeSlidingMenu extends SlidingMenu {
+
+		private final HomeActivity mActivity;
+		private final GestureDetector mGestureDetector;
+
+		public HomeSlidingMenu(final HomeActivity activity) {
+			super(activity);
+			mActivity = activity;
+			mGestureDetector = new GestureDetector(activity, new GestureListener(activity));
+		}
+
+		@Override
+		public boolean onInterceptTouchEvent(final MotionEvent ev) {
+			final int actionMasked = ev.getActionMasked();
+			if (mGestureDetector.onTouchEvent(ev) && actionMasked == MotionEvent.ACTION_MOVE) {
+				setSlidingEnabled(isSecondaryMenuShowing() || isMenuShowing());
+			} else {
+				setSlidingEnabled(true);
+			}
+			// setTouchModeAbove(mode);
+			return super.onInterceptTouchEvent(ev);
+		}
+
+		private static class GestureListener extends SimpleOnGestureListener {
+
+			private final HomeActivity mActivity;
+
+			public GestureListener(final HomeActivity activity) {
+				mActivity = activity;
+			}
+
+			@Override
+			public boolean onDown(final MotionEvent e) {
+				return true;
+			}
+
+			@Override
+			public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX,
+					final float distanceY) {
+				final ViewPager viewPager = mActivity.mViewPager;
+				if (viewPager == null) return false;
+				return viewPager.canScrollHorizontally(Math.round(distanceX));
+			}
+
+		}
+
+	}
+
 	private static class ListenerCanvasTransformer implements CanvasTransformer {
 		private final HomeActivity mHomeActivity;
 
@@ -911,7 +919,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 		@Override
 		public void transformCanvas(final Canvas canvas, final float percentOpen) {
-			mHomeActivity.updatePullToRefreshLayoutScroll(percentOpen, true);
+			mHomeActivity.updateDrawerPercentOpen(percentOpen, true);
 		}
 
 	}

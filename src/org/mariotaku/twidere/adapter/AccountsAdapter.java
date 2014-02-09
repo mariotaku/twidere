@@ -22,10 +22,10 @@ package org.mariotaku.twidere.adapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;

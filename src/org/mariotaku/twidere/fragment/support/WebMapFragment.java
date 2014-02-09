@@ -28,10 +28,10 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-import org.mariotaku.twidere.util.MapInterface;
+import org.mariotaku.twidere.fragment.iface.IMapFragment;
 import org.mariotaku.twidere.util.webkit.DefaultWebViewClient;
 
-public class WebMapFragment extends BaseSupportWebViewFragment implements MapInterface {
+public class WebMapFragment extends BaseSupportWebViewFragment implements IMapFragment {
 
 	private static final String MAPVIEW_URI = "file:///android_asset/mapview.html";
 

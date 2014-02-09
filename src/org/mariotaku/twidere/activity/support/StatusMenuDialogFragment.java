@@ -1,14 +1,11 @@
 package org.mariotaku.twidere.activity.support;
 
-import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -53,28 +50,11 @@ public class StatusMenuDialogFragment extends BaseSupportDialogFragment implemen
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(this);
 		builder.setView(listView);
-		final int activatedColor = ThemeUtils.getUserThemeColor(getActivity());
-		final boolean separateRetweetAction = prefs.getBoolean(KEY_SEPARATE_RETWEET_ACTION,
-				DEFAULT_SEPARATE_RETWEET_ACTION);
 		final boolean longclickToOpenMenu = prefs.getBoolean(KEY_LONG_CLICK_TO_OPEN_MENU, false);
 		final Menu menu = MenuUtils.createMenu(context);
 		new MenuInflater(context).inflate(R.menu.action_status, menu);
 		setMenuForStatus(getActivity(), menu, status);
-		Utils.setMenuItemAvailability(menu, R.id.retweet_submenu, !separateRetweetAction);
-		Utils.setMenuItemAvailability(menu, R.id.direct_quote, separateRetweetAction);
 		Utils.setMenuItemAvailability(menu, MENU_MULTI_SELECT, longclickToOpenMenu);
-		final MenuItem directRetweet = menu.findItem(R.id.direct_retweet);
-		if (directRetweet != null) {
-			final Drawable icon = directRetweet.getIcon().mutate();
-			directRetweet.setVisible(separateRetweetAction && (!status.user_is_protected || isMyRetweet(status)));
-			if (isMyRetweet(status)) {
-				icon.setColorFilter(activatedColor, PorterDuff.Mode.SRC_ATOP);
-				directRetweet.setTitle(R.string.cancel_retweet);
-			} else {
-				icon.clearColorFilter();
-				directRetweet.setTitle(R.string.retweet);
-			}
-		}
 		adapter.setMenu(menu);
 		return builder.create();
 	}

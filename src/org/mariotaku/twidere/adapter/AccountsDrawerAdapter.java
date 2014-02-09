@@ -69,8 +69,8 @@ public class AccountsDrawerAdapter extends BaseExpandableListAdapter implements 
 		MORE_OPTION_ITEMS[2] = new OptionItem(R.string.filters, R.drawable.ic_iconic_action_speaker_muted, MENU_FILTERS);
 		MORE_OPTION_ITEMS[3] = new OptionItem(R.string.settings, R.drawable.ic_iconic_action_preferences, MENU_SETTINGS);
 		GROUPS[0] = new GroupItem(R.string.accounts, R.layout.accounts_drawer_item_child_accounts, GROUP_ID_ACCOUNTS);
-		GROUPS[1] = new GroupItem(R.string.account_options, R.layout.menu_list_item, GROUP_ID_ACCOUNT_OPTIONS);
-		GROUPS[2] = new GroupItem(R.string.more, R.layout.menu_list_item, GROUP_ID_MENU);
+		GROUPS[1] = new GroupItem(R.string.account_options, R.layout.list_item_menu, GROUP_ID_ACCOUNT_OPTIONS);
+		GROUPS[2] = new GroupItem(R.string.more, R.layout.list_item_menu, GROUP_ID_MENU);
 	}
 
 	private final ImageLoaderWrapper mImageLoader;
