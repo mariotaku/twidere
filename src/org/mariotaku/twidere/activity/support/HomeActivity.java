@@ -105,6 +105,7 @@ import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.ExtendedViewPager;
 import org.mariotaku.twidere.view.HomeActionsActionView;
 import org.mariotaku.twidere.view.LeftDrawerFrameLayout;
+import org.mariotaku.twidere.view.RightDrawerFrameLayout;
 import org.mariotaku.twidere.view.TabPageIndicator;
 
 import java.util.ArrayList;
@@ -155,6 +156,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	private ProgressBar mSmartBarProgress;
 	private HomeActionsActionView mActionsButton, mBottomActionsButton;
 	private LeftDrawerFrameLayout mLeftDrawerContainer;
+	private RightDrawerFrameLayout mRightDrawerContainer;
 
 	private Fragment mCurrentVisibleFragment;
 	private UpdateUnreadCountTask mUpdateUnreadCountTask;
@@ -171,6 +173,10 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	@Override
 	public Fragment getCurrentVisibleFragment() {
 		return mCurrentVisibleFragment;
+	}
+
+	public ViewPager getPager() {
+		return mViewPager;
 	}
 
 	public SlidingMenu getSlidingMenu() {
@@ -599,10 +605,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		return false;
 	}
 
-	private LeftDrawerFrameLayout getLeftDrawerContainer() {
-		return mLeftDrawerContainer;
-	}
-
 	private int handleIntent(final Intent intent, final boolean firstCreate) {
 		// use packge's class loader to prevent BadParcelException
 		intent.setExtrasClassLoader(getClassLoader());
@@ -725,9 +727,13 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		mSlidingMenu.setOnOpenedListener(this);
 		mSlidingMenu.setOnClosedListener(this);
 		mLeftDrawerContainer = (LeftDrawerFrameLayout) mSlidingMenu.getMenu().findViewById(R.id.left_drawer_container);
+		mRightDrawerContainer = (RightDrawerFrameLayout) mSlidingMenu.getSecondaryMenu().findViewById(
+				R.id.right_drawer_container);
 		final boolean isTransparentBackground = ThemeUtils.isTransparentBackground(this);
 		mLeftDrawerContainer.setClipEnabled(isTransparentBackground);
 		mLeftDrawerContainer.setScrollScale(mSlidingMenu.getBehindScrollScale());
+		mRightDrawerContainer.setClipEnabled(isTransparentBackground);
+		mRightDrawerContainer.setScrollScale(mSlidingMenu.getBehindScrollScale());
 		mSlidingMenu.setBehindCanvasTransformer(new ListenerCanvasTransformer(this));
 		final Window window = getWindow();
 		if (isTransparentBackground) {
@@ -820,9 +826,9 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	}
 
 	private void updateDrawerPercentOpen(final float percentOpen, final boolean horizontalScroll) {
-		final LeftDrawerFrameLayout ld = getLeftDrawerContainer();
-		if (ld == null) return;
-		ld.setPercentOpen(percentOpen);
+		if (mLeftDrawerContainer == null || mRightDrawerContainer == null) return;
+		mLeftDrawerContainer.setPercentOpen(percentOpen);
+		mRightDrawerContainer.setPercentOpen(percentOpen);
 	}
 
 	private void updateSlidingMenuTouchMode() {
@@ -864,12 +870,10 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	private static class HomeSlidingMenu extends SlidingMenu {
 
-		private final HomeActivity mActivity;
 		private final GestureDetector mGestureDetector;
 
 		public HomeSlidingMenu(final HomeActivity activity) {
 			super(activity);
-			mActivity = activity;
 			mGestureDetector = new GestureDetector(activity, new GestureListener(activity));
 		}
 
@@ -881,7 +885,6 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			} else {
 				setSlidingEnabled(true);
 			}
-			// setTouchModeAbove(mode);
 			return super.onInterceptTouchEvent(ev);
 		}
 
@@ -895,15 +898,26 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 			@Override
 			public boolean onDown(final MotionEvent e) {
-				return true;
+				return !isTouchingMargin(e);
 			}
 
 			@Override
 			public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX,
 					final float distanceY) {
-				final ViewPager viewPager = mActivity.mViewPager;
+				if (isTouchingMargin(e1)) return false;
+				final ViewPager viewPager = mActivity.getPager();
 				if (viewPager == null) return false;
 				return viewPager.canScrollHorizontally(Math.round(distanceX));
+			}
+
+			private boolean isTouchingMargin(final MotionEvent e) {
+				final SlidingMenu slidingMenu = mActivity.getSlidingMenu();
+				if (slidingMenu == null) return false;
+				final float x = e.getX();
+				final int touchmodeMarginThreshold = slidingMenu.getTouchmodeMarginThreshold();
+				final int left = slidingMenu.getLeft(), right = slidingMenu.getRight();
+				return x >= left && x <= left + touchmodeMarginThreshold || x <= right
+						&& x >= right - touchmodeMarginThreshold;
 			}
 
 		}

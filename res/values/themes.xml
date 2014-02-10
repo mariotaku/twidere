@@ -24,7 +24,6 @@
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_dark</item>
-		<item name="android:fitsSystemWindows">true</item>
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Dark</item>
@@ -58,7 +57,6 @@
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_light</item>
-		<item name="android:fitsSystemWindows">true</item>
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light</item>
@@ -92,10 +90,10 @@
 		<!-- Window attributes -->
 		<item name="android:windowAnimationStyle">@style/Animation.Twidere.Activity</item>
 		<item name="android:windowBackground">@color/bg_color_light</item>
-		<item name="android:fitsSystemWindows">true</item>
 
 		<!-- ActionBar styles -->
 		<item name="android:actionBarStyle">@style/Widget.Twidere.ActionBar.Light.DarkActionBar</item>
+		<item name="android:actionBarWidgetTheme">@style/Theme.Twidere.Dark</item>
 
 		<!-- Custom view styles -->
 		<item name="tabItemStyle">@style/Widget.TabPageIndicator.TabItem</item>

@@ -82,8 +82,8 @@ public class RightDrawerFrameLayout extends FrameLayout {
 	protected void dispatchDraw(final Canvas canvas) {
 		super.dispatchDraw(canvas);
 		if (mClipEnabled && mPercentOpen > 0 && mPercentOpen < 1) {
-			final int left = Math.round(getWidth() * (1 - (1 - mPercentOpen) * (1 - mScrollScale)));
-			canvas.drawRect(left, getTop(), getRight(), getBottom(), mClipPaint);
+			final int right = Math.round(getWidth() * (1 - mPercentOpen) * (1 - mScrollScale));
+			canvas.drawRect(getLeft(), getTop(), right, getBottom(), mClipPaint);
 		}
 	}
 }

@@ -80,6 +80,8 @@ import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.content.SupportFragmentReloadCursorObserver;
 import org.mariotaku.twidere.view.iface.IColorLabelView;
 
+import java.util.ArrayList;
+
 public class AccountsDrawerFragment extends BaseSupportListFragment implements LoaderCallbacks<Cursor>,
 		OnSharedPreferenceChangeListener, OnAccountActivateStateChangeListener {
 
@@ -93,7 +95,7 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 	private MergeAdapter mAdapter;
 
 	private DrawerAccountsAdapter mAccountsAdapter;
-	private OptionItemsAdapter mAccountOptionsAdapter;
+	private AccountOptionsAdapter mAccountOptionsAdapter;
 	private AppMenuAdapter mAppMenuAdapter;
 
 	private TextView mAccountsSectionView, mAccountOptionsSectionView, mAppMenuSectionView;
@@ -175,6 +177,7 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 			final Account account = (Account) item;
 			mAccountsAdapter.setSelectedAccountId(account.account_id);
 			updateAccountOptionsSeparatorLabel();
+			updateDefaultAccountState();
 		} else if (adapter instanceof AccountOptionsAdapter) {
 			final Account account = mAccountsAdapter.getSelectedAccount();
 			if (account == null || !(item instanceof OptionItem)) return;
@@ -291,18 +294,21 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 		}
 		mAccountsAdapter.changeCursor(data);
 		updateAccountOptionsSeparatorLabel();
+		updateDefaultAccountState();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		mAccountsAdapter.setDefaultAccountId(mPreferences.getLong(KEY_DEFAULT_ACCOUNT_ID, -1));
+		updateDefaultAccountState();
 	}
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
 		if (KEY_DEFAULT_ACCOUNT_ID.equals(key)) {
 			mAccountsAdapter.setDefaultAccountId(mPreferences.getLong(KEY_DEFAULT_ACCOUNT_ID, -1));
+			updateDefaultAccountState();
 		}
 	}
 
@@ -331,12 +337,19 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 	private void updateAccountOptionsSeparatorLabel() {
 		final Account account = mAccountsAdapter.getSelectedAccount();
 		if (account != null) {
+
 			final String displayName = getDisplayName(getActivity(), account.account_id, account.name,
 					account.screen_name);
 			mAccountOptionsSectionView.setText(displayName);
 		} else {
 			mAccountOptionsSectionView.setText(null);
 		}
+	}
+
+	private void updateDefaultAccountState() {
+		final long defaultAccountId = mAccountsAdapter.getDefaultAccountId();
+		final long selectedAccountId = mAccountsAdapter.getSelectedAccountId();
+		mAccountOptionsAdapter.setDefault(defaultAccountId == selectedAccountId);
 	}
 
 	private static TextView newSectionView(final Context context, final int titleRes) {
@@ -385,17 +398,43 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 
 	private static final class AccountOptionsAdapter extends OptionItemsAdapter {
 
+		private static final ArrayList<OptionItem> sOptions = new ArrayList<OptionItem>();
+		private static final ArrayList<OptionItem> sOptionsDefault = new ArrayList<OptionItem>();
+		static {
+			sOptions.add(new OptionItem(R.string.view_user_profile, R.drawable.ic_iconic_action_user, MENU_VIEW_PROFILE));
+			sOptions.add(new OptionItem(android.R.string.search_go, R.drawable.ic_iconic_action_search, MENU_SEARCH));
+			sOptions.add(new OptionItem(R.string.statuses, R.drawable.ic_iconic_action_quote, MENU_STATUSES));
+			sOptions.add(new OptionItem(R.string.favorites, R.drawable.ic_iconic_action_star, MENU_FAVORITES));
+			sOptions.add(new OptionItem(R.string.users_lists, R.drawable.ic_iconic_action_list, MENU_LISTS));
+			sOptions.add(new OptionItem(R.string.lists_following_me, R.drawable.ic_iconic_action_list,
+					MENU_LIST_MEMBERSHIPS));
+			sOptions.add(new OptionItem(R.string.set_color, R.drawable.ic_iconic_action_color_palette, MENU_SET_COLOR));
+			sOptions.add(new OptionItem(R.string.set_as_default, R.drawable.ic_iconic_action_ok, MENU_SET_AS_DEFAULT));
+			sOptions.add(new OptionItem(R.string.delete, R.drawable.ic_iconic_action_delete, MENU_DELETE));
+
+			sOptionsDefault.add(new OptionItem(R.string.view_user_profile, R.drawable.ic_iconic_action_user,
+					MENU_VIEW_PROFILE));
+			sOptionsDefault.add(new OptionItem(android.R.string.search_go, R.drawable.ic_iconic_action_search,
+					MENU_SEARCH));
+			sOptionsDefault.add(new OptionItem(R.string.statuses, R.drawable.ic_iconic_action_quote, MENU_STATUSES));
+			sOptionsDefault.add(new OptionItem(R.string.favorites, R.drawable.ic_iconic_action_star, MENU_FAVORITES));
+			sOptionsDefault.add(new OptionItem(R.string.users_lists, R.drawable.ic_iconic_action_list, MENU_LISTS));
+			sOptionsDefault.add(new OptionItem(R.string.lists_following_me, R.drawable.ic_iconic_action_list,
+					MENU_LIST_MEMBERSHIPS));
+			sOptionsDefault.add(new OptionItem(R.string.set_color, R.drawable.ic_iconic_action_color_palette,
+					MENU_SET_COLOR));
+			sOptionsDefault.add(new OptionItem(R.string.delete, R.drawable.ic_iconic_action_delete, MENU_DELETE));
+		}
+
 		public AccountOptionsAdapter(final Context context) {
 			super(context);
-			add(new OptionItem(R.string.view_user_profile, R.drawable.ic_iconic_action_user, MENU_VIEW_PROFILE));
-			add(new OptionItem(android.R.string.search_go, R.drawable.ic_iconic_action_search, MENU_SEARCH));
-			add(new OptionItem(R.string.statuses, R.drawable.ic_iconic_action_quote, MENU_STATUSES));
-			add(new OptionItem(R.string.favorites, R.drawable.ic_iconic_action_star, MENU_FAVORITES));
-			add(new OptionItem(R.string.users_lists, R.drawable.ic_iconic_action_list, MENU_LISTS));
-			add(new OptionItem(R.string.lists_following_me, R.drawable.ic_iconic_action_list, MENU_LIST_MEMBERSHIPS));
-			add(new OptionItem(R.string.set_color, R.drawable.ic_iconic_action_color_palette, MENU_SET_COLOR));
-			add(new OptionItem(R.string.set_as_default, R.drawable.ic_iconic_action_ok, MENU_SET_AS_DEFAULT));
-			add(new OptionItem(R.string.delete, R.drawable.ic_iconic_action_delete, MENU_DELETE));
+			clear();
+			addAll(sOptions);
+		}
+
+		public void setDefault(final boolean isDefault) {
+			clear();
+			addAll(isDefault ? sOptionsDefault : sOptions);
 		}
 	}
 
@@ -445,6 +484,10 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 			toggle.setOnCheckedChangeListener(this);
 			view.setActivated(account.account_id == mSelectedAccountId);
 			((IColorLabelView) view).drawEnd(account.color);
+		}
+
+		public long getDefaultAccountId() {
+			return mDefaultAccountId;
 		}
 
 		@Override
