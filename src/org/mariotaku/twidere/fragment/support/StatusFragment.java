@@ -60,7 +60,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -96,7 +95,6 @@ import edu.ucdavis.earlybird.ProfilingUtil;
 import org.mariotaku.menucomponent.widget.MenuBar;
 import org.mariotaku.refreshnow.widget.RefreshMode;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.iface.IThemedActivity;
 import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.LinkHandlerActivity;
 import org.mariotaku.twidere.adapter.MediaPreviewAdapter;
@@ -170,7 +168,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private MediaPreviewAdapter mImagePreviewAdapter;
 
 	private LoadConversationTask mConversationTask;
-	
+
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -418,7 +416,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		updateConversationInfo();
 		scrollToStart();
 	}
-
 
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {

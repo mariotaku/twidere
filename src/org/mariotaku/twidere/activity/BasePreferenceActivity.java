@@ -45,14 +45,6 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 	}
 
 	@Override
-	public Resources getAccentResources() {
-		if (mResourceHelper == null) {
-			mResourceHelper = new TwidereResourceHelper(getThemeResourceId());
-		}
-		return mResourceHelper.getResources(this, super.getResources());
-	}
-
-	@Override
 	public int getCurrentThemeResourceId() {
 		return mCurrentThemeResource;
 	}
@@ -64,7 +56,7 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 
 	@Override
 	public Resources getResources() {
-		return getAccentResources();
+		return getThemedResources();
 	}
 
 	@Override
@@ -88,6 +80,14 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 	@Override
 	public int getThemeColor() {
 		return 0;
+	}
+
+	@Override
+	public Resources getThemedResources() {
+		if (mResourceHelper == null) {
+			mResourceHelper = new TwidereResourceHelper(getThemeResourceId());
+		}
+		return mResourceHelper.getResources(this, super.getResources());
 	}
 
 	@Override

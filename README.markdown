@@ -43,8 +43,6 @@ Thanks to their excellent design!
 
 ### Open source projects ###
 
-* [ActionBar-PullToRefresh](https://github.com/chrisbanes/ActionBar-PullToRefresh), Copyright 2013 Chris Banes
-* [Android-PullToRefresh](https://github.com/chrisbanes/Android-PullToRefresh), Copyright 2013 Chris Banes
 * [Android-ViewPagerIndicator](https://github.com/JakeWharton/Android-ViewPagerIndicator/), Copyright 2012 Jake Wharton
 * [Android ViewBadger](https://github.com/jgilfelt/android-viewbadger), Copyright (c) 2012 readyState Software Ltd.
 * [Universal Image Loader for Android](https://github.com/nostra13/Android-Universal-Image-Loader), Copyright 2011-2013 Sergey Tarasevich
@@ -61,7 +59,12 @@ Thanks to their excellent design!
 * [drag-sort-listview](https://github.com/bauerca/drag-sort-listview), Copyright 2012 Carl Bauer
 * [Android-MenuComponent](https://github.com/mariotaku/Android-MenuComponent), Copyright 2013 Mariotaku Lee
 * [RefreshNow](https://github.com/mariotaku/RefreshNow), Copyright 2014 Mariotaku Lee
-* [AndroidStaggeredGrid](https://github.com/etsy/AndroidStaggeredGrid), Copyright (c) 2013 Etsy
+* [AndroidStaggeredGrid](https://github.com/etsy/AndroidStaggeredGrid), Copyright 2013 Etsy
+* [cwac-merge](https://github.com/commonsguy/cwac-merge), Copyright 2013 CommonsWare
+* [cwac-sacklist](https://github.com/commonsguy/cwac-sacklist), Copyright 2013 CommonsWare
+* [SlidingMenu](https://github.com/mariotaku/SlidingMenu) ([Original](https://github.com/jfeinstein10/SlidingMenu)), Copyright 2012 Jeremy Feinstein
+* [holoaccent](https://github.com/negusoft/holoaccent), Copyright 2013 NEGU Soft
+* [IconicDroid](https://github.com/mariotaku/IconicDroid) ([Original](https://github.com/atermenji/IconicDroid)), Copyright 2013 Artur Termenji
 
 ---
 

@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -63,6 +64,8 @@ import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.CustomTabUtils;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.ParseUtils;
+import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.theme.TwidereResourceHelper;
 import org.mariotaku.twidere.view.LinePageIndicator;
 
 import java.io.File;
@@ -85,6 +88,7 @@ public class SettingsWizardActivity extends Activity implements Constants {
 	private TabsAdapter mAdapter;
 
 	private AbsInitialSettingsTask mTask;
+	private TwidereResourceHelper mResourceHelper;
 
 	public void applyInitialSettings() {
 		if (mTask != null && mTask.getStatus() == AsyncTask.Status.RUNNING) return;
@@ -105,6 +109,14 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		intent.putExtra(EXTRA_OPEN_ACCOUNTS_DRAWER, true);
 		startActivity(intent);
 		finish();
+	}
+
+	@Override
+	public Resources getResources() {
+		if (mResourceHelper == null) {
+			mResourceHelper = new TwidereResourceHelper(ThemeUtils.getSettingsWizardThemeResource(this));
+		}
+		return mResourceHelper.getResources(this, super.getResources());
 	}
 
 	public void gotoFinishPage() {

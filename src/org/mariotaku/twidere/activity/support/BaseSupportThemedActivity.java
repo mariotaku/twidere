@@ -50,14 +50,6 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	}
 
 	@Override
-	public final Resources getAccentResources() {
-		if (mAccentHelper == null) {
-			mAccentHelper = new TwidereAccentHelper(getThemeResourceId(), getThemeColor());
-		}
-		return mAccentHelper.getResources(this, super.getResources());
-	}
-
-	@Override
 	public final int getCurrentThemeResourceId() {
 		return mCurrentThemeResource;
 	}
@@ -69,7 +61,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	@Override
 	public Resources getResources() {
-		return getAccentResources();
+		return getThemedResources();
 	}
 
 	@Override
@@ -79,6 +71,14 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	@Override
 	public abstract int getThemeColor();
+
+	@Override
+	public final Resources getThemedResources() {
+		if (mAccentHelper == null) {
+			mAccentHelper = new TwidereAccentHelper(getThemeResourceId(), getThemeColor());
+		}
+		return mAccentHelper.getResources(this, super.getResources());
+	}
 
 	@Override
 	public String getThemeFontFamily() {
@@ -135,7 +135,8 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		if (isThemeChanged()) {
 			restart();
 		} else {
-			ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha);
+			ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor,
+					mCurrentThemeBackgroundAlpha);
 		}
 	}
 
@@ -156,7 +157,8 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		mCurrentThemeColor = getThemeColor();
 		mCurrentThemeFontFamily = getThemeFontFamily();
 		mCurrentThemeBackgroundAlpha = getThemeBackgroundAlpha();
-		ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor, mCurrentThemeBackgroundAlpha);
+		ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor,
+				mCurrentThemeBackgroundAlpha);
 		setTheme(mCurrentThemeResource);
 		if (shouldSetWindowBackground() && ThemeUtils.isTransparentBackground(mCurrentThemeResource)) {
 			getWindow().setBackgroundDrawable(ThemeUtils.getWindowBackground(this));

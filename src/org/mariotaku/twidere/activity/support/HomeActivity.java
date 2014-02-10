@@ -56,13 +56,10 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.SparseArray;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -72,6 +69,7 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.jeremyfeinstein.slidingmenu.lib.CustomViewBehind;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.CanvasTransformer;
 import com.readystatesoftware.viewbadger.BadgeView;
@@ -175,12 +173,12 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		return mCurrentVisibleFragment;
 	}
 
-	public ViewPager getPager() {
-		return mViewPager;
-	}
-
 	public SlidingMenu getSlidingMenu() {
 		return mSlidingMenu;
+	}
+
+	public ViewPager getViewPager() {
+		return mViewPager;
 	}
 
 	public void notifyAccountsChanged() {
@@ -717,7 +715,8 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		final int marginThreshold = getResources().getDimensionPixelSize(R.dimen.default_sliding_menu_margin_threshold);
 		mSlidingMenu.setMode(SlidingMenu.LEFT_RIGHT);
 		mSlidingMenu.setShadowWidthRes(R.dimen.default_sliding_menu_shadow_width);
-		mSlidingMenu.setShadowDrawable(R.drawable.shadow_holo);
+		mSlidingMenu.setShadowDrawable(R.drawable.drawer_shadow_left);
+		mSlidingMenu.setSecondaryShadowDrawable(R.drawable.drawer_shadow_right);
 		mSlidingMenu.setBehindWidthRes(R.dimen.left_drawer_width);
 		mSlidingMenu.setTouchmodeMarginThreshold(marginThreshold);
 		mSlidingMenu.setFadeDegree(0.5f);
@@ -870,56 +869,44 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 	private static class HomeSlidingMenu extends SlidingMenu {
 
-		private final GestureDetector mGestureDetector;
+		private final HomeActivity mActivity;
 
 		public HomeSlidingMenu(final HomeActivity activity) {
 			super(activity);
-			mGestureDetector = new GestureDetector(activity, new GestureListener(activity));
+			mActivity = activity;
 		}
 
 		@Override
-		public boolean onInterceptTouchEvent(final MotionEvent ev) {
-			final int actionMasked = ev.getActionMasked();
-			if (mGestureDetector.onTouchEvent(ev) && actionMasked == MotionEvent.ACTION_MOVE) {
-				setSlidingEnabled(isSecondaryMenuShowing() || isMenuShowing());
-			} else {
-				setSlidingEnabled(true);
-			}
-			return super.onInterceptTouchEvent(ev);
+		protected CustomViewBehind newCustomViewBehind(final Context context) {
+			return new MyCustomViewBehind(context, this);
 		}
 
-		private static class GestureListener extends SimpleOnGestureListener {
+		private ViewPager getViewPager() {
+			return mActivity.getViewPager();
+		}
 
-			private final HomeActivity mActivity;
+		private static class MyCustomViewBehind extends CustomViewBehind {
 
-			public GestureListener(final HomeActivity activity) {
-				mActivity = activity;
+			private final HomeSlidingMenu mSlidingMenu;
+
+			public MyCustomViewBehind(final Context context, final HomeSlidingMenu slidingMenu) {
+				super(context);
+				mSlidingMenu = slidingMenu;
 			}
 
 			@Override
-			public boolean onDown(final MotionEvent e) {
-				return !isTouchingMargin(e);
-			}
-
-			@Override
-			public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX,
-					final float distanceY) {
-				if (isTouchingMargin(e1)) return false;
-				final ViewPager viewPager = mActivity.getPager();
+			public boolean menuClosedSlideAllowed(final float dx) {
+				final ViewPager viewPager = mSlidingMenu.getViewPager();
 				if (viewPager == null) return false;
-				return viewPager.canScrollHorizontally(Math.round(distanceX));
+				final boolean canScrollHorizontally = viewPager.canScrollHorizontally(Math.round(-dx));
+				final int mode = getMode();
+				if (mode == SlidingMenu.LEFT)
+					return dx > 0 && !canScrollHorizontally;
+				else if (mode == SlidingMenu.RIGHT)
+					return dx < 0 && !canScrollHorizontally;
+				else if (mode == SlidingMenu.LEFT_RIGHT) return !canScrollHorizontally;
+				return false;
 			}
-
-			private boolean isTouchingMargin(final MotionEvent e) {
-				final SlidingMenu slidingMenu = mActivity.getSlidingMenu();
-				if (slidingMenu == null) return false;
-				final float x = e.getX();
-				final int touchmodeMarginThreshold = slidingMenu.getTouchmodeMarginThreshold();
-				final int left = slidingMenu.getLeft(), right = slidingMenu.getRight();
-				return x >= left && x <= left + touchmodeMarginThreshold || x <= right
-						&& x >= right - touchmodeMarginThreshold;
-			}
-
 		}
 
 	}

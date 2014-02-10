@@ -366,6 +366,10 @@ public class ThemeUtils implements Constants {
 		return R.style.Theme_Twidere_Settings_Light_DarkActionBar;
 	}
 
+	public static int getSettingsWizardThemeResource(final Context context) {
+		return R.style.Theme_Twidere_Settings_Light;
+	}
+
 	public static int getTextAppearanceLarge(final Context context) {
 		// final Context wrapped = getThemedContext(context,
 		// getResources(context));
