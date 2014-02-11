@@ -702,9 +702,12 @@ public class ThemeUtils implements Constants {
 		switch (themeRes) {
 			case R.style.Theme_Twidere_Colored_Transparent:
 			case R.style.Theme_Twidere_Colored_DarkActionBar_Transparent:
+			case R.style.Theme_Twidere_Colored_DarkActionBar_Transparent_DarkIcon:
 			case R.style.Theme_Twidere_Dark_Transparent:
 			case R.style.Theme_Twidere_Light_Transparent:
 			case R.style.Theme_Twidere_Light_DarkActionBar_Transparent:
+			case R.style.Theme_Twidere_Light_DarkActionBar_Transparent_DarkIcon:
+			case R.style.Theme_Twidere_Viewer_Transparent:
 				return true;
 		}
 		return false;
