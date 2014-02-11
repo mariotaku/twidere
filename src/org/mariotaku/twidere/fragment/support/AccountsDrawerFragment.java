@@ -443,7 +443,7 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 		public AppMenuAdapter(final Context context) {
 			super(context);
 			add(new OptionItem(R.string.add_account, R.drawable.ic_iconic_action_add, MENU_ADD_ACCOUNT));
-			add(new OptionItem(R.string.drafts, R.drawable.ic_iconic_action_save, MENU_DRAFTS));
+			add(new OptionItem(R.string.drafts, R.drawable.ic_iconic_action_drafts, MENU_DRAFTS));
 			add(new OptionItem(R.string.filters, R.drawable.ic_iconic_action_speaker_muted, MENU_FILTERS));
 			add(new OptionItem(R.string.settings, R.drawable.ic_iconic_action_preferences, MENU_SETTINGS));
 		}

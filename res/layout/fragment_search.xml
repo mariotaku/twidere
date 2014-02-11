@@ -8,13 +8,13 @@
 	<org.mariotaku.twidere.view.ExtendedViewPager
 		android:id="@+id/search_pager"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
+		android:layout_height="match_parent">
 
-	<LinearLayout
-		android:id="@+id/search_pager_indicator"
-		android:layout_width="wrap_content"
-		android:layout_height="48dp"
-		android:layout_gravity="center_horizontal|bottom"
-		android:orientation="horizontal"/>
+		<android.support.v4.view.PagerTabStrip
+			android:id="@+id/search_pager_indicator"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top"/>
+	</org.mariotaku.twidere.view.ExtendedViewPager>
 
 </FrameLayout>

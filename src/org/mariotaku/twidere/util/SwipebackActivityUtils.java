@@ -32,6 +32,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.Window;
 
@@ -60,6 +62,11 @@ public class SwipebackActivityUtils implements TwidereConstants {
 	public static void startSwipebackActivity(final Activity activity, final Intent intent) {
 		setActivityScreenshot(activity, intent);
 		activity.startActivityForResult(intent, REQUEST_SWIPEBACK_ACTIVITY);
+	}
+
+	public static void startSwipebackActivity(final Activity activity, final Intent intent, final Bundle options) {
+		setActivityScreenshot(activity, intent);
+		ActivityCompat.startActivityForResult(activity, intent, REQUEST_SWIPEBACK_ACTIVITY, options);
 	}
 
 	/**

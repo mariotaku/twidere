@@ -55,11 +55,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -877,6 +879,32 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		}
 
 		@Override
+		public boolean dispatchTouchEvent(MotionEvent ev) {
+			switch (ev.getActionMasked()) {
+				case MotionEvent.ACTION_DOWN: {
+					boolean isTouchingMargin = isTouchingMargin(ev);
+					setTouchModeAbove(isTouchingMargin ? TOUCHMODE_MARGIN : TOUCHMODE_FULLSCREEN);
+					break;
+				}
+			}
+			return super.dispatchTouchEvent(ev);
+		}
+
+		private boolean isTouchingMargin(MotionEvent e) {
+			final float x = e.getX(), marginThreshold = getTouchmodeMarginThreshold();
+			final View content = getContent();
+			final int mode = getMode(), left = content.getLeft(), right = content.getRight();
+			if (mode == SlidingMenu.LEFT) {
+				return (x >= left && x <= marginThreshold + left);
+			} else if (mode == SlidingMenu.RIGHT) {
+				return (x <= right && x >= right - marginThreshold);
+			} else if (mode == SlidingMenu.LEFT_RIGHT) {
+				return (x >= left && x <= marginThreshold + left) || (x <= right && x >= right - marginThreshold);
+			}
+			return false;
+		}
+
+		@Override
 		protected CustomViewBehind newCustomViewBehind(final Context context) {
 			return new MyCustomViewBehind(context, this);
 		}
@@ -896,6 +924,8 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 
 			@Override
 			public boolean menuClosedSlideAllowed(final float dx) {
+				if (mSlidingMenu.getTouchModeAbove() != SlidingMenu.TOUCHMODE_FULLSCREEN)
+					return super.menuClosedSlideAllowed(dx);
 				final ViewPager viewPager = mSlidingMenu.getViewPager();
 				if (viewPager == null) return false;
 				final boolean canScrollHorizontally = viewPager.canScrollHorizontally(Math.round(-dx));

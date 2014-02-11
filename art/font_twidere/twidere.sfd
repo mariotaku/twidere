@@ -20,7 +20,7 @@ OS2Version: 0
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 1
 CreationTime: 1391066035
-ModificationTime: 1391697310
+ModificationTime: 1392039688
 OS2TypoAscent: 0
 OS2TypoAOffset: 1
 OS2TypoDescent: 0
@@ -43,10 +43,10 @@ NameList: Adobe Glyph List
 DisplaySize: -72
 AntiAlias: 1
 FitToEm: 0
-WinInfo: 61440 16 6
+WinInfo: 61536 16 6
 BeginPrivate: 0
 EndPrivate
-BeginChars: 65539 73
+BeginChars: 65539 74
 
 StartChar: brand_twidere
 Encoding: 61440 61440 0
@@ -1053,7 +1053,7 @@ StartChar: uniF030
 Encoding: 61488 61488 20
 Width: 1024
 VWidth: 0
-Flags: HO
+Flags: H
 LayerCount: 2
 Fore
 SplineSet
@@ -3284,6 +3284,35 @@ SplineSet
  267 172 377 62 512 62 c 0
 EndSplineSet
 Validated: 1
+EndChar
+
+StartChar: uniF092
+Encoding: 61586 61586 73
+Width: 1024
+VWidth: 0
+Flags: HO
+LayerCount: 2
+Fore
+SplineSet
+544 669.667 m 2
+ 567.146 669.24 597.333 669.667 597.333 669.667 c 1
+ 768 499 l 1
+ 768 328.333 l 1
+ 512 200.333 l 1
+ 256 328.333 l 1
+ 256 669.667 l 1
+ 544 669.667 l 2
+597.333 509.667 m 1
+ 682.667 509.667 l 1
+ 597.333 595 l 1
+ 597.333 509.667 l 1
+512 157.667 m 1
+ 864 328.333 l 1
+ 864 -34.333 l 1
+ 160 -34.333 l 1
+ 160 328.333 l 1
+ 512 157.667 l 1
+EndSplineSet
 EndChar
 EndChars
 EndSplineFont

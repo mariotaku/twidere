@@ -63,6 +63,8 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -2590,10 +2592,10 @@ public final class Utils implements Constants {
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 	}
 
-	public static void openImage(final Context context, final String uri, final boolean is_possibly_sensitive) {
+	public static void openImage(final Context context, final String uri, final boolean isPossiblySensitive) {
 		if (context == null || uri == null) return;
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (context instanceof FragmentActivity && is_possibly_sensitive
+		if (context instanceof FragmentActivity && isPossiblySensitive
 				&& !prefs.getBoolean(KEY_DISPLAY_SENSITIVE_CONTENTS, false)) {
 			final FragmentActivity activity = (FragmentActivity) context;
 			final FragmentManager fm = activity.getSupportFragmentManager();
