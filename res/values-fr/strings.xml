@@ -144,7 +144,7 @@
   <string name="users_blocked">Utilisateurs bloqués.</string>
   <string name="user_unblocked">Utilisateur débloqué.</string>
   <string name="reported_user_for_spam">Utilisateur signalé pour spam.</string>
-  <string name="reported_users_for_spam">Utilisateurs signalés comme spam.</string>
+  <string name="reported_users_for_spam">Utilisateurs signalés pour spam.</string>
   <string name="filename_hint">Nom du fichier</string>
   <string name="overwrite_confirm">Le fichier existe déjà, le remplacer ?</string>
   <string name="save_as">Enregistrer sous</string>
@@ -368,7 +368,7 @@
   <string name="permission_description_accounts">Lire les informations du compte</string>
   <string name="permission_description_preferences">Lire les paramètres</string>
   <string name="permissions_request">Demande d\'autorisation</string>
-  <string name="permissions_request_message">L\'extension sollicite permissions suivantes</string>
+  <string name="permissions_request_message">L\'extension sollicite les permissions suivantes</string>
   <string name="accept_permission_request">Accepter</string>
   <string name="no_thanks">Non, merci</string>
   <string name="revoke_permissions">Révoquer les autorisations</string>
@@ -419,7 +419,7 @@
   <string name="unblocked_user"><xliff:g id="user">%s</xliff:g> débolqué.</string>
   <string name="profile_updated">Profil mis à jour.</string>
   <string name="profile_banner_image_updated">Image d\'entête du profil mise à jour.</string>
-  <string name="profile_image_updated">Image du profile mis à jour.</string>
+  <string name="profile_image_updated">Image du profil mise à jour.</string>
   <string name="created_list">Liste \"<xliff:g id="list">%s</xliff:g>\" créée.</string>
   <string name="deleted_list">Liset \"<xliff:g id="list">%s</xliff:g>\" supprimée.</string>
   <string name="updated_list_details">Détails de la liste \"<xliff:g id="list">%s</xliff:g>\" mis à jour.</string>
@@ -449,7 +449,7 @@
   <string name="empty_content">Contenu vide</string>
   <string name="fast_image_loading">Chargement de l\'image rapide</string>
   <string name="fast_image_loading_summary">Activer pour permettre aux images de se charger plus rapidement, désactiver si des images ne s\'affichent pas.</string>
-  <string name="select_user_list">Sélectionnez la liste d'utilisateur</string>
+  <string name="select_user_list">Sélectionnez la liste utilisateur</string>
   <string name="select_user">Sélectionner l\'utilisateur</string>
   <string name="created_by">Créé par <xliff:g id="created_by">%s</xliff:g></string>
   <string name="add_to_list">Ajouter à la liste</string>
