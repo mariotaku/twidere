@@ -486,6 +486,44 @@
 			android:label="@string/import_settings"
 			android:theme="@android:style/Theme.NoDisplay"/>
 		<activity
+			android:name=".activity.support.ActivityPickerActivity"
+			android:theme="@style/Theme.Blank.Dialog">
+			<intent-filter>
+				<action android:name="org.mariotaku.twidere.PICK_ACTIVITY"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.TwitterLinkHandlerActivity"
+			android:theme="@style/Theme.Launcher">
+			<intent-filter>
+				<data
+					android:host="twitter.com"
+					android:scheme="http"/>
+				<data
+					android:host="twitter.com"
+					android:scheme="https"/>
+
+				<action android:name="android.intent.action.VIEW"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".activity.AssistLauncherActivity"
+			android:theme="@style/Theme.Launcher">
+			<intent-filter>
+				<action android:name="android.intent.action.ASSIST"/>
+
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+
+			<meta-data
+				android:name="com.android.systemui.action_assist_icon"
+				android:resource="@drawable/ic_assist_twidere"/>
+		</activity>
+		<activity
 			android:name=".activity.TestActivity"
 			android:icon="@drawable/ic_iconic_twidere"
 			android:launchMode="singleTop"

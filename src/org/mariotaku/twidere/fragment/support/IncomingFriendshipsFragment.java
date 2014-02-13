@@ -26,8 +26,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.loader.IDsUsersLoader;
-import org.mariotaku.twidere.loader.IncomingFriendshipsLoader;
+import org.mariotaku.twidere.loader.support.IDsUsersLoader;
+import org.mariotaku.twidere.loader.support.IncomingFriendshipsLoader;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.Account.AccountWithCredentials;
 import org.mariotaku.twidere.model.ParcelableUser;

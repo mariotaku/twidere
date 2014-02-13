@@ -605,5 +605,9 @@
 	<string name="status_text_limit">Tweet text limit</string>
 	<string name="load_more_from_top">Load more from top</string>
 	<string name="load_more_from_top_summary">Useful if you prefer to read from bottom to top</string>
+	<string name="twitter_link_handler">Twitter link handler</string>
+	<string name="compose_now">Compose Now</string>
+	<string name="compose_now_summary">Replaces Google Now shortcut for Compose screen</string>
+	<string name="compose_now_action">Compose Now action</string>
 
 </resources>

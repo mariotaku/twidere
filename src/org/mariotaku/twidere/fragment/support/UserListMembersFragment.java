@@ -30,8 +30,8 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
-import org.mariotaku.twidere.loader.UserListMembersLoader;
+import org.mariotaku.twidere.loader.support.CursorSupportUsersLoader;
+import org.mariotaku.twidere.loader.support.UserListMembersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.task.AsyncTask;

@@ -34,7 +34,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.mariotaku.twidere.loader.SavedSearchesLoader;
+import org.mariotaku.twidere.loader.support.SavedSearchesLoader;
 import org.mariotaku.twidere.model.Panes;
 
 import twitter4j.ResponseList;

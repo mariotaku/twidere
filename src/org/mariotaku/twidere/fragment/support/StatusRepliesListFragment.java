@@ -26,7 +26,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-import org.mariotaku.twidere.loader.StatusRepliesLoader;
+import org.mariotaku.twidere.loader.support.StatusRepliesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import java.util.List;

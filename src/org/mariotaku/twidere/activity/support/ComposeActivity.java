@@ -59,6 +59,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -79,6 +80,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -190,6 +192,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private StatusTextCountView mSendTextCountView, mBottomSendTextCountView;
 
 	private boolean mBottomSendButton;
+
+	private final Rect mWindowDecorHitRect = new Rect();
 
 	@Override
 	public void afterTextChanged(final Editable s) {
@@ -528,6 +532,21 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		updateTextCount();
 	}
 
+	@Override
+	public boolean onTouchEvent(final MotionEvent event) {
+		switch (event.getActionMasked()) {
+			case MotionEvent.ACTION_DOWN: {
+				getWindow().getDecorView().getHitRect(mWindowDecorHitRect);
+				if (!mWindowDecorHitRect.contains(Math.round(event.getX()), Math.round(event.getY()))) {
+					onBackPressed();
+					return true;
+				}
+				break;
+			}
+		}
+		return super.onTouchEvent(event);
+	}
+
 	public void saveToDrafts() {
 		final String text = mEditText != null ? ParseUtils.parseString(mEditText.getText()) : null;
 		final ParcelableStatusUpdate.Builder builder = new ParcelableStatusUpdate.Builder();
@@ -779,6 +798,12 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 			final long accountId = intent.getLongExtra(EXTRA_ACCOUNT_ID, -1);
 			final long inReplyToUserId = intent.getLongExtra(EXTRA_IN_REPLY_TO_ID, -1);
 			return handleReplyMultipleIntent(screenNames, accountId, inReplyToUserId);
+		} else if (INTENT_ACTION_COMPOSE_TAKE_PHOTO.equals(action)) {
+			takePhoto();
+			return true;
+		} else if (INTENT_ACTION_COMPOSE_PICK_IMAGE.equals(action)) {
+			pickImage();
+			return true;
 		}
 		// Unknown action or no intent extras
 		return false;
@@ -878,16 +903,17 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private void setCommonMenu(final Menu menu) {
 		final boolean hasMedia = hasMedia();
 		final int activatedColor = getUserThemeColor(this);
-		final MenuItem itemAddImageSubmenu = menu.findItem(R.id.add_image_submenu);
-		if (itemAddImageSubmenu != null) {
-			final Drawable iconAddImage = itemAddImageSubmenu.getIcon();
-			iconAddImage.mutate();
-			if (hasMedia) {
-				iconAddImage.setColorFilter(activatedColor, Mode.SRC_ATOP);
-			} else {
-				iconAddImage.clearColorFilter();
-			}
-		}
+		// final MenuItem itemAddImageSubmenu =
+		// menu.findItem(R.id.add_image_submenu);
+		// if (itemAddImageSubmenu != null) {
+		// final Drawable iconAddImage = itemAddImageSubmenu.getIcon();
+		// iconAddImage.mutate();
+		// if (hasMedia) {
+		// iconAddImage.setColorFilter(activatedColor, Mode.SRC_ATOP);
+		// } else {
+		// iconAddImage.clearColorFilter();
+		// }
+		// }
 		final MenuItem itemAddImage = menu.findItem(MENU_ADD_IMAGE);
 		if (itemAddImage != null) {
 			final Drawable iconAddImage = itemAddImage.getIcon().mutate();
@@ -1088,9 +1114,9 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	private void updateTextCount() {
 		final StatusTextCountView textCountView = mBottomSendButton ? mBottomSendTextCountView : mSendTextCountView;
 		if (textCountView != null && mEditText != null) {
-			final String text_orig = mEditText != null ? parseString(mEditText.getText()) : null;
-			final String text = hasMedia() && text_orig != null ? mImageUploaderUsed ? getImageUploadStatus(this,
-					FAKE_IMAGE_LINK, text_orig) : text_orig + " " + FAKE_IMAGE_LINK : text_orig;
+			final String textOrig = mEditText != null ? parseString(mEditText.getText()) : null;
+			final String text = hasMedia() && textOrig != null ? mImageUploaderUsed ? getImageUploadStatus(this,
+					new String[] { FAKE_IMAGE_LINK }, textOrig) : textOrig + " " + FAKE_IMAGE_LINK : textOrig;
 			final int validatedCount = text != null ? mValidator.getTweetLength(text) : 0;
 			textCountView.setTextCount(validatedCount);
 		}

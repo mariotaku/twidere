@@ -24,25 +24,25 @@ import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.IImageUploader;
+import org.mariotaku.twidere.IMediaUploader;
+import org.mariotaku.twidere.model.MediaUploadResult;
+import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 
-public final class ImageUploaderInterface implements Constants, IImageUploader {
+public final class ImageUploaderInterface implements Constants, IMediaUploader {
 
-	private IImageUploader mUploader;
+	private IMediaUploader mUploader;
 
 	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(final ComponentName service, final IBinder obj) {
-			mUploader = IImageUploader.Stub.asInterface(obj);
+			mUploader = IMediaUploader.Stub.asInterface(obj);
 		}
 
 		@Override
@@ -52,7 +52,7 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	};
 
 	private ImageUploaderInterface(final Context context, final String uploader_name) {
-		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_MEDIA);
 		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
 		intent.setComponent(component);
 		bindToService(context, intent, mConntecion);
@@ -65,10 +65,10 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 	}
 
 	@Override
-	public Uri upload(final Uri file_uri, final String message) {
+	public MediaUploadResult upload(final ParcelableStatusUpdate status) throws RemoteException {
 		if (mUploader == null) return null;
 		try {
-			return mUploader.upload(file_uri, message);
+			return mUploader.upload(status);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -85,22 +85,12 @@ public final class ImageUploaderInterface implements Constants, IImageUploader {
 		}
 	}
 
-	public static ImageUploaderInterface getInstance(final Application application, final String uploader_name) {
-		if (uploader_name == null) return null;
-		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
-		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
+	public static ImageUploaderInterface getInstance(final Application application, final String uploaderName) {
+		if (uploaderName == null) return null;
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_MEDIA);
+		final ComponentName component = ComponentName.unflattenFromString(uploaderName);
 		intent.setComponent(component);
 		if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1) return null;
-		return new ImageUploaderInterface(application, uploader_name);
-	}
-
-	public static class ServiceToken {
-
-		ContextWrapper wrapped_context;
-
-		ServiceToken(final ContextWrapper context) {
-
-			wrapped_context = context;
-		}
+		return new ImageUploaderInterface(application, uploaderName);
 	}
 }

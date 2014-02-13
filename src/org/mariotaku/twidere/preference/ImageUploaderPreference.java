@@ -75,7 +75,7 @@ public class ImageUploaderPreference extends DialogPreference implements Constan
 		final String component = mPreferences.getString(KEY_IMAGE_UPLOADER, null);
 		final ArrayList<ImageUploaderSpec> specs = new ArrayList<ImageUploaderSpec>();
 		specs.add(new ImageUploaderSpec(getContext().getString(R.string.image_uploader_default), null));
-		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_IMAGE);
+		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_MEDIA);
 		final List<ResolveInfo> result = mPackageManager.queryIntentServices(query_intent, 0);
 		for (final ResolveInfo info : result) {
 			specs.add(new ImageUploaderSpec(info.loadLabel(mPackageManager).toString(), info.serviceInfo.packageName

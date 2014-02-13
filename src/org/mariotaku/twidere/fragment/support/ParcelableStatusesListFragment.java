@@ -32,7 +32,7 @@ import android.support.v4.content.Loader;
 
 import org.mariotaku.twidere.adapter.ParcelableStatusesAdapter;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.loader.DummyParcelableStatusesLoader;
+import org.mariotaku.twidere.loader.support.DummyParcelableStatusesLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.ArrayUtils;
 

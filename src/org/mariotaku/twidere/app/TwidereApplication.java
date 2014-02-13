@@ -80,7 +80,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.Locale;
 
-@ReportsCrashes(formKey = "", sharedPreferencesMode = Context.MODE_PRIVATE,
+@ReportsCrashes(formKey = "", mailTo = Constants.APP_PROJECT_EMAIL, sharedPreferencesMode = Context.MODE_PRIVATE,
 	sharedPreferencesName = Constants.SHARED_PREFERENCES_NAME)
 public class TwidereApplication extends Application implements Constants, OnSharedPreferenceChangeListener {
 

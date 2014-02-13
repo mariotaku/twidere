@@ -22,8 +22,8 @@ package org.mariotaku.twidere.fragment.support;
 import android.content.Context;
 import android.os.Bundle;
 
-import org.mariotaku.twidere.loader.CursorSupportUsersLoader;
-import org.mariotaku.twidere.loader.UserBlocksLoader;
+import org.mariotaku.twidere.loader.support.CursorSupportUsersLoader;
+import org.mariotaku.twidere.loader.support.UserBlocksLoader;
 
 public class UserBlocksListFragment extends CursorSupportUsersListFragment {
 

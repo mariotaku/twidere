@@ -120,5 +120,15 @@
 		<item>@string/user_colors</item>
 		<item>@string/custom_host_mapping</item>
 	</string-array>
+	<string-array name="values_compose_now_action">
+		<item>compose</item>
+		<item>take_photo</item>
+		<item>pick_image</item>
+	</string-array>
+	<string-array name="entries_compose_now_action">
+		<item>@string/compose</item>
+		<item>@string/take_photo</item>
+		<item>@string/add_image</item>
+	</string-array>
 
 </resources>

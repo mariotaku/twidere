@@ -77,7 +77,7 @@ public class TweetShortenerPreference extends DialogPreference implements Consta
 		final String component = mPreferences.getString(KEY_TWEET_SHORTENER, null);
 		final ArrayList<TweetShortenerSpec> specs = new ArrayList<TweetShortenerSpec>();
 		specs.add(new TweetShortenerSpec(getContext().getString(R.string.tweet_shortener_default), null));
-		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
+		final Intent query_intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_STATUS);
 		final List<ResolveInfo> result = mPackageManager.queryIntentServices(query_intent, 0);
 		for (final ResolveInfo info : result) {
 			specs.add(new TweetShortenerSpec(info.loadLabel(mPackageManager).toString(), info.serviceInfo.packageName

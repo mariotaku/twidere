@@ -38,7 +38,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
@@ -51,11 +50,13 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.Main2Activity;
 import org.mariotaku.twidere.activity.MainActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.MediaUploadResult;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.model.StatusShortenResult;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
@@ -65,7 +66,7 @@ import org.mariotaku.twidere.util.ContentValuesCreator;
 import org.mariotaku.twidere.util.ImageUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.MessagesManager;
-import org.mariotaku.twidere.util.TweetShortenerInterface;
+import org.mariotaku.twidere.util.StatusShortenerInterface;
 import org.mariotaku.twidere.util.TwidereValidator;
 import org.mariotaku.twidere.util.TwitterErrorCodes;
 import org.mariotaku.twidere.util.Utils;
@@ -99,7 +100,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 	private MessagesManager mMessagesManager;
 
 	private ImageUploaderInterface mUploader;
-	private TweetShortenerInterface mShortener;
+	private StatusShortenerInterface mShortener;
 
 	private boolean mUseUploader, mUseShortener;
 
@@ -124,7 +125,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		mUseUploader = !isEmpty(uploader_component);
 		mUseShortener = !isEmpty(shortener_component);
 		mUploader = mUseUploader ? ImageUploaderInterface.getInstance(app, uploader_component) : null;
-		mShortener = mUseShortener ? TweetShortenerInterface.getInstance(app, shortener_component) : null;
+		mShortener = mUseShortener ? StatusShortenerInterface.getInstance(app, shortener_component) : null;
 	}
 
 	@Override
@@ -329,77 +330,81 @@ public class BackgroundOperationService extends IntentService implements Constan
 		}
 	}
 
-	private List<SingleResponse<ParcelableStatus>> updateStatus(final ParcelableStatusUpdate pstatus) {
+	private List<SingleResponse<ParcelableStatus>> updateStatus(final ParcelableStatusUpdate statusUpdate) {
 		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
-		final Collection<String> hashtags = extractor.extractHashtags(pstatus.text);
+		final Collection<String> hashtags = extractor.extractHashtags(statusUpdate.text);
 		for (final String hashtag : hashtags) {
 			final ContentValues values = new ContentValues();
 			values.put(CachedHashtags.NAME, hashtag);
 			hashtag_values.add(values);
 		}
-		final boolean hasEasterEggTriggerText = pstatus.text.contains(EASTER_EGG_TRIGGER_TEXT);
-		final boolean hasEasterEggRestoreText = pstatus.text.contains(EASTER_EGG_RESTORE_TEXT_PART1)
-				&& pstatus.text.contains(EASTER_EGG_RESTORE_TEXT_PART2)
-				&& pstatus.text.contains(EASTER_EGG_RESTORE_TEXT_PART3);
+		final boolean hasEasterEggTriggerText = statusUpdate.text.contains(EASTER_EGG_TRIGGER_TEXT);
+		final boolean hasEasterEggRestoreText = statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART1)
+				&& statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART2)
+				&& statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART3);
 		boolean mentioned_hondajojo = false;
 		mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 				hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 
 		final List<SingleResponse<ParcelableStatus>> results = new ArrayList<SingleResponse<ParcelableStatus>>();
 
-		if (pstatus.account_ids.length == 0) return Collections.emptyList();
+		if (statusUpdate.account_ids.length == 0) return Collections.emptyList();
 
 		try {
 			if (mUseUploader && mUploader == null) throw new ImageUploaderNotFoundException(this);
 			if (mUseShortener && mShortener == null) throw new TweetShortenerNotFoundException(this);
 
-			final String imagePath = getImagePathFromUri(this, pstatus.media_uri);
+			final String imagePath = getImagePathFromUri(this, statusUpdate.media_uri);
 			final File imageFile = imagePath != null ? new File(imagePath) : null;
 
-			final Uri uploadResultUri;
-			try {
-				if (mUploader != null) {
-					mUploader.waitForService();
+			final String overrideStatusText;
+			if (mUseUploader && statusUpdate.media_uri != null) {
+				final MediaUploadResult uploadResult;
+				try {
+					if (mUploader != null) {
+						mUploader.waitForService();
+					}
+					uploadResult = mUploader.upload(statusUpdate);
+				} catch (final Exception e) {
+					throw new ImageUploadException(this);
 				}
-				uploadResultUri = imageFile != null && imageFile.exists() && mUploader != null ? mUploader.upload(
-						Uri.fromFile(imageFile), pstatus.text) : null;
-			} catch (final Exception e) {
-				throw new ImageUploadException(this);
-			}
-			if (mUseUploader && imageFile != null && imageFile.exists() && uploadResultUri == null)
-				throw new ImageUploadException(this);
-
-			final String unshortenedContent = mUseUploader && uploadResultUri != null ? getImageUploadStatus(this,
-					uploadResultUri.toString(), pstatus.text) : pstatus.text;
-
-			final boolean shouldShorten = mValidator.getTweetLength(unshortenedContent) > mValidator
-					.getMaxTweetLength();
-			final String screenName = getAccountScreenName(this, pstatus.account_ids[0]);
-			final String shortenedContent;
-			try {
-				if (mShortener != null) {
-					mShortener.waitForService();
-				}
-				shortenedContent = shouldShorten && mUseShortener ? mShortener.shorten(unshortenedContent, screenName,
-						pstatus.in_reply_to_status_id) : null;
-			} catch (final Exception e) {
-				throw new TweetShortenException(this);
+				if (mUseUploader && imageFile != null && imageFile.exists() && uploadResult == null)
+					throw new ImageUploadException(this);
+				overrideStatusText = getImageUploadStatus(this, uploadResult.mediaUris, statusUpdate.text);
+			} else {
+				overrideStatusText = null;
 			}
 
+			final String unshortenedText = isEmpty(overrideStatusText) ? statusUpdate.text : overrideStatusText;
+
+			final boolean shouldShorten = mValidator.getTweetLength(unshortenedText) > mValidator.getMaxTweetLength();
+			final String shortenedText;
 			if (shouldShorten) {
-				if (!mUseShortener)
+				if (mUseShortener) {
+					final StatusShortenResult shortenedResult;
+					mShortener.waitForService();
+					try {
+						shortenedResult = mShortener.shorten(statusUpdate, unshortenedText);
+
+					} catch (final Exception e) {
+						throw new TweetShortenException(this);
+					}
+					if (shortenedResult == null || shortenedResult.shortened == null)
+						throw new TweetShortenException(this);
+					shortenedText = shortenedResult.shortened;
+				} else
 					throw new StatusTooLongException(this);
-				else if (unshortenedContent == null) throw new TweetShortenException(this);
+			} else {
+				shortenedText = unshortenedText;
 			}
 			if (!mUseUploader && imageFile != null && imageFile.exists()) {
 				Utils.downscaleImageIfNeeded(imageFile, 95);
 			}
-			for (final long account_id : pstatus.account_ids) {
-				final StatusUpdate status = new StatusUpdate(shouldShorten && mUseShortener ? shortenedContent
-						: unshortenedContent);
-				status.setInReplyToStatusId(pstatus.in_reply_to_status_id);
-				if (pstatus.location != null) {
-					status.setLocation(ParcelableLocation.toGeoLocation(pstatus.location));
+			for (final long account_id : statusUpdate.account_ids) {
+				final StatusUpdate status = new StatusUpdate(shortenedText);
+				status.setInReplyToStatusId(statusUpdate.in_reply_to_status_id);
+				if (statusUpdate.location != null) {
+					status.setLocation(ParcelableLocation.toGeoLocation(statusUpdate.location));
 				}
 				if (!mUseUploader && imageFile != null && imageFile.exists()) {
 					try {
@@ -413,7 +418,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 								final int percent = length > 0 ? (int) (position * 100 / length) : 0;
 								if (this.percent != percent) {
 									mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS,
-											updateUpdateStatusNotificaion(percent, pstatus));
+											updateUpdateStatusNotificaion(percent, statusUpdate));
 								}
 								this.percent = percent;
 							}
@@ -423,7 +428,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 						status.setMedia(imageFile);
 					}
 				}
-				status.setPossiblySensitive(pstatus.is_possibly_sensitive);
+				status.setPossiblySensitive(statusUpdate.is_possibly_sensitive);
 
 				final Twitter twitter = getTwitterInstance(this, account_id, true, true);
 				if (twitter == null) {
@@ -441,7 +446,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 								}
 							}
 						} else {
-							mentioned_hondajojo = pstatus.text.contains(HONDAJOJO_SCREEN_NAME);
+							mentioned_hondajojo = statusUpdate.text.contains(HONDAJOJO_SCREEN_NAME);
 						}
 					}
 					final ParcelableStatus result = new ParcelableStatus(twitter_result, account_id, false);

@@ -26,7 +26,7 @@ import android.support.v4.content.Loader;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
-import org.mariotaku.twidere.loader.UserSearchLoader;
+import org.mariotaku.twidere.loader.support.UserSearchLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 
 import java.util.List;

@@ -44,7 +44,7 @@ import android.widget.ListView;
 import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
-import org.mariotaku.twidere.loader.DummyParcelableUsersLoader;
+import org.mariotaku.twidere.loader.support.DummyParcelableUsersLoader;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.MultiSelectManager;

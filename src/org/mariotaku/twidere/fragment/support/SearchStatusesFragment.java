@@ -29,7 +29,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.loader.TweetSearchLoader;
+import org.mariotaku.twidere.loader.support.TweetSearchLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import java.util.List;

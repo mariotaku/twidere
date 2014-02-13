@@ -23,7 +23,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
 
-import org.mariotaku.twidere.loader.BaseCursorSupportUsersLoader;
+import org.mariotaku.twidere.loader.support.BaseCursorSupportUsersLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 
 import java.util.List;

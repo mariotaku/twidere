@@ -21,7 +21,7 @@ package org.mariotaku.twidere.fragment.support;
 
 import android.support.v4.content.Loader;
 
-import org.mariotaku.twidere.loader.UserListMembershipsLoader;
+import org.mariotaku.twidere.loader.support.UserListMembershipsLoader;
 import org.mariotaku.twidere.model.ParcelableUserList;
 
 import java.util.List;

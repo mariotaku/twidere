@@ -75,6 +75,10 @@ public interface SharedPreferenceConstants {
 	public static final String VALUE_THEME_NAME_DARK = "dark";
 	public static final String VALUE_THEME_NAME_LIGHT = "light";
 
+	public static final String VALUE_COMPOSE_NOW_ACTION_COMPOSE = "compose";
+	public static final String VALUE_COMPOSE_NOW_ACTION_TAKE_PHOTO = "take_photo";
+	public static final String VALUE_COMPOSE_NOW_ACTION_PICK_IMAGE = "pick_image";
+
 	public static final String DEFAULT_THEME = VALUE_THEME_NAME_TWIDERE;
 	public static final String DEFAULT_THEME_BACKGROUND = VALUE_THEME_BACKGROUND_DEFAULT;
 	public static final String DEFAULT_THEME_FONT_FAMILY = VALUE_THEME_FONT_FAMILY_REGULAR;
@@ -268,6 +272,8 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_FORCE_USING_PRIVATE_APIS = "force_using_private_apis";
 	@Preference(type = STRING, hasDefault = true, defaultString = "140")
 	public static final String KEY_STATUS_TEXT_LIMIT = "status_text_limit";
+	@Preference(type = STRING, hasDefault = true, defaultString = VALUE_COMPOSE_NOW_ACTION_COMPOSE)
+	public static final String KEY_COMPOSE_NOW_ACTION = "compose_now_action";
 
 	@Preference(type = STRING)
 	public static final String KEY_TRANSLATION_DESTINATION = "translation_destination";

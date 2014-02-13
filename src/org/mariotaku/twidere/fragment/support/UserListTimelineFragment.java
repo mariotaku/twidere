@@ -24,7 +24,7 @@ import android.os.Bundle;
 import android.support.v4.content.Loader;
 
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
-import org.mariotaku.twidere.loader.UserListTimelineLoader;
+import org.mariotaku.twidere.loader.support.UserListTimelineLoader;
 import org.mariotaku.twidere.model.ParcelableStatus;
 
 import java.util.List;

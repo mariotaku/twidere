@@ -618,10 +618,10 @@ public final class Utils implements Constants {
 			}
 			case LINK_ID_USER: {
 				fragment = new UserProfileFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (!args.containsKey(EXTRA_USER_ID)) {
 					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
@@ -630,10 +630,10 @@ public final class Utils implements Constants {
 			}
 			case LINK_ID_USER_LIST_MEMBERSHIPS: {
 				fragment = new UserListMembershipsListFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (!args.containsKey(EXTRA_USER_ID)) {
 					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
@@ -642,54 +642,54 @@ public final class Utils implements Constants {
 			}
 			case LINK_ID_USER_TIMELINE: {
 				fragment = new UserTimelineFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (!args.containsKey(EXTRA_USER_ID)) {
 					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
-				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				if (isEmpty(paramScreenName) && isEmpty(param_user_id)) return null;
 				break;
 			}
 			case LINK_ID_USER_FAVORITES: {
 				fragment = new UserFavoritesFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramUserId = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (!args.containsKey(EXTRA_USER_ID)) {
-					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
+					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(paramUserId));
 				}
-				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				if (!args.containsKey(EXTRA_SCREEN_NAME) && !args.containsKey(EXTRA_USER_ID)) return null;
 				break;
 			}
 			case LINK_ID_USER_FOLLOWERS: {
 				fragment = new UserFollowersFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (!args.containsKey(EXTRA_USER_ID)) {
 					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
-				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				if (isEmpty(paramScreenName) && isEmpty(param_user_id)) return null;
 				break;
 			}
 			case LINK_ID_USER_FRIENDS: {
 				fragment = new UserFriendsFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (!args.containsKey(EXTRA_USER_ID)) {
 					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
-				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				if (isEmpty(paramScreenName) && isEmpty(param_user_id)) return null;
 				break;
 			}
 			case LINK_ID_USER_BLOCKS: {
@@ -710,75 +710,71 @@ public final class Utils implements Constants {
 			}
 			case LINK_ID_USER_LIST: {
 				fragment = new UserListDetailsFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
-				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				final String paramListName = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
 				if (isEmpty(param_list_id)
-						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
-					return null;
+						&& (isEmpty(paramListName) || isEmpty(paramScreenName) && isEmpty(param_user_id))) return null;
 				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
 				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
-				args.putString(EXTRA_LIST_NAME, param_list_name);
+				args.putString(EXTRA_SCREEN_NAME, paramScreenName);
+				args.putString(EXTRA_LIST_NAME, paramListName);
 				break;
 			}
 			case LINK_ID_USER_LISTS: {
 				fragment = new UserListsListFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				if (!args.containsKey(EXTRA_SCREEN_NAME)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (!args.containsKey(EXTRA_USER_ID)) {
 					args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
 				}
-				if (isEmpty(param_screen_name) && isEmpty(param_user_id)) return null;
+				if (isEmpty(paramScreenName) && isEmpty(param_user_id)) return null;
 				break;
 			}
 			case LINK_ID_USER_LIST_TIMELINE: {
 				fragment = new UserListTimelineFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
-				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				final String paramListName = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
 				if (isEmpty(param_list_id)
-						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
-					return null;
+						&& (isEmpty(paramListName) || isEmpty(paramScreenName) && isEmpty(param_user_id))) return null;
 				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
 				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
-				args.putString(EXTRA_LIST_NAME, param_list_name);
+				args.putString(EXTRA_SCREEN_NAME, paramScreenName);
+				args.putString(EXTRA_LIST_NAME, paramListName);
 				break;
 			}
 			case LINK_ID_USER_LIST_MEMBERS: {
 				fragment = new UserListMembersFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
-				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				final String paramListName = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
 				if (isEmpty(param_list_id)
-						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
-					return null;
+						&& (isEmpty(paramListName) || isEmpty(paramScreenName) && isEmpty(param_user_id))) return null;
 				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
 				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
-				args.putString(EXTRA_LIST_NAME, param_list_name);
+				args.putString(EXTRA_SCREEN_NAME, paramScreenName);
+				args.putString(EXTRA_LIST_NAME, paramListName);
 				break;
 			}
 			case LINK_ID_LIST_SUBSCRIBERS: {
 				fragment = new UserListSubscribersFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
 				final String param_user_id = uri.getQueryParameter(QUERY_PARAM_USER_ID);
 				final String param_list_id = uri.getQueryParameter(QUERY_PARAM_LIST_ID);
-				final String param_list_name = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
+				final String paramListName = uri.getQueryParameter(QUERY_PARAM_LIST_NAME);
 				if (isEmpty(param_list_id)
-						&& (isEmpty(param_list_name) || isEmpty(param_screen_name) && isEmpty(param_user_id)))
-					return null;
+						&& (isEmpty(paramListName) || isEmpty(paramScreenName) && isEmpty(param_user_id))) return null;
 				args.putInt(EXTRA_LIST_ID, ParseUtils.parseInt(param_list_id));
 				args.putLong(EXTRA_USER_ID, ParseUtils.parseLong(param_user_id));
-				args.putString(EXTRA_SCREEN_NAME, param_screen_name);
-				args.putString(EXTRA_LIST_NAME, param_list_name);
+				args.putString(EXTRA_SCREEN_NAME, paramScreenName);
+				args.putString(EXTRA_LIST_NAME, paramListName);
 				break;
 			}
 			case LINK_ID_SAVED_SEARCHES: {
@@ -787,9 +783,9 @@ public final class Utils implements Constants {
 			}
 			case LINK_ID_USER_MENTIONS: {
 				fragment = new UserMentionsFragment();
-				final String param_screen_name = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
-				if (!args.containsKey(EXTRA_SCREEN_NAME) && !isEmpty(param_screen_name)) {
-					args.putString(EXTRA_SCREEN_NAME, param_screen_name);
+				final String paramScreenName = uri.getQueryParameter(QUERY_PARAM_SCREEN_NAME);
+				if (!args.containsKey(EXTRA_SCREEN_NAME) && !isEmpty(paramScreenName)) {
+					args.putString(EXTRA_SCREEN_NAME, paramScreenName);
 				}
 				if (isEmpty(args.getString(EXTRA_SCREEN_NAME))) return null;
 				break;
@@ -1642,15 +1638,12 @@ public final class Utils implements Constants {
 		return null;
 	}
 
-	public static String getImageUploadStatus(final Context context, final CharSequence link, final CharSequence text) {
-		if (context == null) return null;
-		String image_upload_format = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
-				.getString(KEY_IMAGE_UPLOAD_FORMAT, DEFAULT_IMAGE_UPLOAD_FORMAT);
-		if (isEmpty(image_upload_format)) {
-			image_upload_format = DEFAULT_IMAGE_UPLOAD_FORMAT;
-		}
-		if (link == null) return ParseUtils.parseString(text);
-		return image_upload_format.replace(FORMAT_PATTERN_LINK, link).replace(FORMAT_PATTERN_TEXT, text);
+	public static String getImageUploadStatus(final Context context, final CharSequence[] links, final CharSequence text) {
+		if (context == null || links == null || links.length == 0) return ParseUtils.parseString(text);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		final String imageUploadFormat = getNonEmptyString(prefs, KEY_IMAGE_UPLOAD_FORMAT, DEFAULT_IMAGE_UPLOAD_FORMAT);
+		return imageUploadFormat.replace(FORMAT_PATTERN_LINK, ArrayUtils.toString(links, ' ', false)).replace(
+				FORMAT_PATTERN_TEXT, text);
 	}
 
 	public static String getInReplyToName(final Status status) {

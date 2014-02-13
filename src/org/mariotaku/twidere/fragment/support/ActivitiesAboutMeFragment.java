@@ -31,7 +31,7 @@ import android.widget.ListView;
 
 import org.mariotaku.twidere.adapter.BaseParcelableActivitiesAdapter;
 import org.mariotaku.twidere.adapter.ParcelableActivitiesAboutMeAdapter;
-import org.mariotaku.twidere.loader.ActivitiesAboutMeLoader;
+import org.mariotaku.twidere.loader.support.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
