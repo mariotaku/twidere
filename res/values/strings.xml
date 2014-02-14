@@ -31,7 +31,7 @@
 	<string name="home">Home</string>
 	<string name="mentions">Mentions</string>
 	<string name="error_occurred">An error occurred, please try again.</string>
-	<string name="error_already_logged_in">You are already logged in.</string>
+	<string name="error_already_logged_in">You have already logged in.</string>
 	<string name="no_account_selected">No account selected.</string>
 	<string name="empty_account_selection_disallowed">Please select at least one account.</string>
 	<string name="error_unknown_error">Error: Unknown error, this is probably a bug.</string>
@@ -68,20 +68,20 @@
 	<string name="open_source_license">Open source license</string>
 	<string name="api">API</string>
 	<string name="default_api_settings">Default API settings</string>
-	<string name="default_api_settings_summary">These settings only applies to new logged accounts</string>
+	<string name="default_api_settings_summary">These settings only apply to newly logged-in accounts</string>
 	<string name="consumer_key">Consumer key</string>
 	<string name="consumer_secret">Consumer secret</string>
 	<string name="ignore_ssl_error">Ignore SSL Error</string>
 	<string name="ignore_ssl_error_summary">Ignore SSL Error, enable this if you are having problems with custom API server.</string>
 	<string name="gzip_compressing">GZip compressing</string>
-	<string name="gzip_compressing_summary">Compress all API request, it can reduce data usage, but may not work on all API servers.</string>
+	<string name="gzip_compressing_summary">Compress all API requests, it can reduce data usage, but may not work on all API servers.</string>
 	<string name="storage">Storage</string>
 	<string name="database_item_limit">Database size limit</string>
 	<string name="database_item_limit_summary">Upper limit of items stored in databases for each account, set to a smaller value to save space and increase loading speed.</string>
 	<string name="clear_cache">Clear cache</string>
 	<string name="clear_cache_summary">Clear stored profile image cache.</string>
 	<string name="clear_databases">Clear databases</string>
-	<string name="clear_databases_summary">Clear all tweets, profiles, messages. Your account credentials won\'t loss.</string>
+	<string name="clear_databases_summary">Clear all tweets, profiles, messages. Your account credentials won\'t be lost.</string>
 	<string name="look_and_feel">Look and feel</string>
 	<string name="display_profile_image">Display profile image</string>
 	<string name="image_load_summary">Disabling this will increase list scroll speed and reduce data usage.</string>
@@ -109,8 +109,8 @@
 	<string name="unfollow">Unfollow</string>
 	<string name="bottom_compose_button">Bottom \"compose\" button</string>
 	<string name="bottom_compose_button_summary">Place the compose button in the bottom, you can enable this if your screen is large.</string>
-	<string name="leftside_compose_button">Leftside compose button</string>
-	<string name="leftside_compose_button_summary">Put the compose button to the left.</string>
+	<string name="leftside_compose_button">Left side compose button</string>
+	<string name="leftside_compose_button_summary">Put the compose button on the left.</string>
 	<string name="bottom_send_button">Bottom \"send\" button</string>
 	<string name="load_item_limit">Load item limit</string>
 	<string name="load_item_limit_summary">Set items limit per load.</string>
@@ -344,7 +344,7 @@
 	<string name="silent_notifications">Silent notifications</string>
 	<string name="silent_notifications_summary">Disable ringtone/vibrate for notifications</string>
 	<string name="disable_background_service">Disable background service</string>
-	<string name="disable_background_service_summary">Twidere doesn\'t have background service if you disable auto refresh and data profiling, don\'t be silly!</string>
+	<string name="disable_background_service_summary">Twidere won\'t have background service if you disable auto refresh and data profiling, don\'t be silly!</string>
 	<string name="text_copied">Text copied to clipboard.</string>
 	<string name="amount_usd">Amount (USD)</string>
 	<string name="donate">Donate</string>
@@ -386,8 +386,8 @@
 	<string name="preload_wifi_only">Preload using Wi-Fi only</string>
 	<string name="disable_tab_swipe">Disable tab swipe</string>
 	<string name="sign_in_method_introduction_title">How does it work?</string>
-	<string name="sign_in_method_introduction">Most clients like twicca opens a browser asking you to type username and password, and then takes you back to heir clients. Sometimes this can become very inconvenient.\n\nTwidere uses more simple steps to sign in, without opening the browser. Don\'t worry about your password, Twidere will never store it, it\'s totally safe!</string>
-	<string name="quote_protected_status_notice">It\'s not recommended to quote protected tweet.</string>
+	<string name="sign_in_method_introduction">Most clients like twicca open a browser asking you to type username and password, and then take you back to the clients. Sometimes this can become very inconvenient.\n\nTwidere uses simpler steps to sign in, without opening the browser. Don\'t worry about your password, Twidere will never store it, it\'s totally safe!</string>
+	<string name="quote_protected_status_notice">It\'s not recommended to quote protected tweets.</string>
 	<string name="edit_draft">Edit draft</string>
 	<string name="profile_image">Profile image</string>
 	<string name="my_profile_image">My profile image</string>
@@ -490,7 +490,7 @@
 	<string name="wizard_page_tabs_text">Add some tabs to Twidere.\nKeep track of people or things you care about.</string>
 	<string name="wizard_page_tabs_unchanged_message">You can add tabs in &quot;Settings&quot; - &quot;Tabs&quot;</string>
 	<string name="wizard_page_cards_text">Config card items.</string>
-	<string name="wizard_page_hints_text">Here\'re some useful hints.</string>
+	<string name="wizard_page_hints_text">Here are some useful hints.</string>
 	<string name="wizard_page_finished_title">Finished</string>
 	<string name="wizard_page_finished_text">Now Twidere is ready for use.</string>
 	<string name="invalid_tab">Invalid tab</string>
@@ -502,15 +502,15 @@
 	<string name="block_user">Block <xliff:g id="name">%s</xliff:g></string>
 	<string name="block_user_confirm_message">Block <xliff:g id="name">%s</xliff:g>? This user won\'t be able to follow you, mention you or send you direct messages.</string>
 	<string name="unfollow_user">Unfollow <xliff:g id="name">%s</xliff:g></string>
-	<string name="unfollow_user_confirm_message">Unfollow <xliff:g id="name">%s</xliff:g>? You\'ll not see tweets from this user.</string>
+	<string name="unfollow_user_confirm_message">Unfollow <xliff:g id="name">%s</xliff:g>? You will no longer see tweets from this user.</string>
 	<string name="delete_user_list">Delete list <xliff:g id="name">%s</xliff:g></string>
-	<string name="delete_user_list_confirm_message">Delete list <xliff:g id="name">%s</xliff:g>? This can\' be undone.</string>
+	<string name="delete_user_list_confirm_message">Delete list <xliff:g id="name">%s</xliff:g>? This can\'t be undone.</string>
 	<string name="unsubscribe_from_user_list">Unsubscribe from list <xliff:g id="name">%s</xliff:g></string>
-	<string name="unsubscribe_from_user_list_confirm_message">Unsubscribe from list <xliff:g id="name">%s</xliff:g>? You can re-subscribe this list later.</string>
+	<string name="unsubscribe_from_user_list_confirm_message">Unsubscribe from list <xliff:g id="name">%s</xliff:g>? You can re-subscribe to this list later.</string>
 	<string name="delete_tweet">Delete tweet</string>
 	<string name="delete_tweet_confirm_message">Delete this tweet?</string>
 	<string name="delete_saved_search">Delete saved search \"<xliff:g id="name">%s</xliff:g>\"</string>
-	<string name="delete_saved_search_confirm_message">Delete saved search \"<xliff:g id="name">%s</xliff:g>\"? You can re-save this search shortly.</string>
+	<string name="delete_saved_search_confirm_message">Delete saved search \"<xliff:g id="name">%s</xliff:g>\"? You can re-save this search later.</string>
 	<string name="signing_in_error_browser_sign_in_hint">Error while signing in, you may need to use browser sign in method. (This will ignore custom API settings during sign in)</string>
 	<string name="report_user">Report <xliff:g id="name">%s</xliff:g></string>
 	<string name="report_user_confirm_message">Report <xliff:g id="name">%s</xliff:g> for spam? You\'ll also block this user.</string>
@@ -528,14 +528,14 @@
 	<string name="translate">Translate</string>
 	<string name="sponsored_by">Sponsored by</string>
 	<string name="special_thanks_to">Special thanks to</string>
-	<string name="contributors_list_summary">If you haven\'t find your name, please tell project account.</string>
+	<string name="contributors_list_summary">If you don\'t see your name, please tell our project account.</string>
 	<string name="account_options">Account options</string>
 	<string name="show_in_timeline">Show in timeline</string>
 	<string name="cards">Cards</string>
 	<string name="no_tab_hint">No tab</string>
 	<string name="delete_user">Delete user <xliff:g id="name">%s</xliff:g></string>
 	<string name="delete_users">Delete users</string>
-	<string name="delete_user_confirm_message">Delete <xliff:g id="name">%s</xliff:g>? This can\' be undone.</string>
+	<string name="delete_user_confirm_message">Delete <xliff:g id="name">%s</xliff:g>? This can\'t be undone.</string>
 	<string name="toggle">Toggle</string>
 	<string name="general">General</string>
 	<string name="hints">Hints</string>
@@ -547,7 +547,7 @@
 	<string name="theme_dark_actionbar">Dark ActionBar</string>
 	<string name="wizard_hint_compose_select_account">Click this icon to select account when writing a tweet.</string>
 	<string name="wizard_hint_quote_format">Set your favorite quote format in &quot;Settings&quot; - &quot;Content &amp; Storage&quot;</string>
-	<string name="wizard_hint_filters">You can hide unwanted tweet from timeline and notifications by using &quot;Filters&quot;.</string>
+	<string name="wizard_hint_filters">You can hide unwanted tweets from timeline and notification by using &quot;Filters&quot;.</string>
 	<string name="view_replies">View Replies</string>
 	<string name="compact_cards">Compact cards</string>
 	<string name="compact_cards_summary">Display more cards on screen</string>
@@ -565,7 +565,7 @@
 	<string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g> new conversations</string>
 	<string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g> (@<xliff:g id="screen_name">%2$s</xliff:g>), at <xliff:g id="time">%3$s</xliff:g></string>
 	<string name="rate_limit">Rate limit</string>
-	<string name="wizard_hint_rate_limit">If you encountered rate limit problem, please don\'t blame me, that\'s Twitter\'s policy.</string>
+	<string name="wizard_hint_rate_limit">If you encounter rate limit problems, please don\'t blame me, that\'s Twitter\'s policy.</string>
 	<string name="preparing_database">Preparing database</string>
 	<string name="preparing_database_toast">Preparing database, please wait for a while.</string>
 	<string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g>, saved at <xliff:g id="time">%2$s</xliff:g></string>
@@ -581,7 +581,7 @@
 	<string name="tab_display_option_label">Label</string>
 	<string name="tab_display_option_icon_and_label">Icon and label</string>
 	<string name="highlight_and_underline">Highlight and underline</string>
-	<string name="twip_api_version_notice_message">TWIP can\'t handle Rest Base URL that not ends with \"/1.1/\" correctly.\n\n You may need to add \"/1.1/\" at the end of Rest Base URL to avoid issues when uploading image.</string>
+	<string name="twip_api_version_notice_message">TWIP can\'t handle Rest Base URL that doesn\'t end with \"/1.1/\" correctly.\n\n You may need to add \"/1.1/\" at the end of Rest Base URL to avoid issues when uploading images.</string>
 	<string name="back">Back</string>
 	<string name="theme_font_family">Theme font family</string>
 	<string name="translation_destination">Translation destination</string>
