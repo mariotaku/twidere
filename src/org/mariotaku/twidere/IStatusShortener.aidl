@@ -18,6 +18,11 @@
  */
 package org.mariotaku.twidere;
 
-interface ITweetShortener {
-	String shorten(String text, String screen_name, long in_reply_to_status_id);
+import org.mariotaku.twidere.model.ParcelableStatusUpdate;
+import org.mariotaku.twidere.model.StatusShortenResult;
+
+interface IStatusShortener {
+	
+	StatusShortenResult shorten(in ParcelableStatusUpdate status, String overrideStatusText);
+	
 }

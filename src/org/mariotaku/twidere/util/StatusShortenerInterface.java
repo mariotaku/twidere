@@ -24,24 +24,25 @@ import static org.mariotaku.twidere.util.ServiceUtils.bindToService;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.ITweetShortener;
+import org.mariotaku.twidere.IStatusShortener;
+import org.mariotaku.twidere.model.ParcelableStatusUpdate;
+import org.mariotaku.twidere.model.StatusShortenResult;
 
-public final class TweetShortenerInterface implements Constants, ITweetShortener {
+public final class StatusShortenerInterface implements Constants, IStatusShortener {
 
-	private ITweetShortener mShortener;
+	private IStatusShortener mShortener;
 
 	private final ServiceConnection mConntecion = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(final ComponentName service, final IBinder obj) {
-			mShortener = ITweetShortener.Stub.asInterface(obj);
+			mShortener = IStatusShortener.Stub.asInterface(obj);
 		}
 
 		@Override
@@ -50,9 +51,9 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 		}
 	};
 
-	private TweetShortenerInterface(final Context context, final String shortener_name) {
-		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
-		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
+	private StatusShortenerInterface(final Context context, final String shortenerName) {
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_STATUS);
+		final ComponentName component = ComponentName.unflattenFromString(shortenerName);
 		intent.setComponent(component);
 		bindToService(context, intent, mConntecion);
 	}
@@ -64,10 +65,11 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 	}
 
 	@Override
-	public String shorten(final String text, final String screen_name, final long in_reply_to_status_id) {
+	public StatusShortenResult shorten(final ParcelableStatusUpdate status, final String overrideStatusText)
+			throws RemoteException {
 		if (mShortener == null) return null;
 		try {
-			return mShortener.shorten(text, screen_name, in_reply_to_status_id);
+			return mShortener.shorten(status, overrideStatusText);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}
@@ -84,22 +86,13 @@ public final class TweetShortenerInterface implements Constants, ITweetShortener
 		}
 	}
 
-	public static TweetShortenerInterface getInstance(final Application application, final String shortener_name) {
+	public static StatusShortenerInterface getInstance(final Application application, final String shortener_name) {
 		if (shortener_name == null) return null;
-		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_TWEET);
+		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_SHORTEN_STATUS);
 		final ComponentName component = ComponentName.unflattenFromString(shortener_name);
 		intent.setComponent(component);
 		if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1) return null;
-		return new TweetShortenerInterface(application, shortener_name);
+		return new StatusShortenerInterface(application, shortener_name);
 	}
 
-	public static class ServiceToken {
-
-		ContextWrapper wrapped_context;
-
-		ServiceToken(final ContextWrapper context) {
-
-			wrapped_context = context;
-		}
-	}
 }

@@ -44,21 +44,24 @@ public class IntentActivitiesLoader extends AsyncTaskLoader<List<ResolveInfo>> i
 	private final PackageManager mPackageManager;
 	private final Intent mIntent;
 	private final String[] mPackagesBlacklist;
+	private int mFlags;
 
 	public IntentActivitiesLoader(final Context context, final Intent intent) {
-		this(context, intent, null);
+		this(context, intent, null, 0);
 	}
 
-	public IntentActivitiesLoader(final Context context, final Intent intent, final String[] packagesBlacklist) {
+	public IntentActivitiesLoader(final Context context, final Intent intent, final String[] packagesBlacklist,
+			final int flags) {
 		super(context);
 		mPackageManager = context.getPackageManager();
 		mIntent = intent;
 		mPackagesBlacklist = packagesBlacklist;
+		mFlags = flags;
 	}
 
 	@Override
 	public List<ResolveInfo> loadInBackground() {
-		final List<ResolveInfo> activities = mPackageManager.queryIntentActivities(mIntent, 0);
+		final List<ResolveInfo> activities = mPackageManager.queryIntentActivities(mIntent, mFlags);
 		final List<ResolveInfo> result = new ArrayList<ResolveInfo>();
 		for (final ResolveInfo activity : activities) {
 			final ActivityInfo activityInfo = activity.activityInfo;

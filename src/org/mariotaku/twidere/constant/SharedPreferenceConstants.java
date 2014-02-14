@@ -274,6 +274,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_STATUS_TEXT_LIMIT = "status_text_limit";
 	@Preference(type = STRING, hasDefault = true, defaultString = VALUE_COMPOSE_NOW_ACTION_COMPOSE)
 	public static final String KEY_COMPOSE_NOW_ACTION = "compose_now_action";
+	public static final String KEY_FALLBACK_TWITTER_LINK_HANDLER = "fallback_twitter_link_handler";
 
 	@Preference(type = STRING)
 	public static final String KEY_TRANSLATION_DESTINATION = "translation_destination";

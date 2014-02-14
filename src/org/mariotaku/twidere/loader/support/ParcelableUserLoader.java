@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mariotaku.twidere.loader;
+package org.mariotaku.twidere.loader.support;
 
 import static org.mariotaku.twidere.util.ContentValuesCreator.makeCachedUserContentValues;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;

@@ -18,6 +18,11 @@
  */
 package org.mariotaku.twidere;
 
-interface IImageUploader {
-	Uri upload(in Uri file_uri, String message);
+import org.mariotaku.twidere.model.MediaUploadResult;
+import org.mariotaku.twidere.model.ParcelableStatusUpdate;
+
+interface IMediaUploader {
+	
+	MediaUploadResult upload(in ParcelableStatusUpdate status);
+	
 }

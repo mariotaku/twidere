@@ -65,7 +65,7 @@ public interface IntentConstants {
 
 	public static final String INTENT_ACTION_UPDATE_STATUS = INTENT_PACKAGE_PREFIX + "UPDATE_STATUS";
 	public static final String INTENT_ACTION_SEND_DIRECT_MESSAGE = INTENT_PACKAGE_PREFIX + "SEND_DIRECT_MESSAGE";
-	public static final String INTENT_ACTION_PICK_ACTIVITY = INTENT_PACKAGE_PREFIX + "PICK_ACTIVITY";
+	public static final String INTENT_ACTION_PICK_ACTIVITY = "org.mariotaku.twidere.PICK_ACTIVITY";
 
 	public static final String BROADCAST_HOME_TIMELINE_REFRESHED = INTENT_PACKAGE_PREFIX + "HOME_TIMELINE_REFRESHED";
 	public static final String BROADCAST_MENTIONS_REFRESHED = INTENT_PACKAGE_PREFIX + "MENTIONS_REFRESHED";
@@ -204,6 +204,6 @@ public interface IntentConstants {
 	public static final String EXTRA_ACTION = "action";
 	public static final String EXTRA_FLAGS = "flags";
 	public static final String EXTRA_INTENT = "intent";
-	public static final String EXTRA_BLACKLIST = "component_names";
+	public static final String EXTRA_BLACKLIST = "blacklist";
 
 }
