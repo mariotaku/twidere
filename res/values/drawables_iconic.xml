@@ -54,6 +54,8 @@
 	<item name="ic_iconic_action_warning" type="drawable"/>
 	<item name="ic_iconic_action_heart" type="drawable"/>
 	<item name="ic_iconic_action_drafts" type="drawable"/>
+	<item name="ic_iconic_action_import" type="drawable"/>
+	<item name="ic_iconic_action_export" type="drawable"/>
 	<item name="ic_iconic_twidere" type="drawable"/>
 
 </resources>

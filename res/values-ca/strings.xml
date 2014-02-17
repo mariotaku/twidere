@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Voleu esborrar la llista <xliff:g id="name">%s</xliff:g>? Aquesta acció no es pot desfer.</string>
   <string name="unsubscribe_from_user_list">Canceŀla la subscripció a la llista <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Voleu canceŀlar la subscripció a la llista <xliff:g id="name">%s</xliff:g>? Podreu tornar a subscriure-us-hi més endavant.</string>
-  <string name="delete_saved_search">Esborra la cerca desada «<xliff:g id="name">%s</xliff:g>»</string>
-  <string name="delete_saved_search_confirm_message">Voleu esborrar la cerca desada «<xliff:g id="name">%s</xliff:g>»? Podeu tornar a desar-la quan vulgueu.</string>
+  <string name="destroy_saved_search">Esborra la cerca desada «<xliff:g id="name">%s</xliff:g>»</string>
+  <string name="destroy_saved_search_confirm_message">Voleu esborrar la cerca desada «<xliff:g id="name">%s</xliff:g>»? Podeu tornar a desar-la quan vulgueu.</string>
   <string name="signing_in_error_browser_sign_in_hint">Hi ha hagut un error mentre s\'accedia. Proveu el mètode d\'accedir a través d\'un navegador.
 (Això no farà cas de la configuració d\'API personalitzades a sessió)</string>
   <string name="report_user">Informa d\'abús l\'usuari <xliff:g id="name">%s</xliff:g></string>

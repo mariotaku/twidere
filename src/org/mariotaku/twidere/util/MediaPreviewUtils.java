@@ -261,17 +261,25 @@ public class MediaPreviewUtils {
 		return null;
 	}
 
-	public static List<String> getSupportedLinksInStatus(final String status_string) {
-		if (status_string == null) return Collections.emptyList();
+	public static List<String> getSupportedLinksInStatus(final String statusString) {
+		if (statusString == null) return Collections.emptyList();
 		final List<String> links = new ArrayList<String>();
 		final HtmlLinkExtractor extractor = new HtmlLinkExtractor();
-		for (final HtmlLink link : extractor.grabLinks(status_string)) {
+		for (final HtmlLink link : extractor.grabLinks(statusString)) {
 			final String spec = getSupportedLink(link.getLink());
 			if (spec != null) {
 				links.add(spec);
 			}
 		}
 		return links;
+	}
+
+	public static boolean isLinkSupported(final String link) {
+		if (link == null) return false;
+		for (final Pattern pattern : SUPPORTED_PATTERNS) {
+			if (pattern.matcher(link).matches()) return true;
+		}
+		return false;
 	}
 
 	private static PreviewMedia getGoogleImage(final String server, final String id, final boolean fullImage) {

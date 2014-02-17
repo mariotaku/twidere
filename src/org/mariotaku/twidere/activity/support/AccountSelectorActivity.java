@@ -30,6 +30,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,7 +41,7 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.ArrayUtils;
 
 public class AccountSelectorActivity extends BaseSupportDialogActivity implements LoaderCallbacks<Cursor>,
-		OnClickListener {
+		OnClickListener, OnItemClickListener {
 
 	private final ContentObserver mContentObserver = new ContentObserver(null) {
 
@@ -64,18 +66,22 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 
 	private boolean mFirstCreated;
 
+	private View mSelectAccountDivider;
+
+	private View mSelectAccountButtons;
+
 	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
 			case R.id.save: {
-				final long[] checked_ids = mListView.getCheckedItemIds();
-				if (checked_ids == null || checked_ids.length == 0 && !isSelectNoneAllowed()) {
+				final long[] checkedIds = mListView.getCheckedItemIds();
+				if (checkedIds == null || checkedIds.length == 0 && !isSelectNoneAllowed()) {
 					Toast.makeText(this, R.string.no_account_selected, Toast.LENGTH_SHORT).show();
 					return;
 				}
-				final Bundle extras = new Bundle();
-				extras.putLongArray(EXTRA_IDS, checked_ids);
-				setResult(RESULT_OK, new Intent().putExtras(extras));
+				final Intent data = new Intent();
+				data.putExtra(EXTRA_IDS, checkedIds);
+				setResult(RESULT_OK, data);
 				finish();
 				break;
 			}
@@ -83,9 +89,25 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 	}
 
 	@Override
+	public void onContentChanged() {
+		super.onContentChanged();
+		mListView = (ListView) findViewById(android.R.id.list);
+		mSelectAccountDivider = findViewById(R.id.select_account_divider);
+		mSelectAccountButtons = findViewById(R.id.select_account_buttons);
+	}
+
+	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final String where = isOAuthOnly() ? Accounts.AUTH_TYPE + " = " + Accounts.AUTH_TYPE_OAUTH : null;
 		return new CursorLoader(this, Accounts.CONTENT_URI, Accounts.COLUMNS, where, null, null);
+	}
+
+	@Override
+	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+		final Intent data = new Intent();
+		data.putExtra(EXTRA_ID, id);
+		setResult(RESULT_OK, data);
+		finish();
 	}
 
 	@Override
@@ -97,10 +119,9 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 	public void onLoadFinished(final Loader<Cursor> loader, final Cursor cursor) {
 		mAdapter.swapCursor(cursor);
 		if (cursor != null && mFirstCreated) {
-			final Intent intent = getIntent();
-			final long[] activated_ids = intent.getLongArrayExtra(EXTRA_IDS);
+			final long[] activatedIds = getIntentExtraIds();
 			for (int i = 0, j = mAdapter.getCount(); i < j; i++) {
-				mListView.setItemChecked(i, ArrayUtils.contains(activated_ids, mAdapter.getItemId(i)));
+				mListView.setItemChecked(i, ArrayUtils.contains(activatedIds, mAdapter.getItemId(i)));
 			}
 		}
 	}
@@ -110,11 +131,16 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 		super.onCreate(savedInstanceState);
 		mFirstCreated = savedInstanceState == null;
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-		setContentView(R.layout.select_account);
-		mListView = (ListView) findViewById(android.R.id.list);
+		setContentView(R.layout.activity_account_selector);
 		mAdapter = new AccountsAdapter(this);
-		mAdapter.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		final boolean isSingleSelection = isSingleSelection();
+		mListView.setChoiceMode(isSingleSelection ? ListView.CHOICE_MODE_NONE : ListView.CHOICE_MODE_MULTIPLE);
+		mAdapter.setChoiceMode(mListView.getChoiceMode());
+		if (isSingleSelection) {
+			mListView.setOnItemClickListener(this);
+		}
+		mSelectAccountDivider.setVisibility(isSingleSelection ? View.GONE : View.VISIBLE);
+		mSelectAccountButtons.setVisibility(isSingleSelection ? View.GONE : View.VISIBLE);
 		mListView.setAdapter(mAdapter);
 		getLoaderManager().initLoader(0, null, this);
 
@@ -139,14 +165,24 @@ public class AccountSelectorActivity extends BaseSupportDialogActivity implement
 		super.onStop();
 	}
 
+	private long[] getIntentExtraIds() {
+		final Intent intent = getIntent();
+		return intent.getLongArrayExtra(EXTRA_IDS);
+	}
+
 	private boolean isOAuthOnly() {
-		final Bundle extras = getIntent().getExtras();
-		return extras != null && extras.getBoolean(EXTRA_OAUTH_ONLY, false);
+		final Intent intent = getIntent();
+		return intent.getBooleanExtra(EXTRA_OAUTH_ONLY, false);
 	}
 
 	private boolean isSelectNoneAllowed() {
-		final Bundle extras = getIntent().getExtras();
-		return extras != null && extras.getBoolean(EXTRA_ALLOW_SELECT_NONE, false);
+		final Intent intent = getIntent();
+		return intent.getBooleanExtra(EXTRA_ALLOW_SELECT_NONE, false);
+	}
+
+	private boolean isSingleSelection() {
+		final Intent intent = getIntent();
+		return intent.getBooleanExtra(EXTRA_SINGLE_SELECTION, false);
 	}
 
 }

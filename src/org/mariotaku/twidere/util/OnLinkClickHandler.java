@@ -62,12 +62,12 @@ public class OnLinkClickHandler implements OnLinkClickListener, Constants {
 				openTweetSearch(activity, account_id, link);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(activity, link, sensitive);
-				break;
-			}
 			case TwidereLinkify.LINK_TYPE_LINK: {
-				openLink(link);
+				if (MediaPreviewUtils.isLinkSupported(link)) {
+					openImage(activity, link, sensitive);
+				} else {
+					openLink(link);
+				}
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LIST: {

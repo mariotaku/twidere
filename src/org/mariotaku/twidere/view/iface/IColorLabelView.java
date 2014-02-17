@@ -37,11 +37,15 @@ public interface IColorLabelView {
 
 	public void drawBackground(final int color);
 
+	public void drawBottom(final int... colors);
+
 	public void drawEnd(final int... colors);
 
-	public void drawLabel(final int[] start, final int[] end, final int background);
+	public void drawLabel(final int[] start, final int[] end, int[] top, int[] bottom, final int background);
 
 	public void drawStart(final int... colors);
+
+	public void drawTop(final int... colors);
 
 	public boolean isPaddingsIgnored();
 
@@ -58,7 +62,7 @@ public interface IColorLabelView {
 		private final boolean mIsRTL;
 
 		private int mBackgroundColor;
-		private int[] mStartColors, mEndColors;
+		private int[] mStartColors, mEndColors, mTopColors, mBottomColors;
 
 		private boolean mIgnorePadding;
 
@@ -89,27 +93,40 @@ public interface IColorLabelView {
 			final int labelWidth = Math.round(mDensity * LABEL_WIDTH);
 			final int[] leftColors = mIsRTL ? mEndColors : mStartColors;
 			final int[] rightColors = mIsRTL ? mStartColors : mEndColors;
-			drawColors(canvas, leftColors, left, top, labelWidth, bottom - top);
-			drawColors(canvas, rightColors, right - labelWidth, top, labelWidth, bottom - top);
+			drawColorsHorizontally(canvas, mTopColors, left, top, right - left, labelWidth);
+			drawColorsHorizontally(canvas, mBottomColors, left, bottom - labelWidth, right - left, labelWidth);
+			drawColorsVertically(canvas, leftColors, left, top, labelWidth, bottom - top);
+			drawColorsVertically(canvas, rightColors, right - labelWidth, top, labelWidth, bottom - top);
 		}
 
 		public void drawBackground(final int color) {
-			drawLabel(mStartColors, mEndColors, color);
+			drawLabel(mStartColors, mEndColors, mTopColors, mBottomColors, color);
+		}
+
+		public void drawBottom(final int[] colors) {
+			drawLabel(mStartColors, mEndColors, mTopColors, colors, mBackgroundColor);
 		}
 
 		public void drawEnd(final int[] colors) {
-			drawLabel(mStartColors, colors, mBackgroundColor);
+			drawLabel(mStartColors, colors, mTopColors, mBottomColors, mBackgroundColor);
 		}
 
-		public void drawLabel(final int[] start, final int[] end, final int background) {
+		public void drawLabel(final int[] start, final int[] end, final int[] top, final int[] bottom,
+				final int background) {
 			mStartColors = start;
 			mEndColors = end;
+			mTopColors = top;
+			mBottomColors = bottom;
 			mBackgroundColor = background;
 			mView.invalidate();
 		}
 
 		public void drawStart(final int[] colors) {
-			drawLabel(colors, mEndColors, mBackgroundColor);
+			drawLabel(colors, mEndColors, mTopColors, mBottomColors, mBackgroundColor);
+		}
+
+		public void drawTop(final int[] colors) {
+			drawLabel(mStartColors, mEndColors, colors, mBottomColors, mBackgroundColor);
 		}
 
 		public boolean isPaddingsIgnored() {
@@ -121,7 +138,18 @@ public interface IColorLabelView {
 			mView.invalidate();
 		}
 
-		private void drawColors(final Canvas canvas, final int[] colors, final int left, final int top,
+		private void drawColorsHorizontally(final Canvas canvas, final int[] colors, final int left, final int top,
+				final int width, final int height) {
+			if (colors == null || colors.length == 0) return;
+			for (int i = 0, len = colors.length; i < len; i++) {
+				mPaint.setColor(colors[i]);
+				final float colorLeft = left + i * (width / len);
+				final float colorRight = left + (i + 1) * (width / len);
+				canvas.drawRect(colorLeft, top, colorRight, top + height, mPaint);
+			}
+		}
+
+		private void drawColorsVertically(final Canvas canvas, final int[] colors, final int left, final int top,
 				final int width, final int height) {
 			if (colors == null || colors.length == 0) return;
 			for (int i = 0, len = colors.length; i < len; i++) {

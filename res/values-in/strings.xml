@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Hapus daftar <xliff:g id="name">%s</xliff:g>? Hal ini tidak bisa di kembalikan.</string>
   <string name="unsubscribe_from_user_list">Berhenti berlangganan dari daftar <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Berhenti berlangganan dari daftar <xliff:g id="name">%s</xliff:g>? Kamu bisa berlangganan kembali lain waktu.</string>
-  <string name="delete_saved_search">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="delete_saved_search_confirm_message">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"? Kamu bisa menyimpan kembali pencarian.</string>
+  <string name="destroy_saved_search">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"? Kamu bisa menyimpan kembali pencarian.</string>
   <string name="signing_in_error_browser_sign_in_hint">Kesalahan saat masuk, Anda mungkin perlu menggunakan browser untuk masuk. (Ini akan mengabaikan pengaturan kustom API selama masuk)</string>
   <string name="report_user">Laporkan <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Laporkan <xliff:g id="name">%s</xliff:g> karena spam? Kamu juga bisa blokir pengguna ini.</string>

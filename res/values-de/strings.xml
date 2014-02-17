@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Liste <xliff:g id="name">%s</xliff:g> wirklich löschen? Das kann nicht rückgängig gemacht werden.</string>
   <string name="unsubscribe_from_user_list">Aus Liste <xliff:g id="name">%s</xliff:g> austragen</string>
   <string name="unsubscribe_from_user_list_confirm_message">Aus Liste <xliff:g id="name">%s</xliff:g> wirklich austragen? Du kannst Dich jederzeit wieder eintragen.</string>
-  <string name="delete_saved_search">Lösche gepeicherte Suche \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="delete_saved_search_confirm_message">Lösche gespeicherte Suche \"<xliff:g id="name">%s</xliff:g>\"? Du kannst diese Suche in Kürze erneut speichern.</string>
+  <string name="destroy_saved_search">Lösche gepeicherte Suche \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Lösche gespeicherte Suche \"<xliff:g id="name">%s</xliff:g>\"? Du kannst diese Suche in Kürze erneut speichern.</string>
   <string name="signing_in_error_browser_sign_in_hint">Fehler bei der Anmeldung, bitte melde Dich im Browser an.</string>
   <string name="report_user"><xliff:g id="name">%s</xliff:g> melden</string>
   <string name="report_user_confirm_message"><xliff:g id="name">%s</xliff:g> als Spam melden? Dieser Benutzer wird gleichzeitig geblockt.</string>

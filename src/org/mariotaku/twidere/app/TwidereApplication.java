@@ -58,8 +58,8 @@ import org.acra.sender.ReportSenderException;
 import org.mariotaku.gallery3d.util.GalleryUtils;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.Main2Activity;
 import org.mariotaku.twidere.activity.MainActivity;
+import org.mariotaku.twidere.activity.MainHondaJOJOActivity;
 import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
@@ -207,7 +207,7 @@ public class TwidereApplication extends Application implements Constants, OnShar
 
 		final PackageManager pm = getPackageManager();
 		final ComponentName main = new ComponentName(this, MainActivity.class);
-		final ComponentName main2 = new ComponentName(this, Main2Activity.class);
+		final ComponentName main2 = new ComponentName(this, MainHondaJOJOActivity.class);
 		final boolean mainDisabled = pm.getComponentEnabledSetting(main) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 		final boolean main2Disabled = pm.getComponentEnabledSetting(main2) != PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 		final boolean no_entry = mainDisabled && main2Disabled;

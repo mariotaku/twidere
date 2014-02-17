@@ -385,9 +385,12 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		final boolean display_image_preview = mPreferences.getBoolean(KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(KEY_DISPLAY_SENSITIVE_CONTENTS, false);
 		final boolean indicate_my_status = mPreferences.getBoolean(KEY_INDICATE_MY_STATUS, true);
+		final String card_highlight_option = mPreferences.getString(KEY_CARD_HIGHLIGHT_OPTION,
+				DEFAULT_CARD_HIGHLIGHT_OPTION);
 		mAdapter.setDisplayImagePreview(display_image_preview);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
 		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);
+		mAdapter.setCardHighlightOption(card_highlight_option);
 		mLoadMoreAutomatically = mPreferences.getBoolean(KEY_LOAD_MORE_AUTOMATICALLY, false);
 	}
 

@@ -500,8 +500,8 @@
   <string name="delete_user_list_confirm_message">Eliminare lisra <xliff:g id="name">%s</xliff:g>? Non potrà essere annullato.</string>
   <string name="unsubscribe_from_user_list">Annulla l\'iscrizione alla lista <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Annullare l\'iscrizione alla lista  <xliff:g id="name">%s</xliff:g>? Potrai riscriverti in seguito.</string>
-  <string name="delete_saved_search">Elimina ricerca salvata \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="delete_saved_search_confirm_message">Eliminare ricerca salvata \"<xliff:g id="name">%s</xliff:g>\"? Potrai risalvare questa ricerca a breve.</string>
+  <string name="destroy_saved_search">Elimina ricerca salvata \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Eliminare ricerca salvata \"<xliff:g id="name">%s</xliff:g>\"? Potrai risalvare questa ricerca a breve.</string>
   <string name="signing_in_error_browser_sign_in_hint">Errore durante il login, potresti aver bisogno di usare il login da browser. (ignorando eventuali impostazioni API personalizzate)</string>
   <string name="report_user">Segnala <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Segnalare <xliff:g id="name">%s</xliff:g> per spam? Bloccherai anche questo utente.</string>

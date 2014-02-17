@@ -23,7 +23,7 @@
 				android:contentDescription="@string/app_name"
 				android:padding="@dimen/element_spacing_large"
 				android:scaleType="fitCenter"
-				android:src="@drawable/twidere_icon_512"/>
+				android:src="@drawable/ic_launcher_web"/>
 
 			<TextView
 				android:layout_width="match_parent"

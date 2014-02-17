@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Poistetaanko lista <xliff:g id="name">%s</xliff:g>? Toimintoa ei voi kumota.</string>
   <string name="unsubscribe_from_user_list">Poista listan <xliff:g id="name">%s</xliff:g> tilaus</string>
   <string name="unsubscribe_from_user_list_confirm_message">Lopetetaanko listan <xliff:g id="name">%s</xliff:g> tilaus? Voit tilata listan myöhemmin uudelleen.</string>
-  <string name="delete_saved_search">Poista tallennettu haku \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="delete_saved_search_confirm_message">Poistetaanko tallennettu haku \"<xliff:g id="name">%s</xliff:g>\"? Voit kohta tallentaa tämän haun uudelleen.</string>
+  <string name="destroy_saved_search">Poista tallennettu haku \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Poistetaanko tallennettu haku \"<xliff:g id="name">%s</xliff:g>\"? Voit kohta tallentaa tämän haun uudelleen.</string>
   <string name="signing_in_error_browser_sign_in_hint">Kirjautumisessa ilmeni virhe. Sinun täytyy ehkä käyttää selainkirjautumista (tämä vaihtoehto ohittaa API-asetukset kirjautumisvaiheessa).</string>
   <string name="report_user">Ilmianna <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Ilmiannetaanko käyttäjä <xliff:g id="name">%s</xliff:g> roskapostittamisesta? Tulet myös estämään tämän käyttäjän.</string>

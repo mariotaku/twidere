@@ -175,7 +175,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		final ListView originalList = (ListView) view.findViewById(android.R.id.list);
 		final ViewGroup listContainer = (ViewGroup) originalList.getParent();
 		listContainer.removeView(originalList);
-		inflater.inflate(R.layout.custom_tabs, listContainer, true);
+		inflater.inflate(R.layout.fragment_custom_tabs, listContainer, true);
 		return view;
 	}
 

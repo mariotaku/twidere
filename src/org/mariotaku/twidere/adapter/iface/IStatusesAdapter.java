@@ -39,6 +39,8 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
 	public boolean isLastItemFiltered();
 
+	public void setCardHighlightOption(String option);
+
 	public void setData(Data data);
 
 	public void setDisplayImagePreview(boolean display);

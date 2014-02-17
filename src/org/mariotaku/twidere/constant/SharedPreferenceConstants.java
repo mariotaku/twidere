@@ -79,6 +79,14 @@ public interface SharedPreferenceConstants {
 	public static final String VALUE_COMPOSE_NOW_ACTION_TAKE_PHOTO = "take_photo";
 	public static final String VALUE_COMPOSE_NOW_ACTION_PICK_IMAGE = "pick_image";
 
+	public static final String VALUE_CARD_HIGHLIGHT_OPTION_NONE = "none";
+	public static final String VALUE_CARD_HIGHLIGHT_OPTION_BACKGROUND = "background";
+	public static final String VALUE_CARD_HIGHLIGHT_OPTION_LINE = "line";
+
+	public static final int VALUE_CARD_HIGHLIGHT_OPTION_CODE_NONE = 0x0;
+	public static final int VALUE_CARD_HIGHLIGHT_OPTION_CODE_BACKGROUND = 0x1;
+	public static final int VALUE_CARD_HIGHLIGHT_OPTION_CODE_LINE = 0x2;
+
 	public static final String DEFAULT_THEME = VALUE_THEME_NAME_TWIDERE;
 	public static final String DEFAULT_THEME_BACKGROUND = VALUE_THEME_BACKGROUND_DEFAULT;
 	public static final String DEFAULT_THEME_FONT_FAMILY = VALUE_THEME_FONT_FAMILY_REGULAR;
@@ -107,7 +115,7 @@ public interface SharedPreferenceConstants {
 
 	public static final int DEFAULT_DATABASE_ITEM_LIMIT = 100;
 	public static final int DEFAULT_LOAD_ITEM_LIMIT = 20;
-	public static final boolean DEFAULT_HARDWARE_ACCELERATION = true;
+	public static final String DEFAULT_CARD_HIGHLIGHT_OPTION = VALUE_CARD_HIGHLIGHT_OPTION_BACKGROUND;
 
 	@Preference(type = INT, hasDefault = true, defaultInt = DEFAULT_DATABASE_ITEM_LIMIT)
 	public static final String KEY_DATABASE_ITEM_LIMIT = "database_item_limit";
@@ -280,6 +288,8 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_TRANSLATION_DESTINATION = "translation_destination";
 	@Preference(type = STRING)
 	public static final String KEY_TAB_DISPLAY_OPTION = "tab_display_option";
+	@Preference(type = STRING)
+	public static final String KEY_CARD_HIGHLIGHT_OPTION = "card_highlight_option";
 	@Preference(type = INT, exportable = false)
 	public static final String KEY_LIVE_WALLPAPER_SCALE = "live_wallpaper_scale";
 	@Preference(type = LONG, exportable = false)

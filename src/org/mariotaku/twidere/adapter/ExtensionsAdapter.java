@@ -37,7 +37,7 @@ public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> implements Co
 	private final PermissionsManager mPermissionsManager;
 
 	public ExtensionsAdapter(final Context context) {
-		super(context, R.layout.two_line_list_item_checked);
+		super(context, R.layout.list_item_two_line_checked);
 		mPermissionsManager = new PermissionsManager(context);
 	}
 

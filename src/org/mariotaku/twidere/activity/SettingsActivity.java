@@ -140,7 +140,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 		private final Resources mResources;
 
 		public HeaderAdapter(final Context context) {
-			super(context, R.layout.settings_list_item);
+			super(context, R.layout.list_item_settings);
 			mContext = context;
 			mResources = context.getResources();
 		}

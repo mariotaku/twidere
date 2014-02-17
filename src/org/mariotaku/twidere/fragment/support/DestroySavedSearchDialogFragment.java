@@ -56,8 +56,8 @@ public class DestroySavedSearchDialogFragment extends BaseSupportDialogFragment 
 		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
 		final String name = getSearchName();
 		if (name != null) {
-			builder.setTitle(getString(R.string.delete_saved_search, name));
-			builder.setMessage(getString(R.string.delete_saved_search_confirm_message, name));
+			builder.setTitle(getString(R.string.destroy_saved_search, name));
+			builder.setMessage(getString(R.string.destroy_saved_search_confirm_message, name));
 		}
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);

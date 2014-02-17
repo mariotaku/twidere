@@ -46,7 +46,7 @@
 				android:layout_height="wrap_content"
 				android:minHeight="?android:listPreferredItemHeightSmall"
 				android:padding="@dimen/element_spacing_default"
-				tools:listitem="@layout/two_line_list_item_small"/>
+				tools:listitem="@layout/list_item_two_line_small"/>
 
 			<TextView
 				android:id="@+id/recipient_selector"

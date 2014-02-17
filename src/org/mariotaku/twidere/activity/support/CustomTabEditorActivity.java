@@ -252,7 +252,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		}
 		mTabId = intent.getLongExtra(EXTRA_ID, -1);
 		setTitle(isEditMode() ? R.string.edit_tab : R.string.add_tab);
-		setContentView(R.layout.custom_tab_editor);
+		setContentView(R.layout.activity_custom_tab_editor);
 		mTabTypeName.setText(getTabTypeName(this, type));
 		mTabIconsAdapter = new CustomTabIconsAdapter(this);
 		mTabIconsAdapter.setData(getIconMap());
@@ -404,8 +404,8 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		private final Resources mResources;
 
 		public CustomTabIconsAdapter(final Context context) {
-			super(context, R.layout.custom_tab_icon_spinner_item);
-			setDropDownViewResource(R.layout.two_line_list_item_small);
+			super(context, R.layout.spinner_item_custom_tab_icon);
+			setDropDownViewResource(R.layout.list_item_two_line_small);
 			mResources = context.getResources();
 		}
 

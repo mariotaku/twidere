@@ -20,8 +20,6 @@
 package org.mariotaku.twidere.util;
 
 import static org.mariotaku.twidere.util.MediaPreviewUtils.AVAILABLE_IMAGE_SHUFFIX;
-import static org.mariotaku.twidere.util.MediaPreviewUtils.PATTERN_ALL_AVAILABLE_IMAGES;
-import static org.mariotaku.twidere.util.MediaPreviewUtils.PATTERN_IMAGES;
 import static org.mariotaku.twidere.util.Utils.matcherEnd;
 import static org.mariotaku.twidere.util.Utils.matcherGroup;
 import static org.mariotaku.twidere.util.Utils.matcherStart;
@@ -39,7 +37,6 @@ import com.twitter.Extractor.Entity;
 import com.twitter.Regex;
 
 import org.mariotaku.twidere.Constants;
-import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.text.TwidereURLSpan;
 
 import java.util.regex.Matcher;
@@ -63,16 +60,14 @@ public final class TwidereLinkify implements Constants {
 
 	public static final int LINK_TYPE_MENTION = 1;
 	public static final int LINK_TYPE_HASHTAG = 2;
-	public static final int LINK_TYPE_LINK_WITH_IMAGE_EXTENSION = 3;
 	public static final int LINK_TYPE_LINK = 4;
-	public static final int LINK_TYPE_ALL_AVAILABLE_IMAGE = 5;
 	public static final int LINK_TYPE_LIST = 6;
 	public static final int LINK_TYPE_CASHTAG = 7;
 	public static final int LINK_TYPE_USER_ID = 8;
 	public static final int LINK_TYPE_STATUS = 9;
 
 	public static final int[] ALL_LINK_TYPES = new int[] { LINK_TYPE_LINK, LINK_TYPE_MENTION, LINK_TYPE_HASHTAG,
-			LINK_TYPE_STATUS, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, LINK_TYPE_ALL_AVAILABLE_IMAGE, LINK_TYPE_CASHTAG };
+			LINK_TYPE_STATUS, LINK_TYPE_CASHTAG };
 
 	public static final String AVAILABLE_URL_SCHEME_PREFIX = "(https?:\\/\\/)?";
 
@@ -177,7 +172,7 @@ public final class TwidereLinkify implements Constants {
 		for (final Entity entity : mExtractor.extractCashtagsWithIndices(spannable.toString())) {
 			final int start = entity.getStart();
 			final int end = entity.getEnd();
-			applyLink(entity.getValue(), start, end, spannable, account_id, LINK_TYPE_HASHTAG, false, listener,
+			applyLink(entity.getValue(), start, end, spannable, account_id, LINK_TYPE_CASHTAG, false, listener,
 					highlightOption, highlightColor);
 			hasMatches = true;
 		}
@@ -187,7 +182,6 @@ public final class TwidereLinkify implements Constants {
 	private final boolean addHashtagLinks(final Spannable spannable, final long account_id,
 			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		boolean hasMatches = false;
-		final Matcher matcher = Regex.VALID_HASHTAG.matcher(spannable);
 		for (final Entity entity : mExtractor.extractHashtagsWithIndices(spannable.toString())) {
 			final int start = entity.getStart();
 			final int end = entity.getEnd();
@@ -226,20 +220,6 @@ public final class TwidereLinkify implements Constants {
 				addHashtagLinks(string, account_id, listener, highlightOption, highlightColor);
 				break;
 			}
-			case LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
-				for (final URLSpan span : spans) {
-					final int start = string.getSpanStart(span);
-					final int end = string.getSpanEnd(span);
-					final String url = span.getURL();
-					if (PATTERN_IMAGES.matcher(url).matches()) {
-						string.removeSpan(span);
-						applyLink(url, start, end, string, account_id, LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive,
-								listener, highlightOption, highlightColor);
-					}
-				}
-				break;
-			}
 			case LINK_TYPE_LINK: {
 				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
 				for (final URLSpan span : spans) {
@@ -264,25 +244,6 @@ public final class TwidereLinkify implements Constants {
 				// LINK_TYPE_LINK, sensitive, listener,
 				// highlightOption, highlightColor);
 				// }
-				break;
-			}
-			case LINK_TYPE_ALL_AVAILABLE_IMAGE: {
-				final URLSpan[] spans = string.getSpans(0, string.length(), URLSpan.class);
-				for (final URLSpan span : spans) {
-					final Matcher matcher = PATTERN_ALL_AVAILABLE_IMAGES.matcher(span.getURL());
-					if (matcher.matches()) {
-						final PreviewMedia spec = MediaPreviewUtils.getAllAvailableImage(matcher.group(), true);
-						final int start = string.getSpanStart(span);
-						final int end = string.getSpanEnd(span);
-						if (spec == null || start < 0 || end > string.length() || start > end) {
-							continue;
-						}
-						string.removeSpan(span);
-						applyLink(spec.url, spec.original, start, end, string, account_id,
-								LINK_TYPE_LINK_WITH_IMAGE_EXTENSION, sensitive, listener, highlightOption,
-								highlightColor);
-					}
-				}
 				break;
 			}
 			case LINK_TYPE_STATUS: {

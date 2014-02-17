@@ -39,7 +39,7 @@ public class SeparatedListAdapter<T extends Adapter> extends BaseAdapter {
 	private final static int TYPE_SECTION_HEADER = 0;
 
 	public SeparatedListAdapter(final Context context) {
-		mHeaders = new ArrayAdapter<String>(context, R.layout.section_header);
+		mHeaders = new ArrayAdapter<String>(context, R.layout.list_item_section_header);
 	}
 
 	public void addSection(final String section, final T adapter) {

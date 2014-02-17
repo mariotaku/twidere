@@ -90,7 +90,7 @@ public class PayPalDonateFragment extends BaseFragment implements OnClickListene
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.donate, container, false);
+		final View view = inflater.inflate(R.layout.fragment_donate, container, false);
 		mEditName = (EditText) view.findViewById(R.id.name);
 		mEditAmount = (EditText) view.findViewById(R.id.amount);
 		mDonateButton = (Button) view.findViewById(R.id.donate);

@@ -20,7 +20,6 @@
 package org.mariotaku.twidere.preference;
 
 import android.content.Context;
-import android.preference.ListPreference;
 import android.util.AttributeSet;
 
 public class AutoInvalidateListPreference extends AutoFixListPreference {

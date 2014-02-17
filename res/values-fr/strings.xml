@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Souhaitez-vous effectivement supprimer la liste <xliff:g id="name">%s</xliff:g> ? Cette opération ne peut pas être annulée.</string>
   <string name="unsubscribe_from_user_list">Se désabonner de la liste <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Souhaitez-vous effectivement vous désabonner de la liste <xliff:g id="name">%s</xliff:g> ? Vous pourrez toujours vous réabonner ultérieurement.</string>
-  <string name="delete_saved_search">Supprimer la recherche sauvegardée \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="delete_saved_search_confirm_message">Supprimer la recherche sauvegardée \"<xliff:g id="name">%s</xliff:g>\" ? Vous pouvez la sauvegarder à nouveau d\'ici peu.</string>
+  <string name="destroy_saved_search">Supprimer la recherche sauvegardée \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Supprimer la recherche sauvegardée \"<xliff:g id="name">%s</xliff:g>\" ? Vous pouvez la sauvegarder à nouveau d\'ici peu.</string>
   <string name="signing_in_error_browser_sign_in_hint">Erreur de connexion, vous devriez peut-être utiliser la méthode de connexion par navigateur. (Cela ignorera les préférences d\'API personnalisée pendant la connexion)</string>
   <string name="report_user">Signaler <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Signaler <xliff:g id="name">%s</xliff:g>comme spam ? Vous bloquerez aussi cet utilisateur.</string>

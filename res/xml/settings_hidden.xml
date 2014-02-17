@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/hidden_settings">
 
-	<Preference android:layout="@layout/hidden_settings_header"/>
+	<Preference android:layout="@layout/header_hidden_settings"/>
 
 	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="false"

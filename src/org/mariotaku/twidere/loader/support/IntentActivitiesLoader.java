@@ -44,7 +44,7 @@ public class IntentActivitiesLoader extends AsyncTaskLoader<List<ResolveInfo>> i
 	private final PackageManager mPackageManager;
 	private final Intent mIntent;
 	private final String[] mPackagesBlacklist;
-	private int mFlags;
+	private final int mFlags;
 
 	public IntentActivitiesLoader(final Context context, final Intent intent) {
 		this(context, intent, null, 0);

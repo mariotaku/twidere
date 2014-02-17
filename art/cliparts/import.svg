@@ -1,64 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+              "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="64px"
-   height="64px"
-   id="svg3008"
-   version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="新建文档 3">
-  <defs
-     id="defs3010" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="5.5"
-     inkscape:cx="32"
-     inkscape:cy="32"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1366"
-     inkscape:window-height="711"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1" />
-  <metadata
-     id="metadata3013">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <polygon
-       transform="matrix(0.55121309,0,0,0.55121309,-132.62665,-189.19838)"
-       points="281.832,418.522 325.528,418.522 311.859,404.852 340.94,375.772 324.582,359.414 295.5,388.495 281.832,374.825 "
-       id="polygon3" />
-    <path
-       inkscape:connector-curvature="0"
-       d="m 36.664671,45.354908 v 2.56314 c 0,1.695531 -1.379135,3.074667 -3.074666,3.074667 H 15.89882 c -1.695531,0 -3.074667,-1.379136 -3.074667,-3.074667 V 30.226864 c 0,-1.695532 1.379136,-3.074667 3.074667,-3.074667 h 2.964975 v -4.823114 h -6.544002 c -2.3812392,0 -4.318202,1.937514 -4.318202,4.318203 v 24.849238 c 0,2.38124 1.9375137,4.318203 4.318202,4.318203 h 24.849238 c 2.381241,0 4.318203,-1.937514 4.318203,-4.318203 v -6.142719 h -4.822563 z"
-       id="path5" />
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1.33333in" height="1.33333in"
+     viewBox="0 0 96 96">
+  <path id="polygon3 #1"
+        fill="black"
+        d="M 34.08,24.62
+           C 34.08,24.62 45.39,35.92 45.39,35.92
+             45.39,35.92 69.43,11.87 69.43,11.87
+             69.43,11.87 82.96,25.40 82.96,25.40
+             82.96,25.40 58.91,49.44 58.91,49.44
+             58.91,49.44 70.21,60.74 70.21,60.74
+             70.21,60.74 34.08,60.74 34.08,60.74
+             34.08,60.74 34.08,24.62 34.08,24.62 Z
+           M 59.00,67.00
+           C 59.00,67.00 66.00,67.00 66.00,67.00
+             66.00,67.00 66.00,84.00 66.00,84.00
+             66.00,84.00 12.00,84.00 12.00,84.00
+             12.00,84.00 12.00,29.00 12.00,29.00
+             12.00,29.00 28.00,29.00 28.00,29.00
+             28.00,29.00 28.00,36.00 28.00,36.00
+             28.00,36.00 19.00,36.00 19.00,36.00
+             19.00,36.00 19.00,77.00 19.00,77.00
+             19.00,77.00 59.00,77.00 59.00,77.00
+             59.00,77.00 59.00,67.00 59.00,67.00 Z" />
 </svg>

@@ -98,6 +98,7 @@ import android.widget.TextView;
 import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.support.AccountSelectorActivity;
 import org.mariotaku.twidere.activity.support.ColorPickerDialogActivity;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.activity.support.UserProfileEditorActivity;
@@ -432,24 +433,35 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	}
 
 	@Override
-	public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
+				if (mUser == null) return;
 				if (resultCode == Activity.RESULT_OK) {
-					if (intent == null) return;
-					final int color = intent.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
-					setUserColor(getActivity(), mUserId, color);
+					if (data == null) return;
+					final int color = data.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
+					setUserColor(getActivity(), mUser.id, color);
 				} else if (resultCode == ColorPickerDialogActivity.RESULT_CLEARED) {
-					clearUserColor(getActivity(), mUserId);
+					clearUserColor(getActivity(), mUser.id);
 				}
 				break;
 			}
 			case REQUEST_ADD_TO_LIST: {
-				if (resultCode == Activity.RESULT_OK && intent != null) {
+				if (mUser == null) return;
+				if (resultCode == Activity.RESULT_OK && data != null) {
 					final AsyncTwitterWrapper twitter = getTwitterWrapper();
-					final ParcelableUserList list = intent.getParcelableExtra(EXTRA_USER_LIST);
+					final ParcelableUserList list = data.getParcelableExtra(EXTRA_USER_LIST);
 					if (list == null || twitter == null) return;
 					twitter.addUserListMembersAsync(mAccountId, list.id, mUser);
+				}
+				break;
+			}
+			case REQUEST_SELECT_ACCOUNT: {
+				if (mUser == null) return;
+				if (resultCode == Activity.RESULT_OK) {
+					if (data == null || !data.hasExtra(EXTRA_ID)) return;
+					final long accountId = data.getLongExtra(EXTRA_ID, -1);
+					openUserProfile(getActivity(), accountId, mUser.id, null);
 				}
 				break;
 			}
@@ -619,10 +631,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				openTweetSearch(getActivity(), mAccountId, link);
 				break;
 			}
-			case TwidereLinkify.LINK_TYPE_LINK_WITH_IMAGE_EXTENSION: {
-				openImage(getActivity(), link, false);
-				break;
-			}
 			case TwidereLinkify.LINK_TYPE_LINK: {
 				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
 				startActivity(intent);
@@ -708,6 +716,13 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				intent.putExtra(EXTRA_ACCOUNT_ID, mAccountId);
 				intent.putExtra(EXTRA_SCREEN_NAME, getAccountScreenName(getActivity(), mAccountId));
 				startActivityForResult(intent, REQUEST_ADD_TO_LIST);
+				break;
+			}
+			case MENU_OPEN_WITH_ACCOUNT: {
+				final Intent intent = new Intent(INTENT_ACTION_SELECT_ACCOUNT);
+				intent.setClass(getActivity(), AccountSelectorActivity.class);
+				intent.putExtra(EXTRA_SINGLE_SELECTION, true);
+				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
 			}
 			default: {

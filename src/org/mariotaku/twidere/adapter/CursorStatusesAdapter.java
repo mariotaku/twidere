@@ -24,7 +24,8 @@ import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.findStatusInDatabases;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getStatusBackground;
+import static org.mariotaku.twidere.util.Utils.getCardHighlightColor;
+import static org.mariotaku.twidere.util.Utils.getCardHighlightOptionInt;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -72,7 +73,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			mAnimationEnabled;
 	private boolean mFilterIgnoreUser, mFilterIgnoreSource, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mFilterRetweetedById;
-	private int mMaxAnimationPosition;
+	private int mMaxAnimationPosition, mCardHighlightOption;
 
 	private CursorStatusIndices mIndices;
 
@@ -103,6 +104,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 		holder.setShowAsGap(showGap);
 		holder.position = position;
 		holder.setDisplayProfileImage(isDisplayProfileImage());
+		holder.setCardHighlightOption(mCardHighlightOption);
 
 		if (!showGap) {
 
@@ -147,7 +149,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			final boolean isMyStatus = accountId == userId;
 
 			holder.setUserColor(getUserColor(mContext, userId));
-			holder.setHighlightColor(getStatusBackground(!mMentionsHighlightDisabled && isMention,
+			holder.setHighlightColor(getCardHighlightColor(!mMentionsHighlightDisabled && isMention,
 					!mFavoritesHighlightDisabled && isFavorite, isRetweet));
 
 			holder.setAccountColorEnabled(showAccountColor);
@@ -348,6 +350,14 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	public void setAnimationEnabled(final boolean anim) {
 		if (mAnimationEnabled == anim) return;
 		mAnimationEnabled = anim;
+	}
+
+	@Override
+	public void setCardHighlightOption(final String option) {
+		final int option_int = getCardHighlightOptionInt(option);
+		if (option_int == mCardHighlightOption) return;
+		mCardHighlightOption = option_int;
+		notifyDataSetChanged();
 	}
 
 	@Override

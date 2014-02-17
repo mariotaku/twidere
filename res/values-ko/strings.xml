@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message"><xliff:g id="name">%s</xliff:g> 리스트를 삭제하겠습니까? 되돌릴 수 없습니다.</string>
   <string name="unsubscribe_from_user_list"><xliff:g id="name">%s</xliff:g> 리스트 구독 취소</string>
   <string name="unsubscribe_from_user_list_confirm_message"><xliff:g id="name">%s</xliff:g> 리스트를 구독취소하겠습니까? 나중에 다시 구독할 수 있습니다.</string>
-  <string name="delete_saved_search">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어 삭제</string>
-  <string name="delete_saved_search_confirm_message">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어를 삭제하겠습니까? 한 동안 재저장을 할 수 없게 됩니다.</string>
+  <string name="destroy_saved_search">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어 삭제</string>
+  <string name="destroy_saved_search_confirm_message">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어를 삭제하겠습니까? 한 동안 재저장을 할 수 없게 됩니다.</string>
   <string name="signing_in_error_browser_sign_in_hint">로그인 오류입니다. 브라우저로 로그인하여 주십시오. (커스텀 API 설정은 무시됩니다)</string>
   <string name="report_user"><xliff:g id="name">%s</xliff:g>님을 스팸 신고하기</string>
   <string name="report_user_confirm_message"><xliff:g id="name">%s</xliff:g>님을 스팸 신고하겠습니까? 이 사용자를 차단하게 됩니다.</string>

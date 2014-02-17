@@ -30,7 +30,7 @@
 			android:summary="@string/tcp_dns_query_summary"
 			android:title="@string/tcp_dns_query"/>
 
-		<org.mariotaku.twidere.preference.AutoFixEditTextPreference
+		<org.mariotaku.twidere.preference.SummaryEditTextPreference
 			android:defaultValue="8.8.8.8"
 			android:dialogTitle="@string/dns_server"
 			android:inputType="textVisiblePassword"
@@ -55,13 +55,13 @@
 			android:summary="@string/http_proxy_summary"
 			android:title="@string/http_proxy"/>
 
-		<org.mariotaku.twidere.preference.AutoFixEditTextPreference
+		<org.mariotaku.twidere.preference.SummaryEditTextPreference
 			android:dependency="enable_proxy"
 			android:key="proxy_host"
 			android:singleLine="true"
 			android:summary="%s"
 			android:title="@string/proxy_host"/>
-		<org.mariotaku.twidere.preference.AutoFixEditTextPreference
+		<org.mariotaku.twidere.preference.SummaryEditTextPreference
 			android:dependency="enable_proxy"
 			android:inputType="number"
 			android:key="proxy_port"

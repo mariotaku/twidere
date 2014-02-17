@@ -1445,6 +1445,34 @@ public final class Utils implements Constants {
 		return def;
 	}
 
+	public static int getCardHighlightColor(final boolean is_mention, final boolean is_favorite,
+			final boolean is_retweet) {
+		if (is_mention)
+			return HOLO_BLUE_LIGHT;
+		else if (is_favorite)
+			return HOLO_ORANGE_LIGHT;
+		else if (is_retweet) return HOLO_GREEN_LIGHT;
+		return Color.TRANSPARENT;
+	}
+
+	public static String getCardHighlightOption(final Context context) {
+		if (context == null) return null;
+		final String defaultOption = context.getString(R.string.default_tab_display_option);
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return prefs.getString(KEY_TAB_DISPLAY_OPTION, defaultOption);
+	}
+
+	public static int getCardHighlightOptionInt(final Context context) {
+		return getCardHighlightOptionInt(getCardHighlightOption(context));
+	}
+
+	public static int getCardHighlightOptionInt(final String option) {
+		if (VALUE_CARD_HIGHLIGHT_OPTION_NONE.equals(option))
+			return VALUE_CARD_HIGHLIGHT_OPTION_CODE_NONE;
+		else if (VALUE_CARD_HIGHLIGHT_OPTION_LINE.equals(option)) return VALUE_CARD_HIGHLIGHT_OPTION_CODE_LINE;
+		return VALUE_CARD_HIGHLIGHT_OPTION_CODE_BACKGROUND;
+	}
+
 	public static int getCharacterCount(final String string, final char c) {
 		if (string == null) return 0;
 		int count = 0;
@@ -1939,15 +1967,6 @@ public final class Utils implements Constants {
 		}
 		if (isEmpty(title)) return ParseUtils.parseString(text);
 		return share_format.replace(FORMAT_PATTERN_TITLE, title).replace(FORMAT_PATTERN_TEXT, text != null ? text : "");
-	}
-
-	public static int getStatusBackground(final boolean is_mention, final boolean is_favorite, final boolean is_retweet) {
-		if (is_mention)
-			return 0x1A33B5E5;
-		else if (is_favorite)
-			return 0x1AFFBB33;
-		else if (is_retweet) return 0x1A66CC00;
-		return Color.TRANSPARENT;
 	}
 
 	public static ArrayList<Long> getStatusIdsInDatabase(final Context context, final Uri uri, final long account_id) {
@@ -2659,13 +2678,13 @@ public final class Utils implements Constants {
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 	}
 
-	public static void openStatus(final Activity activity, final long account_id, final long status_id) {
-		if (activity == null || account_id <= 0 || status_id <= 0) return;
+	public static void openStatus(final Activity activity, final long accountId, final long statusId) {
+		if (activity == null || accountId <= 0 || statusId <= 0) return;
 		final Uri.Builder builder = new Uri.Builder();
 		builder.scheme(SCHEME_TWIDERE);
 		builder.authority(AUTHORITY_STATUS);
-		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-		builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(status_id));
+		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
+		builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, String.valueOf(statusId));
 		final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 	}

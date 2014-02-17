@@ -34,12 +34,12 @@ import static org.mariotaku.twidere.util.Utils.getAccountColors;
 import static org.mariotaku.twidere.util.Utils.getAccountIds;
 import static org.mariotaku.twidere.util.Utils.getAccountName;
 import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
+import static org.mariotaku.twidere.util.Utils.getCardHighlightColor;
 import static org.mariotaku.twidere.util.Utils.getDefaultTextSize;
 import static org.mariotaku.twidere.util.Utils.getDisplayName;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getQuoteStatus;
 import static org.mariotaku.twidere.util.Utils.getShareStatus;
-import static org.mariotaku.twidere.util.Utils.getStatusBackground;
 import static org.mariotaku.twidere.util.Utils.getStatusTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.openImageDirectly;
@@ -455,11 +455,6 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 		if (isSingleAccount()) return;
 		final boolean selected = !view.isActivated();
 		final Account account = mAccountSelectorAdapter.getItem(position);
-		final long[] prevSelectedIds = mAccountSelectorAdapter.getSelectedAccountIds();
-		if (prevSelectedIds.length == 1 && prevSelectedIds[0] == account.account_id) {
-			Toast.makeText(this, R.string.empty_account_selection_disallowed, Toast.LENGTH_SHORT).show();
-			return;
-		}
 		mAccountSelectorAdapter.setAccountSelected(account.account_id, selected);
 		mSendAccountIds = mAccountSelectorAdapter.getSelectedAccountIds();
 		updateAccountSelection();
@@ -1195,7 +1190,7 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 
 			final boolean is_my_status = status.account_id == status.user_id;
 			mHolder.setUserColor(getUserColor(getActivity(), status.user_id, true));
-			mHolder.setHighlightColor(getStatusBackground(false, status.is_favorite, status.is_retweet));
+			mHolder.setHighlightColor(getCardHighlightColor(false, status.is_favorite, status.is_retweet));
 
 			mHolder.setIsMyStatus(is_my_status && !prefs.getBoolean(KEY_INDICATE_MY_STATUS, true));
 

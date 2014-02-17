@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Verwijder lijst <xliff:g id="name">%s</xliff:g>? Dit kan niet worden hersteld.</string>
   <string name="unsubscribe_from_user_list">Afmelden van lijst <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Afmelden van lijst <xliff:g id="name">%s</xliff:g>? Je kan je later weer abonneren op deze lijst.</string>
-  <string name="delete_saved_search">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderd</string>
-  <string name="delete_saved_search_confirm_message">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderen? Je kunt deze zoekopdracht binnenkort opnieuw opslaan.</string>
+  <string name="destroy_saved_search">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderd</string>
+  <string name="destroy_saved_search_confirm_message">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderen? Je kunt deze zoekopdracht binnenkort opnieuw opslaan.</string>
   <string name="signing_in_error_browser_sign_in_hint">Fout bij het ​​aanmelden, misschien moet je de browser inlog methode gebruiken. (Dit zal aangepaste API instellingen negeren tijdens aanmelden)</string>
   <string name="report_user">Rapporteer <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Rapporteer <xliff:g id="name">%s</xliff:g> voor spam? Je zult deze gebruiker ook blokkeren.</string>

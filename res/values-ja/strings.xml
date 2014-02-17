@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">リスト<xliff:g id="name">%s</xliff:g>を削除しますか? 復元はできません。</string>
   <string name="unsubscribe_from_user_list">リスト<xliff:g id="name">%s</xliff:g>の保存を解除</string>
   <string name="unsubscribe_from_user_list_confirm_message">リスト<xliff:g id="name">%s</xliff:g>の保存を解除しますか? 後で保存し直すことも出来ます。</string>
-  <string name="delete_saved_search">保存した検索 \"<xliff:g id="name">%s</xliff:g>\"を削除</string>
-  <string name="delete_saved_search_confirm_message">保存した検索\"<xliff:g id="name">%s</xliff:g>\"を削除しますか? 再保存がすぐにはできないようになります。</string>
+  <string name="destroy_saved_search">保存した検索 \"<xliff:g id="name">%s</xliff:g>\"を削除</string>
+  <string name="destroy_saved_search_confirm_message">保存した検索\"<xliff:g id="name">%s</xliff:g>\"を削除しますか? 再保存がすぐにはできないようになります。</string>
   <string name="signing_in_error_browser_sign_in_hint">ログインエラー、ブラウザでログインする方法を試してみてください。(カスタムAPI設定は無視されます)</string>
   <string name="report_user"><xliff:g id="name">%s</xliff:g>をスパム報告する</string>
   <string name="report_user_confirm_message"><xliff:g id="name">%s</xliff:g>をスパム報告しますか? 同時にブロックもします。</string>

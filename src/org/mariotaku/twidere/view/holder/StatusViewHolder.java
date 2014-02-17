@@ -55,6 +55,7 @@ public class StatusViewHolder extends CardViewHolder {
 	private float text_size;
 	private boolean nickname_only, name_first;
 	private boolean display_profile_image;
+	private int card_highlight_option;
 
 	public StatusViewHolder(final View view) {
 		super(view);
@@ -85,6 +86,10 @@ public class StatusViewHolder extends CardViewHolder {
 		}
 	}
 
+	public void setCardHighlightOption(final int option) {
+		card_highlight_option = option;
+	}
+
 	public void setDisplayNameFirst(final boolean name_first) {
 		this.name_first = name_first;
 	}
@@ -94,7 +99,10 @@ public class StatusViewHolder extends CardViewHolder {
 	}
 
 	public void setHighlightColor(final int color) {
-		content.drawBackground(show_as_gap ? Color.TRANSPARENT : color);
+		final boolean line = (card_highlight_option & VALUE_CARD_HIGHLIGHT_OPTION_CODE_LINE) != 0;
+		final boolean bg = (card_highlight_option & VALUE_CARD_HIGHLIGHT_OPTION_CODE_BACKGROUND) != 0;
+		content.drawTop(!show_as_gap && line ? color : Color.TRANSPARENT);
+		content.drawBackground(!show_as_gap && bg && color != 0 ? 0x1A000000 | 0x00FFFFFF & color : Color.TRANSPARENT);
 	}
 
 	public void setIsMyStatus(final boolean my_status) {

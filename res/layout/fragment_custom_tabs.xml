@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.mobeta.android.dslv.DragSortListView xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@android:id/list"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -15,4 +16,5 @@
 	app:slide_shuffle_speed="0.3"
 	app:sort_enabled="true"
 	app:track_drag_sort="true"
-	app:use_default_controller="true"/>
+	app:use_default_controller="true"
+	tools:context=".fragment.CustomTabsFragment"/>

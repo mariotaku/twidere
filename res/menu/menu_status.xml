@@ -59,5 +59,9 @@
 		android:icon="@drawable/ic_iconic_action_delete"
 		android:title="@string/delete"
 		android:visible="false"/>
+	<item
+		android:id="@id/open_with_account"
+		android:icon="@drawable/ic_iconic_action_accounts"
+		android:title="@string/open_with_account"/>
 
 </menu>

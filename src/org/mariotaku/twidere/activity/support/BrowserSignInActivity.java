@@ -105,7 +105,7 @@ public class BrowserSignInActivity extends BaseSupportDialogActivity implements 
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		setContentView(R.layout.browser_sign_in);
+		setContentView(R.layout.activity_browser_sign_in);
 		mWebView.setWebViewClient(new AuthorizationWebViewClient(this));
 		mWebView.setVerticalScrollBarEnabled(false);
 		mWebView.addJavascriptInterface(new InjectorJavaScriptInterface(this), "injector");

@@ -118,7 +118,7 @@ public final class ColorPickerDialog extends AlertDialog implements OnItemClickL
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 
 		final LayoutInflater inflater = LayoutInflater.from(getContext());
-		final View dialogView = inflater.inflate(R.layout.color_picker, null);
+		final View dialogView = inflater.inflate(R.layout.dialog_color_picker, null);
 
 		mColorPicker = (ColorPickerView) dialogView.findViewById(R.id.color_picker);
 		mColorPresets = (Gallery) dialogView.findViewById(R.id.color_presets);
@@ -180,7 +180,7 @@ public final class ColorPickerDialog extends AlertDialog implements OnItemClickL
 		private int mCurrentColor;
 
 		public ColorsAdapter(final Context context) {
-			super(context, R.layout.color_picker_preset_item);
+			super(context, R.layout.gallery_item_color_picker_preset);
 		}
 
 		@Override

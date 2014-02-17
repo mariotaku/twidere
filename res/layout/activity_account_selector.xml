@@ -13,11 +13,13 @@
 		android:layout_weight="1"/>
 
 	<View
+		android:id="@+id/select_account_divider"
 		android:layout_width="match_parent"
 		android:layout_height="0.2dp"
 		android:background="#40808080"/>
 
 	<LinearLayout
+		android:id="@+id/select_account_buttons"
 		style="?android:buttonBarStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

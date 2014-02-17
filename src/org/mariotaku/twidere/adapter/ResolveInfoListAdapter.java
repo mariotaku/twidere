@@ -15,7 +15,7 @@ public class ResolveInfoListAdapter extends ArrayAdapter<ResolveInfo> {
 	private final PackageManager mPackageManager;
 
 	public ResolveInfoListAdapter(final Context context) {
-		super(context, R.layout.two_line_list_item_small);
+		super(context, R.layout.list_item_two_line_small);
 		mPackageManager = context.getPackageManager();
 	}
 

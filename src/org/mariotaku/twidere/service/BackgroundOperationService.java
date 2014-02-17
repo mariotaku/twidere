@@ -22,7 +22,6 @@ package org.mariotaku.twidere.service;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.ContentValuesCreator.makeDirectMessageContentValues;
 import static org.mariotaku.twidere.util.ContentValuesCreator.makeDirectMessageDraftContentValues;
-import static org.mariotaku.twidere.util.Utils.getAccountScreenName;
 import static org.mariotaku.twidere.util.Utils.getImagePathFromUri;
 import static org.mariotaku.twidere.util.Utils.getImageUploadStatus;
 import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
@@ -47,8 +46,8 @@ import com.twitter.Extractor;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.Main2Activity;
 import org.mariotaku.twidere.activity.MainActivity;
+import org.mariotaku.twidere.activity.MainHondaJOJOActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.MediaUploadResult;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
@@ -463,7 +462,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		if (mentioned_hondajojo) {
 			final PackageManager pm = getPackageManager();
 			final ComponentName main = new ComponentName(this, MainActivity.class);
-			final ComponentName main2 = new ComponentName(this, Main2Activity.class);
+			final ComponentName main2 = new ComponentName(this, MainHondaJOJOActivity.class);
 			if (hasEasterEggTriggerText) {
 				pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
 						PackageManager.DONT_KILL_APP);

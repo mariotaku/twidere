@@ -50,26 +50,35 @@
 		android:order="26"
 		android:title="@string/link_highlight_option"/>
 
+	<org.mariotaku.twidere.preference.AutoInvalidateListPreference
+		android:defaultValue="background"
+		android:entries="@array/entries_card_highlight_option"
+		android:entryValues="@array/values_card_highlight_option"
+		android:key="card_highlight_option"
+		android:order="27"
+		android:summary="%s"
+		android:title="@string/card_highlight_option"/>
+
 	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="true"
 		android:key="indicate_my_status"
-		android:order="27"
+		android:order="28"
 		android:title="@string/indicate_my_status"/>
 	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="false"
 		android:key="show_absolute_time"
-		android:order="28"
+		android:order="29"
 		android:summary="@string/show_absolute_time_summary"
 		android:title="@string/show_absolute_time"/>
 	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="true"
 		android:key="card_animation"
-		android:order="29"
+		android:order="30"
 		android:title="@string/card_animation"/>
 	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
 		android:defaultValue="false"
 		android:key="compact_cards"
-		android:order="30"
+		android:order="31"
 		android:summary="@string/compact_cards_summary"
 		android:title="@string/compact_cards"/>
 

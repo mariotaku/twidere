@@ -53,8 +53,8 @@ public class DestroyStatusDialogFragment extends BaseSupportDialogFragment imple
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
 		final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
-		builder.setTitle(R.string.delete_tweet);
-		builder.setMessage(R.string.delete_tweet_confirm_message);
+		builder.setTitle(R.string.destroy_status);
+		builder.setMessage(R.string.destroy_status_confirm_message);
 		builder.setPositiveButton(android.R.string.ok, this);
 		builder.setNegativeButton(android.R.string.cancel, null);
 		return builder.create();

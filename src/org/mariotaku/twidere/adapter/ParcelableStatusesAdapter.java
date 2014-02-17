@@ -24,7 +24,8 @@ import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserColor;
 import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getStatusBackground;
+import static org.mariotaku.twidere.util.Utils.getCardHighlightColor;
+import static org.mariotaku.twidere.util.Utils.getCardHighlightOptionInt;
 import static org.mariotaku.twidere.util.Utils.isFiltered;
 import static org.mariotaku.twidere.util.Utils.openImage;
 import static org.mariotaku.twidere.util.Utils.openUserProfile;
@@ -67,7 +68,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			mAnimationEnabled;
 	private boolean mFilterIgnoreUser, mFilterIgnoreSource, mFilterIgnoreTextHtml, mFilterIgnoreTextPlain,
 			mFilterRetweetedById;
-	private int mMaxAnimationPosition;
+	private int mMaxAnimationPosition, mCardHighlightOption;
 
 	public ParcelableStatusesAdapter(final Context context) {
 		this(context, Utils.isCompactCards(context));
@@ -168,6 +169,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 		holder.position = position;
 		holder.setShowAsGap(showGap);
 		holder.setDisplayProfileImage(isDisplayProfileImage());
+		holder.setCardHighlightOption(mCardHighlightOption);
 
 		if (!showGap) {
 			final TwidereLinkify linkify = getLinkify();
@@ -197,7 +199,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			final boolean isMention = ParcelableUserMention.hasMention(status.mentions, status.account_id);
 			final boolean isMyStatus = status.account_id == status.user_id;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
-			holder.setHighlightColor(getStatusBackground(!mMentionsHighlightDisabled && isMention,
+			holder.setHighlightColor(getCardHighlightColor(!mMentionsHighlightDisabled && isMention,
 					!mFavoritesHighlightDisabled && status.is_favorite, status.is_retweet));
 			holder.setTextSize(getTextSize());
 
@@ -306,6 +308,14 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 	public void setAnimationEnabled(final boolean anim) {
 		if (mAnimationEnabled == anim) return;
 		mAnimationEnabled = anim;
+	}
+
+	@Override
+	public void setCardHighlightOption(final String option) {
+		final int option_int = getCardHighlightOptionInt(option);
+		if (option_int == mCardHighlightOption) return;
+		mCardHighlightOption = option_int;
+		notifyDataSetChanged();
 	}
 
 	@Override

@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Вилучити список <xliff:g id="name">%s</xliff:g>? Це не можна відмінити.</string>
   <string name="unsubscribe_from_user_list">Відписатися від списку <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Відписатися від списку <xliff:g id="name">%s</xliff:g>? Ви зможете пізніше повторно підписатися на цей список.</string>
-  <string name="delete_saved_search">Вилучити збережений пошук \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="delete_saved_search_confirm_message">Вилучити збережений пошук \"<xliff:g id="name">%s</xliff:g>\"? Ви можете стисло повторно зберегти цей пошук.</string>
+  <string name="destroy_saved_search">Вилучити збережений пошук \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Вилучити збережений пошук \"<xliff:g id="name">%s</xliff:g>\"? Ви можете стисло повторно зберегти цей пошук.</string>
   <string name="signing_in_error_browser_sign_in_hint">Помилка при вході, вам потрібно використати вхід через браузер. (Він ігноруватиме ваші налаштування API при вході)</string>
   <string name="report_user">Повідомити про <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Повідомити про <xliff:g id="name">%s</xliff:g> як про спамера? Ви також заблокуєте цього користувача.</string>

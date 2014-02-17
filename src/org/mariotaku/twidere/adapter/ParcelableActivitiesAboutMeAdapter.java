@@ -22,7 +22,7 @@ package org.mariotaku.twidere.adapter;
 import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserColor;
 import static org.mariotaku.twidere.util.UserColorNicknameUtils.getUserNickname;
 import static org.mariotaku.twidere.util.Utils.getAccountColor;
-import static org.mariotaku.twidere.util.Utils.getStatusBackground;
+import static org.mariotaku.twidere.util.Utils.getCardHighlightColor;
 
 import android.content.Context;
 import android.text.Html;
@@ -239,7 +239,7 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 
 			final boolean isMyStatus = status.account_id == status.user_id;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
-			holder.setHighlightColor(getStatusBackground(false, !mFavoritesHighlightDisabled && status.is_favorite,
+			holder.setHighlightColor(getCardHighlightColor(false, !mFavoritesHighlightDisabled && status.is_favorite,
 					status.is_retweet));
 			holder.setTextSize(getTextSize());
 

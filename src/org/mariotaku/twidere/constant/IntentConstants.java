@@ -182,6 +182,7 @@ public interface IntentConstants {
 	public static final String EXTRA_COMMAND = "command";
 	public static final String EXTRA_WIDTH = "width";
 	public static final String EXTRA_ALLOW_SELECT_NONE = "allow_select_none";
+	public static final String EXTRA_SINGLE_SELECTION = "single_selection";
 	public static final String EXTRA_OAUTH_ONLY = "oauth_only";
 	public static final String EXTRA_PERMISSIONS = "permissions";
 	public static final String EXTRA_LOCATION = "location";

@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">删除列表<xliff:g id="name">%s</xliff:g>吗？这个操作不能撤销。</string>
   <string name="unsubscribe_from_user_list">从列表<xliff:g id="name">%s</xliff:g>退订</string>
   <string name="unsubscribe_from_user_list_confirm_message">取消订阅列表<xliff:g id="name">%s</xliff:g>吗？你稍后可以重新订阅这个列表。</string>
-  <string name="delete_saved_search">删除保存的搜索“<xliff:g id="name">%s</xliff:g>”</string>
-  <string name="delete_saved_search_confirm_message">要删除保存的搜索“<xliff:g id="name">%s</xliff:g>”吗？你可以稍后再保存这个搜索。</string>
+  <string name="destroy_saved_search">删除保存的搜索“<xliff:g id="name">%s</xliff:g>”</string>
+  <string name="destroy_saved_search_confirm_message">要删除保存的搜索“<xliff:g id="name">%s</xliff:g>”吗？你可以稍后再保存这个搜索。</string>
   <string name="signing_in_error_browser_sign_in_hint">登录时发生问题，你可能需要使用“浏览器登录”。（这将在登录时暂时忽略自定义API设定）</string>
   <string name="report_user">报告<xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">报告<xliff:g id="name">%s</xliff:g>发送垃圾信息吗？你将同时阻止这个用户。</string>

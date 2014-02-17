@@ -193,7 +193,7 @@ public class HostMappingsListFragment extends BaseListFragment implements MultiC
 		public Dialog onCreateDialog(final Bundle savedInstanceState) {
 			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
 			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
-			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.host_mapping_dialog_view, null);
+			final View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_host_mapping, null);
 			builder.setView(view);
 			mEditHost = (EditText) view.findViewById(R.id.host);
 			mEditAddress = (EditText) view.findViewById(R.id.address);

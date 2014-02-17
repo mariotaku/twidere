@@ -149,7 +149,7 @@ public class UserListSelectorActivity extends BaseSupportDialogActivity implemen
 			finish();
 			return;
 		}
-		setContentView(R.layout.user_list_selector);
+		setContentView(R.layout.activity_user_list_selector);
 		if (savedInstanceState == null) {
 			mScreenName = intent.getStringExtra(EXTRA_SCREEN_NAME);
 		} else {

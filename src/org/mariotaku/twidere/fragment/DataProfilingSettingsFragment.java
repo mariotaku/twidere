@@ -104,7 +104,7 @@ public class DataProfilingSettingsFragment extends BaseFragment implements OnCli
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.data_profiling_settings, container, false);
+		final View view = inflater.inflate(R.layout.fragment_data_profiling_settings, container, false);
 		mTextView = (TextView) view.findViewById(android.R.id.text1);
 		mCheckBox = (CheckBox) view.findViewById(R.id.checkbox);
 		mSaveButton = (Button) view.findViewById(R.id.save);

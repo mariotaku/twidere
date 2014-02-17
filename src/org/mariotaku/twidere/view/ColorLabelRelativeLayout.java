@@ -49,18 +49,28 @@ public class ColorLabelRelativeLayout extends RelativeLayout implements IColorLa
 	}
 
 	@Override
+	public void drawBottom(final int... colors) {
+		mHelper.drawBottom(colors);
+	}
+
+	@Override
 	public void drawEnd(final int... colors) {
 		mHelper.drawEnd(colors);
 	}
 
 	@Override
-	public void drawLabel(final int[] start, final int[] end, final int background) {
-		mHelper.drawLabel(start, end, background);
+	public void drawLabel(final int[] start, final int[] end, final int[] top, final int[] bottom, final int background) {
+		mHelper.drawLabel(start, end, top, bottom, background);
 	}
 
 	@Override
 	public void drawStart(final int... colors) {
 		mHelper.drawStart(colors);
+	}
+
+	@Override
+	public void drawTop(final int... colors) {
+		mHelper.drawTop(colors);
 	}
 
 	@Override

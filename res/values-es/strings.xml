@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Borrar la lista <xliff:g id="name">%s</xliff:g>? No podrás restaurarla!</string>
   <string name="unsubscribe_from_user_list">Darse de baja de la lista <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Darse de baja de la lista <xliff:g id="name">%s</xliff:g>? Podrá volver a suscribirse luego.</string>
-  <string name="delete_saved_search">Borrar búsqueda salvada \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="delete_saved_search_confirm_message">Borrar búsqueda salvada \"<xliff:g id="name">%s</xliff:g>\"? Podrá volver a salvar esta búsqueda en breve.</string>
+  <string name="destroy_saved_search">Borrar búsqueda salvada \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Borrar búsqueda salvada \"<xliff:g id="name">%s</xliff:g>\"? Podrá volver a salvar esta búsqueda en breve.</string>
   <string name="signing_in_error_browser_sign_in_hint">Error al iniciar sesión, es posible que debas utilizar el logueo en el navegador. (Esto ignorará la configuración de la API modificada, durante el inicio de sesión)</string>
   <string name="report_user">Bloquear a <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Denunciar a <xliff:g id="name">%s</xliff:g> por spam? también podrá bloquear a este usuario.</string>

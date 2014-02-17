@@ -46,7 +46,7 @@ public class AccountsAdapter extends SimpleCursorAdapter implements Constants {
 	private int mChoiceMode;
 
 	public AccountsAdapter(final Context context) {
-		super(context, R.layout.account_list_item, null, new String[] { Accounts.NAME },
+		super(context, R.layout.list_item_account, null, new String[] { Accounts.NAME },
 				new int[] { android.R.id.text1 }, 0);
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mImageLoader = application.getImageLoaderWrapper();
@@ -65,9 +65,9 @@ public class AccountsAdapter extends SimpleCursorAdapter implements Constants {
 		} else {
 			holder.profile_image.setImageResource(R.drawable.ic_profile_image_default);
 		}
-		final boolean is_multiple_choice = mChoiceMode == ListView.CHOICE_MODE_MULTIPLE
+		final boolean isMultipleChoice = mChoiceMode == ListView.CHOICE_MODE_MULTIPLE
 				|| mChoiceMode == ListView.CHOICE_MODE_MULTIPLE_MODAL;
-		holder.checkbox.setVisibility(is_multiple_choice ? View.VISIBLE : View.GONE);
+		holder.checkbox.setVisibility(isMultipleChoice ? View.VISIBLE : View.GONE);
 		super.bindView(view, context, cursor);
 	}
 

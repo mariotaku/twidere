@@ -73,5 +73,6 @@
 	<item name="import_settings" type="id"/>
 	<item name="export_settings" type="id"/>
 	<item name="progress" type="id"/>
+	<item name="open_with_account" type="id"/>
 
 </resources>

@@ -130,5 +130,15 @@
 		<item>@string/take_photo</item>
 		<item>@string/add_image</item>
 	</string-array>
+	<string-array name="values_card_highlight_option">
+		<item>background</item>
+		<item>line</item>
+		<item>none</item>
+	</string-array>
+	<string-array name="entries_card_highlight_option">
+		<item>Background</item>
+		<item>Line</item>
+		<item>@string/none</item>
+	</string-array>
 
 </resources>
