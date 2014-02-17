@@ -38,6 +38,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import org.mariotaku.refreshnow.widget.RefreshNowConfig;
 import org.mariotaku.refreshnow.widget.RefreshNowProgressIndicator.IndicatorConfig;
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
@@ -123,6 +124,11 @@ public class ThemeUtils implements Constants {
 		builder.indeterminateColor(themeColor);
 		builder.progressStrokeWidth(width);
 		builder.indeterminateStrokeWidth(width);
+		return builder.build();
+	}
+
+	public static RefreshNowConfig buildRefreshNowConfig(final Context context) {
+		final RefreshNowConfig.Builder builder = new RefreshNowConfig.Builder(context);
 		return builder.build();
 	}
 
@@ -463,6 +469,17 @@ public class ThemeUtils implements Constants {
 		final String fontFamily = pref.getString(KEY_THEME_FONT_FAMILY, VALUE_THEME_FONT_FAMILY_REGULAR);
 		if (!TextUtils.isEmpty(fontFamily)) return fontFamily;
 		return VALUE_THEME_FONT_FAMILY_REGULAR;
+	}
+
+	public static int getThemeForegroundColor(final Context context) {
+		final Resources res = getResources(context);
+		final Context wrapped = getThemedContext(context, res);
+		final TypedArray a = wrapped.obtainStyledAttributes(new int[] { android.R.attr.colorForeground });
+		try {
+			return a.getColor(0, Color.GRAY);
+		} finally {
+			a.recycle();
+		}
 	}
 
 	public static String getThemeNameOption(final Context context) {

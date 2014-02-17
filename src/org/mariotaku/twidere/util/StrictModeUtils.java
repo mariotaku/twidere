@@ -32,26 +32,11 @@ public class StrictModeUtils {
 	public static final String CLASS_NAME = StrictModeUtils.class.getName();
 
 	public static void checkDiskIO() {
-		final Thread thread = Thread.currentThread();
-		if (thread == null || thread.getId() != 1) return;
-		final StackTraceElement[] framesArray = thread.getStackTrace();
+		check("Disk IO");
+	}
 
-		// look for the last stack frame from this class and then whatever is
-		// next is the caller we want to know about
-		int log_counter = -1;
-		for (final StackTraceElement stackFrame : framesArray) {
-			final String className = stackFrame.getClassName();
-			if (log_counter >= 0 && log_counter < 3) {
-				final String file = stackFrame.getFileName(), method = stackFrame.getMethodName();
-				final int line = stackFrame.getLineNumber();
-				final String nonEmptyFile = file != null ? file : "Unknown";
-				final String template = (log_counter == 0 ? "Disk IO on main thread:\n\t" : "\t") + "at %s.%s(%s:%d)";
-				Log.w(LOGTAG, String.format(Locale.US, template, className, method, nonEmptyFile, line));
-				if (++log_counter == 3) return;
-			} else if (CLASS_NAME.equals(className) && log_counter == -1) {
-				log_counter = 0;
-			}
-		}
+	public static void checkLengthyOperation() {
+		check("Lengthy operation");
 	}
 
 	public static void detectAllThreadPolicy() {
@@ -66,6 +51,31 @@ public class StrictModeUtils {
 		vmPolicyBuilder.detectAll();
 		vmPolicyBuilder.penaltyLog();
 		StrictMode.setVmPolicy(vmPolicyBuilder.build());
+	}
+
+	private static void check(final String message) {
+		final Thread thread = Thread.currentThread();
+		if (thread == null || thread.getId() != 1) return;
+		final StackTraceElement[] framesArray = thread.getStackTrace();
+
+		// look for the last stack frame from this class and then whatever is
+		// next is the caller we want to know about
+		int logCounter = -1;
+		for (final StackTraceElement stackFrame : framesArray) {
+			final String className = stackFrame.getClassName();
+			if (logCounter >= 0 && logCounter < 3) {
+				final String file = stackFrame.getFileName(), method = stackFrame.getMethodName();
+				final int line = stackFrame.getLineNumber();
+				final String nonEmptyFile = file != null ? file : "Unknown";
+				if (logCounter == 0) {
+					Log.w(LOGTAG, String.format(Locale.US, "%s on main thread:\n", message));
+				}
+				Log.w(LOGTAG, String.format(Locale.US, "\t at %s.%s(%s:%d)", className, method, nonEmptyFile, line));
+				if (++logCounter == 3) return;
+			} else if (CLASS_NAME.equals(className) && logCounter == -1) {
+				logCounter = 0;
+			}
+		}
 	}
 
 }

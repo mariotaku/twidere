@@ -237,7 +237,7 @@
   <string name="image_upload_format">Formato de tweet com imagem</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Link da imagem\n\"[TEXT]\" = Conteúdo\n(Extensão apenas)</string>
   <string name="tweet_shortener">Encurtador de tweets</string>
-  <string name="tweet_shortener_default">Nenhum (Cancelar o envio)</string>
+  <string name="status_shortener_default">Nenhum (Cancelar o envio)</string>
   <string name="error_message_status_too_long">Tweet muito longo.</string>
   <string name="error_message_no_content">Nenhum conteúdo</string>
   <string name="error_message_tweet_shorten_failed">Falha ao encurtar URL.</string>

@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IDirectMessagesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -53,7 +52,7 @@ public class DirectMessagesConversationAdapter extends BaseCursorAdapter impleme
 	private boolean mAnimationEnabled = true;
 	private int mMaxAnimationPosition;
 
-	private DirectMessageCursorIndices mIndices;
+	private ParcelableDirectMessage.CursorIndices mIndices;
 
 	public DirectMessagesConversationAdapter(final Context context) {
 		super(context, R.layout.card_item_message_conversation, null, new String[0], new int[0], 0);
@@ -185,7 +184,7 @@ public class DirectMessagesConversationAdapter extends BaseCursorAdapter impleme
 	@Override
 	public Cursor swapCursor(final Cursor cursor) {
 		if (cursor != null) {
-			mIndices = new DirectMessageCursorIndices(cursor);
+			mIndices = new ParcelableDirectMessage.CursorIndices(cursor);
 		} else {
 			mIndices = null;
 		}

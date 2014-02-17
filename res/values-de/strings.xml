@@ -237,7 +237,7 @@
   <string name="image_upload_format">Tweet-Format mit Bild</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Bild link\n\"[TEXT]\" = Text inhalt\n(Nur mit Erweiterung)</string>
   <string name="tweet_shortener">Tweet-Verkürzungsdienst</string>
-  <string name="tweet_shortener_default">Nicht kürzen (Senden abbrechen)</string>
+  <string name="status_shortener_default">Nicht kürzen (Senden abbrechen)</string>
   <string name="error_message_status_too_long">Der Tweet ist zu lang.</string>
   <string name="error_message_no_content">Kein Inhalt</string>
   <string name="error_message_tweet_shorten_failed">Tweet-Verkürzung schlug fehl.</string>

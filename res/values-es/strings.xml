@@ -237,7 +237,7 @@
   <string name="image_upload_format">Formato de tuit con imagen</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Enlace de la imagen\n\"[TEXT]\" = Contenido del tuit\n(Sólo con extensión)</string>
   <string name="tweet_shortener">Acortador de Tuits</string>
-  <string name="tweet_shortener_default">Ninguno (Cancelar el envío)</string>
+  <string name="status_shortener_default">Ninguno (Cancelar el envío)</string>
   <string name="error_message_status_too_long">Tweet demasiado largo.</string>
   <string name="error_message_no_content">Sin contenido</string>
   <string name="error_message_tweet_shorten_failed">Error al acortar el tweet.</string>

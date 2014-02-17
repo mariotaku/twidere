@@ -234,7 +234,7 @@
   <string name="image_upload_format">Format ćwierka z obrazem</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Image link\n\"[TEXT]\" = Zawartość ćwierka\n(tylko rozszerzenie)</string>
   <string name="tweet_shortener">Skracanie ćwierka</string>
-  <string name="tweet_shortener_default">Brak (przerwij wysyłanie)</string>
+  <string name="status_shortener_default">Brak (przerwij wysyłanie)</string>
   <string name="error_message_status_too_long">Ćwierk za długi.</string>
   <string name="error_message_no_content">Brak zawartości</string>
   <string name="error_message_tweet_shorten_failed">Skracanie ćwierka nie powiodło się.</string>

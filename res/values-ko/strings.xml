@@ -237,7 +237,7 @@
   <string name="image_upload_format">이미지 올릴 때 양식</string>
   <string name="image_upload_format_summary">\"[LINK]\" = 이미지 주소\n\"[TEXT]\" = 트윗할 내용\n(플러그인에서만)</string>
   <string name="tweet_shortener">트윗 축약 서비스</string>
-  <string name="tweet_shortener_default">없음 (전송 취소)</string>
+  <string name="status_shortener_default">없음 (전송 취소)</string>
   <string name="error_message_status_too_long">트윗이 너무 깁니다. </string>
   <string name="error_message_no_content">내용 없음</string>
   <string name="error_message_tweet_shorten_failed">트윗 축약 실패.</string>

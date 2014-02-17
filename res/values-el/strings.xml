@@ -10,7 +10,7 @@
   <string name="error_occurred">Παρουσιάστηκε ένα σφάλμα, παρακαλώ προσπαθήστε ξανά.</string>
   <string name="mute_user">Σίγαση χρήστη</string>
   <string name="load_images">Φόρτωση εικόνων</string>
-  <string name="tweet_shortener_default">Κανένα (Αποστολή εγκαταλείφθηκε)</string>
+  <string name="status_shortener_default">Κανένα (Αποστολή εγκαταλείφθηκε)</string>
   <string name="error_message_tweet_shortener_not_found">Δεν βρέθηκε ο συντομευτής tweet, ίσως να έχει απεγκατασταθεί.</string>
   <string name="show_absolute_time">Εμφάνιση απόλυτου χρόνου</string>
   <string name="user_mentions">Αναφορές χρήστη</string>

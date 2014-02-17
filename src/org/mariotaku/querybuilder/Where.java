@@ -48,11 +48,15 @@ public class Where implements SQLLang {
 	}
 
 	public static Where equals(final Column l, final Column r) {
-		return new Where(String.format("%s = %s", l.getSQL(), r.getSQL()));
+		return new Where(String.format(Locale.US, "%s = %s", l.getSQL(), r.getSQL()));
+	}
+
+	public static Where equals(final Column l, final long r) {
+		return new Where(String.format(Locale.US, "%s = %d", l.getSQL(), r));
 	}
 
 	public static Where equals(final Column l, final String r) {
-		return new Where(String.format("%s = '%s'", l.getSQL(), r));
+		return new Where(String.format(Locale.US, "%s = '%s'", l.getSQL(), r));
 	}
 
 	public static Where equals(final String l, final long r) {

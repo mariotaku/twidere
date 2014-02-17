@@ -22,16 +22,24 @@ package org.mariotaku.twidere.util;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.matcherGroup;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
 
 import twitter4j.MediaEntity;
 import twitter4j.Status;
+import twitter4j.TwitterException;
 import twitter4j.URLEntity;
+import twitter4j.http.HttpClientWrapper;
+import twitter4j.http.HttpParameter;
+import twitter4j.http.HttpResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -174,8 +182,20 @@ public class MediaPreviewUtils {
 			PATTERN_IMGUR, PATTERN_IMGLY, PATTERN_YFROG, PATTERN_LOCKERZ, PATTERN_PLIXI, PATTERN_TWITGOO,
 			PATTERN_MOBYPICTURE, PATTERN_PHOTOZOU };
 
+	private static final String URL_PHOTOZOU_PHOTO_INFO = "https://api.photozou.jp/rest/photo_info.json";
+
 	public static PreviewMedia getAllAvailableImage(final String link, final boolean fullImage) {
+		try {
+			return getAllAvailableImage(link, fullImage, null);
+		} catch (final IOException e) {
+			throw new AssertionError("This should never happen");
+		}
+	}
+
+	public static PreviewMedia getAllAvailableImage(final String link, final boolean fullImage,
+			final HttpClientWrapper client) throws IOException {
 		if (link == null) return null;
+		StrictModeUtils.checkLengthyOperation();
 		Matcher m;
 		m = PATTERN_TWITTER_IMAGES.matcher(link);
 		if (m.matches()) return getTwitterImage(link, fullImage);
@@ -208,7 +228,7 @@ public class MediaPreviewUtils {
 		m = PATTERN_MOBYPICTURE.matcher(link);
 		if (m.matches()) return getMobyPictureImage(matcherGroup(m, MOBYPICTURE_GROUP_ID), link, fullImage);
 		m = PATTERN_PHOTOZOU.matcher(link);
-		if (m.matches()) return getPhotozouImage(matcherGroup(m, PHOTOZOU_GROUP_ID), link, fullImage);
+		if (m.matches()) return getPhotozouImage(client, matcherGroup(m, PHOTOZOU_GROUP_ID), link, fullImage);
 		return null;
 	}
 
@@ -329,9 +349,23 @@ public class MediaPreviewUtils {
 		return PreviewMedia.newImage(preview, orig);
 	}
 
-	private static PreviewMedia getPhotozouImage(final String id, final String orig, final boolean fullImage) {
+	private static PreviewMedia getPhotozouImage(final HttpClientWrapper client, final String id, final String orig,
+			final boolean fullImage) throws IOException {
 		if (isEmpty(id)) return null;
-		final String preview = String.format("http://photozou.jp/p/%s/%s", fullImage ? "img" : "thumb", id);
+		if (client != null) {
+			try {
+				final HttpParameter[] parameters = { new HttpParameter("photo_id", id) };
+				final HttpResponse resp = client.get(URL_PHOTOZOU_PHOTO_INFO, URL_PHOTOZOU_PHOTO_INFO, parameters);
+				final JSONObject json = resp.asJSONObject().getJSONObject("info").getJSONObject("photo");
+				final String key = fullImage ? "original_image_url" : "image_url";
+				return PreviewMedia.newImage(json.getString(key), orig);
+			} catch (final TwitterException e) {
+				return null;
+			} catch (final JSONException e) {
+				throw new IOException(e);
+			}
+		}
+		final String preview = String.format(Locale.US, "http://photozou.jp/p/img/%s", id);
 		return PreviewMedia.newImage(preview, orig);
 	}
 
@@ -358,7 +392,7 @@ public class MediaPreviewUtils {
 	private static PreviewMedia getTwitterImage(final String url, final boolean fullImage) {
 		if (isEmpty(url)) return null;
 		final String full = (url + ":large").replaceFirst("https?://", "https://");
-		final String preview = fullImage ? full : (url + ":small").replaceFirst("https?://", "https://");
+		final String preview = fullImage ? full : (url + ":medium").replaceFirst("https?://", "https://");
 		return PreviewMedia.newImage(preview, full);
 	}
 

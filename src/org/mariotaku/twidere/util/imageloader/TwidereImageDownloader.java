@@ -106,7 +106,8 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 		final String scheme = uri.getScheme();
 		if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
 				|| ContentResolver.SCHEME_FILE.equals(scheme)) return mResolver.openInputStream(uri);
-		final PreviewMedia media = MediaPreviewUtils.getAllAvailableImage(uriString, mFullImage);
+		final PreviewMedia media = MediaPreviewUtils.getAllAvailableImage(uriString, mFullImage, mFullImage
+				|| !mFastImageLoading ? mClient : null);
 		try {
 			final String mediaUrl = media != null ? media.url : uriString;
 			if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(uriString).matches())

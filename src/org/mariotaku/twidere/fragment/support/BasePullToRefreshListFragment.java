@@ -41,7 +41,6 @@ import org.mariotaku.refreshnow.widget.RefreshMode;
 import org.mariotaku.refreshnow.widget.RefreshNowConfig;
 import org.mariotaku.refreshnow.widget.RefreshNowListView;
 import org.mariotaku.refreshnow.widget.RefreshNowProgressIndicator;
-import org.mariotaku.refreshnow.widget.RefreshNowProgressIndicator.IndicatorConfig;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.util.ThemeUtils;
 
@@ -116,13 +115,13 @@ public abstract class BasePullToRefreshListFragment extends BaseSupportListFragm
 		lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		lv.setDrawSelectorOnTop(false);
 		lv.setOnRefreshListener(this);
+		lv.setConfig(ThemeUtils.buildRefreshNowConfig(context));
 		lv.setOnTouchListener(this);
 		lframe.addView(lv, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT));
 
 		final RefreshNowProgressIndicator indicator = new RefreshNowProgressIndicator(context);
-		final IndicatorConfig config = ThemeUtils.buildRefreshIndicatorConfig(context);
-		indicator.setConfig(config);
+		indicator.setConfig(ThemeUtils.buildRefreshIndicatorConfig(context));
 		final int indicatorHeight = Math.round(3 * getResources().getDisplayMetrics().density);
 		lframe.addView(indicator, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, indicatorHeight,
 				Gravity.TOP));

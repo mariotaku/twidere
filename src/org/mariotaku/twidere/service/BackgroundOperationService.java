@@ -350,8 +350,8 @@ public class BackgroundOperationService extends IntentService implements Constan
 		if (statusUpdate.account_ids.length == 0) return Collections.emptyList();
 
 		try {
-			if (mUseUploader && mUploader == null) throw new ImageUploaderNotFoundException(this);
-			if (mUseShortener && mShortener == null) throw new TweetShortenerNotFoundException(this);
+			if (mUseUploader && mUploader == null) throw new UploaderNotFoundException(this);
+			if (mUseShortener && mShortener == null) throw new ShortenerNotFoundException(this);
 
 			final String imagePath = getImagePathFromUri(this, statusUpdate.media_uri);
 			final File imageFile = imagePath != null ? new File(imagePath) : null;
@@ -365,10 +365,10 @@ public class BackgroundOperationService extends IntentService implements Constan
 					}
 					uploadResult = mUploader.upload(statusUpdate);
 				} catch (final Exception e) {
-					throw new ImageUploadException(this);
+					throw new UploadException(this);
 				}
 				if (mUseUploader && imageFile != null && imageFile.exists() && uploadResult == null)
-					throw new ImageUploadException(this);
+					throw new UploadException(this);
 				overrideStatusText = getImageUploadStatus(this, uploadResult.mediaUris, statusUpdate.text);
 			} else {
 				overrideStatusText = null;
@@ -386,10 +386,9 @@ public class BackgroundOperationService extends IntentService implements Constan
 						shortenedResult = mShortener.shorten(statusUpdate, unshortenedText);
 
 					} catch (final Exception e) {
-						throw new TweetShortenException(this);
+						throw new ShortenException(this);
 					}
-					if (shortenedResult == null || shortenedResult.shortened == null)
-						throw new TweetShortenException(this);
+					if (shortenedResult == null || shortenedResult.shortened == null) throw new ShortenException(this);
 					shortenedText = shortenedResult.shortened;
 				} else
 					throw new StatusTooLongException(this);
@@ -490,19 +489,19 @@ public class BackgroundOperationService extends IntentService implements Constan
 		return notification;
 	}
 
-	static class ImageUploaderNotFoundException extends UpdateStatusException {
-		private static final long serialVersionUID = 1041685850011544106L;
+	static class ShortenerNotFoundException extends UpdateStatusException {
+		private static final long serialVersionUID = -7262474256595304566L;
 
-		public ImageUploaderNotFoundException(final Context context) {
-			super(context, R.string.error_message_image_uploader_not_found);
+		public ShortenerNotFoundException(final Context context) {
+			super(context, R.string.error_message_tweet_shortener_not_found);
 		}
 	}
 
-	static class ImageUploadException extends UpdateStatusException {
-		private static final long serialVersionUID = 8596614696393917525L;
+	static class ShortenException extends UpdateStatusException {
+		private static final long serialVersionUID = 3075877185536740034L;
 
-		public ImageUploadException(final Context context) {
-			super(context, R.string.error_message_image_upload_failed);
+		public ShortenException(final Context context) {
+			super(context, R.string.error_message_tweet_shorten_failed);
 		}
 	}
 
@@ -514,27 +513,27 @@ public class BackgroundOperationService extends IntentService implements Constan
 		}
 	}
 
-	static class TweetShortenerNotFoundException extends UpdateStatusException {
-		private static final long serialVersionUID = -7262474256595304566L;
-
-		public TweetShortenerNotFoundException(final Context context) {
-			super(context, R.string.error_message_tweet_shortener_not_found);
-		}
-	}
-
-	static class TweetShortenException extends UpdateStatusException {
-		private static final long serialVersionUID = 3075877185536740034L;
-
-		public TweetShortenException(final Context context) {
-			super(context, R.string.error_message_tweet_shorten_failed);
-		}
-	}
-
 	static class UpdateStatusException extends Exception {
 		private static final long serialVersionUID = -1267218921727097910L;
 
 		public UpdateStatusException(final Context context, final int message) {
 			super(context.getString(message));
+		}
+	}
+
+	static class UploaderNotFoundException extends UpdateStatusException {
+		private static final long serialVersionUID = 1041685850011544106L;
+
+		public UploaderNotFoundException(final Context context) {
+			super(context, R.string.error_message_image_uploader_not_found);
+		}
+	}
+
+	static class UploadException extends UpdateStatusException {
+		private static final long serialVersionUID = 8596614696393917525L;
+
+		public UploadException(final Context context) {
+			super(context, R.string.error_message_image_upload_failed);
 		}
 	}
 }

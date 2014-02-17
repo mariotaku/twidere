@@ -237,7 +237,7 @@
   <string name="image_upload_format">Format de les piulades amb imatge</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Enllaç de la imatge\n\"[TEXT]\" = Contingut de la piulada\n(sols l\'extensió)</string>
   <string name="tweet_shortener">Servei per escurçar piulades</string>
-  <string name="tweet_shortener_default">Cap (Avorta l\'enviament)</string>
+  <string name="status_shortener_default">Cap (Avorta l\'enviament)</string>
   <string name="error_message_status_too_long">Piulada massa llarga.</string>
   <string name="error_message_no_content">Sense contingut</string>
   <string name="error_message_tweet_shorten_failed">Ha fallat l\'escurçador de piulades.</string>

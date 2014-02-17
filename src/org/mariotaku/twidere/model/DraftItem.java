@@ -52,7 +52,7 @@ public class DraftItem implements Parcelable {
 	public final int media_type, action_type;
 	public final JSONObject action_extras;
 
-	public DraftItem(final Cursor cursor, final CursorDraftIndices indices) {
+	public DraftItem(final Cursor cursor, final CursorIndices indices) {
 		_id = cursor.getLong(indices._id);
 		text = cursor.getString(indices.text);
 		media_uri = cursor.getString(indices.media_uri);
@@ -123,4 +123,26 @@ public class DraftItem implements Parcelable {
 		}
 		return new JSONObject();
 	}
+
+	public static final class CursorIndices {
+
+		public final int _id, account_ids, in_reply_to_status_id, text, location, media_uri, media_type,
+				is_possibly_sensitive, timestamp, action_type, action_extras;
+
+		public CursorIndices(final Cursor cursor) {
+			_id = cursor.getColumnIndex(Drafts._ID);
+			account_ids = cursor.getColumnIndex(Drafts.ACCOUNT_IDS);
+			in_reply_to_status_id = cursor.getColumnIndex(Drafts.IN_REPLY_TO_STATUS_ID);
+			timestamp = cursor.getColumnIndex(Drafts.TIMESTAMP);
+			text = cursor.getColumnIndex(Drafts.TEXT);
+			media_uri = cursor.getColumnIndex(Drafts.MEDIA_URI);
+			media_type = cursor.getColumnIndex(Drafts.MEDIA_TYPE);
+			is_possibly_sensitive = cursor.getColumnIndex(Drafts.IS_POSSIBLY_SENSITIVE);
+			location = cursor.getColumnIndex(Drafts.LOCATION);
+			action_type = cursor.getColumnIndex(Drafts.ACTION_TYPE);
+			action_extras = cursor.getColumnIndex(Drafts.ACTION_EXTRAS);
+		}
+
+	}
+
 }

@@ -31,7 +31,7 @@ import android.view.ViewGroup;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.CursorDraftIndices;
+import org.mariotaku.twidere.model.DraftItem;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
@@ -45,7 +45,7 @@ public class DraftsAdapter extends SimpleCursorAdapter {
 	private final ImageLoadingHandler mImageLoadingHandler;
 
 	private float mTextSize;
-	private CursorDraftIndices mIndices;
+	private DraftItem.CursorIndices mIndices;
 
 	public DraftsAdapter(final Context context) {
 		super(context, R.layout.card_item_draft, null, new String[0], new int[0], 0);
@@ -107,7 +107,7 @@ public class DraftsAdapter extends SimpleCursorAdapter {
 	public Cursor swapCursor(final Cursor c) {
 		final Cursor old = super.swapCursor(c);
 		if (c != null) {
-			mIndices = new CursorDraftIndices(c);
+			mIndices = new DraftItem.CursorIndices(c);
 		}
 		return old;
 	}

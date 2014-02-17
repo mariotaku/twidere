@@ -237,7 +237,7 @@
   <string name="image_upload_format">Kuvallisen twiitin muoto</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Kuvan linkki\n\"[TEXT]\" = Twiitin sisältö\n(Vain laajennuksissa)</string>
   <string name="tweet_shortener">Twiitinlyhentäjä</string>
-  <string name="tweet_shortener_default">Älä lyhennä (keskeytä lähetys)</string>
+  <string name="status_shortener_default">Älä lyhennä (keskeytä lähetys)</string>
   <string name="error_message_status_too_long">Twiitti on liian pitkä.</string>
   <string name="error_message_no_content">Ei sisältöä</string>
   <string name="error_message_tweet_shorten_failed">Twiitin lyhennys epäonnistui.</string>

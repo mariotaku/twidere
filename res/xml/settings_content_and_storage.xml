@@ -7,14 +7,16 @@
 	<PreferenceCategory
 		android:key="category_multimedia_contents"
 		android:title="@string/multimedia_contents">
-		<org.mariotaku.twidere.preference.ImageUploaderPreference
-			android:key="image_uploader"
+		<org.mariotaku.twidere.preference.MediaUploaderPreference
+			android:defaultValue="none"
+			android:key="media_uploader"
+			android:summary="%s"
 			android:title="@string/image_uploader"/>
 
 		<EditTextPreference
 			android:defaultValue="[TEXT] [LINK]"
 			android:dialogTitle="@string/image_upload_format"
-			android:key="image_upload_format"
+			android:key="media_upload_format"
 			android:singleLine="true"
 			android:summary="@string/image_upload_format_summary"
 			android:title="@string/image_upload_format"/>
@@ -31,9 +33,11 @@
 	<PreferenceCategory
 		android:key="category_content"
 		android:title="@string/content">
-		<org.mariotaku.twidere.preference.TweetShortenerPreference
-			android:key="tweet_shortener"
-			android:title="@string/tweet_shortener"/>
+		<org.mariotaku.twidere.preference.StatusShortenerPreference
+			android:defaultValue="none"
+			android:key="status_shortener"
+			android:summary="%s"
+			android:title="@string/status_shortener"/>
 
 		<EditTextPreference
 			android:defaultValue="RT @[NAME]: [TEXT]"
@@ -69,6 +73,12 @@
 			android:title="@string/load_item_limit"
 			app:max="200"
 			app:min="10"/>
+
+		<org.mariotaku.twidere.preference.TimelineSyncPreference
+			android:defaultValue="none"
+			android:key="timeline_sync_service"
+			android:summary="%s"
+			android:title="@string/timeline_sync_service"/>
 
 		<CheckBoxPreference
 			android:defaultValue="true"

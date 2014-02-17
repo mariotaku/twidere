@@ -292,10 +292,6 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		out.writeString(description_unescaped);
 	}
 
-	private long getTime(final Date date) {
-		return date != null ? date.getTime() : 0;
-	}
-
 	public static ContentValues makeCachedUserContentValues(final ParcelableUser user) {
 		if (user == null) return null;
 		final ContentValues values = new ContentValues();
@@ -319,5 +315,9 @@ public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<Pa
 		values.put(CachedUsers.PROFILE_BANNER_URL, user.profile_banner_url);
 		values.put(CachedUsers.IS_FOLLOWING, user.is_following);
 		return values;
+	}
+
+	private static long getTime(final Date date) {
+		return date != null ? date.getTime() : 0;
 	}
 }

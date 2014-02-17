@@ -56,6 +56,8 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 	public void setIgnoredFilterFields(boolean user, boolean text_plain, boolean text_html, boolean source,
 			final boolean retweeted_by_id);
 
+	public void setImagePreviewScaleType(String scaleType);
+
 	public void setIndicateMyStatusDisabled(boolean disable);
 
 	public void setMentionsHightlightDisabled(boolean disable);

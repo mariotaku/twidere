@@ -143,8 +143,6 @@ import org.mariotaku.twidere.graphic.PaddingDrawable;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.Account.AccountWithCredentials;
 import org.mariotaku.twidere.model.AccountPreferences;
-import org.mariotaku.twidere.model.CursorStatusIndices;
-import org.mariotaku.twidere.model.DirectMessageCursorIndices;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -990,7 +988,7 @@ public final class Utils implements Constants {
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				message = new ParcelableDirectMessage(cur, new DirectMessageCursorIndices(cur));
+				message = new ParcelableDirectMessage(cur, new ParcelableDirectMessage.CursorIndices(cur));
 			}
 			cur.close();
 		}
@@ -1028,7 +1026,7 @@ public final class Utils implements Constants {
 			}
 			if (cur.getCount() > 0) {
 				cur.moveToFirst();
-				status = new ParcelableStatus(cur, new CursorStatusIndices(cur));
+				status = new ParcelableStatus(cur, new ParcelableStatus.CursorIndices(cur));
 			}
 			cur.close();
 		}

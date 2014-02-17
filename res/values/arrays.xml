@@ -136,9 +136,17 @@
 		<item>none</item>
 	</string-array>
 	<string-array name="entries_card_highlight_option">
-		<item>Background</item>
-		<item>Line</item>
+		<item>@string/card_highlight_option_highlight</item>
+		<item>@string/card_highlight_option_line</item>
 		<item>@string/none</item>
+	</string-array>
+	<string-array name="values_image_preview_scale_type">
+		<item>CENTER_CROP</item>
+		<item>FIT_CENTER</item>
+	</string-array>
+	<string-array name="entries_image_preview_scale_type">
+		<item>@string/image_preview_scale_type_crop</item>
+		<item>@string/image_preview_scale_type_fit_center</item>
 	</string-array>
 
 </resources>

@@ -54,7 +54,6 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 			return new ParcelableDirectMessage[size];
 		}
 	};
-
 	public static final Comparator<ParcelableDirectMessage> MESSAGE_ID_COMPARATOR = new Comparator<ParcelableDirectMessage>() {
 
 		@Override
@@ -69,11 +68,12 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 	public final long account_id, id, timestamp;
 
 	public final long sender_id, recipient_id;
-	public final boolean is_outgoing;
 
+	public final boolean is_outgoing;
 	public final String text_html, text_plain, text_unescaped;
 
 	public final String sender_name, recipient_name, sender_screen_name, recipient_screen_name;
+
 	public final String sender_profile_image_url, recipient_profile_image_url;
 
 	public ParcelableDirectMessage(final ContentValues values) {
@@ -94,7 +94,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		account_id = getAsLong(values, DirectMessages.ACCOUNT_ID, -1);
 	}
 
-	public ParcelableDirectMessage(final Cursor cursor, final DirectMessageCursorIndices indices) {
+	public ParcelableDirectMessage(final Cursor cursor, final CursorIndices indices) {
 		account_id = indices.account_id != -1 ? cursor.getLong(indices.account_id) : -1;
 		is_outgoing = indices.is_outgoing != -1 ? cursor.getShort(indices.is_outgoing) == 1 : null;
 		id = indices.message_id != -1 ? cursor.getLong(indices.message_id) : -1;
@@ -153,7 +153,7 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		recipient_screen_name = in.readString();
 		sender_profile_image_url = in.readString();
 		recipient_profile_image_url = in.readString();
-		text_unescaped = toPlainText(text_html);
+		text_unescaped = in.readString();
 	}
 
 	@Override
@@ -217,9 +217,34 @@ public class ParcelableDirectMessage implements Parcelable, Serializable, Compar
 		out.writeString(recipient_screen_name);
 		out.writeString(sender_profile_image_url);
 		out.writeString(recipient_profile_image_url);
+		out.writeString(text_unescaped);
 	}
 
-	private long getTime(final Date date) {
+	private static long getTime(final Date date) {
 		return date != null ? date.getTime() : 0;
+	}
+
+	public static class CursorIndices {
+
+		public final int account_id, message_id, message_timestamp, sender_name, sender_screen_name, text, text_plain,
+				recipient_name, recipient_screen_name, sender_profile_image_url, is_outgoing,
+				recipient_profile_image_url, sender_id, recipient_id;
+
+		public CursorIndices(final Cursor cursor) {
+			account_id = cursor.getColumnIndex(DirectMessages.ACCOUNT_ID);
+			message_id = cursor.getColumnIndex(DirectMessages.MESSAGE_ID);
+			message_timestamp = cursor.getColumnIndex(DirectMessages.MESSAGE_TIMESTAMP);
+			sender_id = cursor.getColumnIndex(DirectMessages.SENDER_ID);
+			recipient_id = cursor.getColumnIndex(DirectMessages.RECIPIENT_ID);
+			is_outgoing = cursor.getColumnIndex(DirectMessages.IS_OUTGOING);
+			text = cursor.getColumnIndex(DirectMessages.TEXT_HTML);
+			text_plain = cursor.getColumnIndex(DirectMessages.TEXT_PLAIN);
+			sender_name = cursor.getColumnIndex(DirectMessages.SENDER_NAME);
+			recipient_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_NAME);
+			sender_screen_name = cursor.getColumnIndex(DirectMessages.SENDER_SCREEN_NAME);
+			recipient_screen_name = cursor.getColumnIndex(DirectMessages.RECIPIENT_SCREEN_NAME);
+			sender_profile_image_url = cursor.getColumnIndex(DirectMessages.SENDER_PROFILE_IMAGE_URL);
+			recipient_profile_image_url = cursor.getColumnIndex(DirectMessages.RECIPIENT_PROFILE_IMAGE_URL);
+		}
 	}
 }

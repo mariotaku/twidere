@@ -36,6 +36,23 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+	<uses-permission android:name="org.mariotaku.twidere.permission.SHORTEN_STATUS"/>
+	<uses-permission android:name="org.mariotaku.twidere.permission.UPLOAD_MEDIA"/>
+	<uses-permission android:name="org.mariotaku.twidere.permission.SYNC_TIMELINE"/>
+
+	<permission-group
+		android:name="org.mariotaku.twidere.permission.PERMISSION_GROUP"
+		android:label="@string/app_name"/>
+
+	<permission
+		android:name="org.mariotaku.twidere.permission.SHORTEN_STATUS"
+		android:permissionGroup="org.mariotaku.twidere.permission.PERMISSION_GROUP"/>
+	<permission
+		android:name="org.mariotaku.twidere.permission.UPLOAD_MEDIA"
+		android:permissionGroup="org.mariotaku.twidere.permission.PERMISSION_GROUP"/>
+	<permission
+		android:name="org.mariotaku.twidere.permission.SYNC_TIMELINE"
+		android:permissionGroup="org.mariotaku.twidere.permission.PERMISSION_GROUP"/>
 
 	<application
 		android:name=".app.TwidereApplication"
@@ -357,6 +374,7 @@
 			android:icon="@drawable/ic_iconic_twidere"
 			android:label="@string/view_image"
 			android:launchMode="singleTop"
+			android:process=":image_viewer"
 			android:theme="@style/Theme.Blank">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.VIEW_IMAGE"/>

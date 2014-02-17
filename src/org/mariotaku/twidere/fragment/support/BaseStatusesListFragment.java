@@ -24,7 +24,6 @@ import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.openStatus;
-import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 import static org.mariotaku.twidere.util.Utils.showOkMessage;
 import static org.mariotaku.twidere.util.Utils.startStatusShareChooser;
 
@@ -36,16 +35,15 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 
-import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.StatusMenuDialogFragment;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
@@ -60,7 +58,6 @@ import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ClipboardUtils;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.PositionManager;
-import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwitterWrapper;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.collection.NoDuplicatesCopyOnWriteArrayList;
@@ -82,7 +79,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 
 	private ListView mListView;
 	private IStatusesAdapter<Data> mAdapter;
-	private PopupMenu mPopupMenu;
 
 	private Data mData;
 	private ParcelableStatus mSelectedStatus;
@@ -384,13 +380,16 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		configBaseCardAdapter(getActivity(), mAdapter);
 		final boolean display_image_preview = mPreferences.getBoolean(KEY_DISPLAY_IMAGE_PREVIEW, false);
 		final boolean display_sensitive_contents = mPreferences.getBoolean(KEY_DISPLAY_SENSITIVE_CONTENTS, false);
-		final boolean indicate_my_status = mPreferences.getBoolean(KEY_INDICATE_MY_STATUS, true);
-		final String card_highlight_option = mPreferences.getString(KEY_CARD_HIGHLIGHT_OPTION,
+		final boolean indicateMyStatus = mPreferences.getBoolean(KEY_INDICATE_MY_STATUS, true);
+		final String cardHighlightOption = mPreferences.getString(KEY_CARD_HIGHLIGHT_OPTION,
 				DEFAULT_CARD_HIGHLIGHT_OPTION);
+		final String previewScaleType = Utils.getNonEmptyString(mPreferences, KEY_IMAGE_PREVIEW_SCALE_TYPE,
+				ScaleType.CENTER_CROP.name());
 		mAdapter.setDisplayImagePreview(display_image_preview);
+		mAdapter.setImagePreviewScaleType(previewScaleType);
 		mAdapter.setDisplaySensitiveContents(display_sensitive_contents);
-		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicate_my_status);
-		mAdapter.setCardHighlightOption(card_highlight_option);
+		mAdapter.setIndicateMyStatusDisabled(isMyTimeline() || !indicateMyStatus);
+		mAdapter.setCardHighlightOption(cardHighlightOption);
 		mLoadMoreAutomatically = mPreferences.getBoolean(KEY_LOAD_MORE_AUTOMATICALLY, false);
 	}
 
@@ -436,9 +435,6 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	public void onStop() {
 		savePosition();
 		mMultiSelectManager.unregisterCallback(this);
-		if (mPopupMenu != null) {
-			mPopupMenu.dismiss();
-		}
 		super.onStop();
 	}
 
@@ -545,26 +541,11 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 		if (twitter != null) {
 			TwitterWrapper.removeUnreadCounts(getActivity(), getTabPosition(), status.account_id, status.id);
 		}
-		if (true) {
-			final StatusMenuDialogFragment df = new StatusMenuDialogFragment();
-			final Bundle args = new Bundle();
-			args.putParcelable(EXTRA_STATUS, status);
-			df.setArguments(args);
-			df.show(getChildFragmentManager(), "status_menu");
-			return;
-		}
-		if (mPopupMenu != null && mPopupMenu.isShowing()) {
-			mPopupMenu.dismiss();
-		}
-		final int activatedColor = ThemeUtils.getUserThemeColor(getActivity());
-		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		mPopupMenu.inflate(R.menu.action_status);
-		final boolean longclickToOpenMenu = mPreferences.getBoolean(KEY_LONG_CLICK_TO_OPEN_MENU, false);
-		final Menu menu = mPopupMenu.getMenu();
-		setMenuForStatus(getActivity(), menu, status);
-		Utils.setMenuItemAvailability(menu, MENU_MULTI_SELECT, longclickToOpenMenu);
-		mPopupMenu.setOnMenuItemClickListener(this);
-		mPopupMenu.show();
+		final StatusMenuDialogFragment df = new StatusMenuDialogFragment();
+		final Bundle args = new Bundle();
+		args.putParcelable(EXTRA_STATUS, status);
+		df.setArguments(args);
+		df.show(getChildFragmentManager(), "status_menu");
 	}
 
 	private void removeUnreadCounts() {

@@ -238,7 +238,7 @@
   <string name="error_message_image_uploader_not_found">لم يتم العثور على مركز رفع الصور،ربما تم إلغاء تثبيته.</string>
   <string name="image_upload_format">شكل تغيردة ذات صورة</string>
   <string name="tweet_shortener">مقصِّر التغريدة</string>
-  <string name="tweet_shortener_default">لايوجد (ألغي الارسال)</string>
+  <string name="status_shortener_default">لايوجد (ألغي الارسال)</string>
   <string name="error_message_status_too_long">تغريدتك طويلة جدا.</string>
   <string name="error_message_no_content">لايجد أي محتوى</string>
   <string name="error_message_tweet_shorten_failed">فشل في تقصير التغريدة.</string>

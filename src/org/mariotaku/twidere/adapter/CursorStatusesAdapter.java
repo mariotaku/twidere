@@ -39,11 +39,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView.ScaleType;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
-import org.mariotaku.twidere.model.CursorStatusIndices;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUserMention;
 import org.mariotaku.twidere.provider.TweetStore.Statuses;
@@ -54,6 +54,8 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.holder.StatusViewHolder;
 import org.mariotaku.twidere.view.iface.ICardItemView.OnOverflowIconClickListener;
+
+import java.util.Locale;
 
 public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatusesAdapter<Cursor>, OnClickListener,
 		OnOverflowIconClickListener {
@@ -75,7 +77,9 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			mFilterRetweetedById;
 	private int mMaxAnimationPosition, mCardHighlightOption;
 
-	private CursorStatusIndices mIndices;
+	private ParcelableStatus.CursorIndices mIndices;
+
+	private ScaleType mImagePreviewScaleType;
 
 	public CursorStatusesAdapter(final Context context) {
 		this(context, Utils.isCompactCards(context));
@@ -204,6 +208,9 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			final boolean hasPreview = mDisplayImagePreview && hasMedia;
 			holder.image_preview_container.setVisibility(hasPreview ? View.VISIBLE : View.GONE);
 			if (hasPreview && mediaLink != null) {
+				if (mImagePreviewScaleType != null) {
+					holder.image_preview.setScaleType(mImagePreviewScaleType);
+				}
 				if (possiblySensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
@@ -413,6 +420,15 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	}
 
 	@Override
+	public void setImagePreviewScaleType(final String scaleTypeString) {
+		final ScaleType scaleType = ScaleType.valueOf(scaleTypeString.toUpperCase(Locale.US));
+		if (!scaleType.equals(mImagePreviewScaleType)) {
+			mImagePreviewScaleType = scaleType;
+			notifyDataSetChanged();
+		}
+	}
+
+	@Override
 	public void setIndicateMyStatusDisabled(final boolean disable) {
 		if (mIndicateMyStatusDisabled == disable) return;
 		mIndicateMyStatusDisabled = disable;
@@ -438,12 +454,12 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	@Override
 	public Cursor swapCursor(final Cursor cursor) {
-		mIndices = cursor != null ? new CursorStatusIndices(cursor) : null;
+		mIndices = cursor != null ? new ParcelableStatus.CursorIndices(cursor) : null;
 		rebuildFilterInfo(cursor, mIndices);
 		return super.swapCursor(cursor);
 	}
 
-	private void rebuildFilterInfo(final Cursor c, final CursorStatusIndices i) {
+	private void rebuildFilterInfo(final Cursor c, final ParcelableStatus.CursorIndices i) {
 		if (i != null && c != null && moveCursorToLast(c)) {
 			final long userId = mFilterIgnoreUser ? -1 : c.getLong(mIndices.user_id);
 			final String textPlain = mFilterIgnoreTextPlain ? null : c.getString(mIndices.text_plain);

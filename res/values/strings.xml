@@ -231,6 +231,7 @@
 	<string name="network">Network</string>
 	<string name="content_and_storage">Content &amp; Storage</string>
 	<string name="image_uploader">Image uploader</string>
+	<string name="media_uploader">Media uploader</string>
 	<string name="image_uploader_default">Default (Twitter)</string>
 	<string name="home_refresh">Refresh in home timeline</string>
 	<string name="error_message_image_upload_failed">Image upload failed.</string>
@@ -238,7 +239,8 @@
 	<string name="image_upload_format">Tweet format with image</string>
 	<string name="image_upload_format_summary">\"[LINK]\" = Image link\n\"[TEXT]\" = Tweet content\n(Extension only)</string>
 	<string name="tweet_shortener">Tweet shortener</string>
-	<string name="tweet_shortener_default">None (Abort sending)</string>
+	<string name="status_shortener">Tweet shortener</string>
+	<string name="status_shortener_default">None (Abort sending)</string>
 	<string name="error_message_status_too_long">Tweet too long.</string>
 	<string name="error_message_no_content">No content</string>
 	<string name="error_message_tweet_shorten_failed">Tweet shorten failed.</string>
@@ -611,5 +613,11 @@
 	<string name="compose_now_action">Compose Now action</string>
 	<string name="open_with_account">Open with account</string>
 	<string name="card_highlight_option">Card highlight option</string>
+	<string name="card_highlight_option_highlight">Highlight</string>
+	<string name="card_highlight_option_line">Line</string>
+	<string name="timeline_sync_service">Timeline sync service</string>
+	<string name="image_preview_scale_type">Image preview scale type</string>
+	<string name="image_preview_scale_type_crop">Crop</string>
+	<string name="image_preview_scale_type_fit_center">Fit center</string>
 
 </resources>
