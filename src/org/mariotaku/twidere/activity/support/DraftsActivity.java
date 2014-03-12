@@ -226,7 +226,7 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 		if (twitter == null) return false;
 		for (final DraftItem item : list) {
 			if (item.action_type == Drafts.ACTION_UPDATE_STATUS || item.action_type <= 0) {
-				twitter.updateStatusesAsync(new ParcelableStatusUpdate(item));
+				twitter.updateStatusesAsync(new ParcelableStatusUpdate(this, item));
 			} else if (item.action_type == Drafts.ACTION_SEND_DIRECT_MESSAGE) {
 				final long recipientId = item.action_extras.optLong(EXTRA_RECIPIENT_ID);
 				if (item.account_ids == null || item.account_ids.length <= 0 || recipientId <= 0) {

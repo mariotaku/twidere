@@ -103,8 +103,19 @@ public class AccountPreferences implements Constants {
 		return mPreferences.getBoolean(KEY_MENTIONS_NOTIFICATION, DEFAULT_MENTIONS_NOTIFICATION);
 	}
 
+	public boolean isMyFollowingOnly() {
+		return mPreferences.getBoolean(KEY_MY_FOLLOWING_ONLY, false);
+	}
+
 	public boolean isNotificationEnabled() {
 		return mPreferences.getBoolean(KEY_NOTIFICATION, DEFAULT_NOTIFICATION);
+	}
+
+	public static AccountPreferences getAccountPreferences(final AccountPreferences[] prefs, final long accountId) {
+		for (final AccountPreferences pref : prefs) {
+			if (pref.getAccountId() == accountId) return pref;
+		}
+		return null;
 	}
 
 	public static AccountPreferences[] getAccountPreferences(final Context context, final long[] accountIds) {

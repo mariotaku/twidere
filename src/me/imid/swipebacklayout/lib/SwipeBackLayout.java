@@ -467,6 +467,7 @@ public class SwipeBackLayout extends FrameLayout {
 		if (mBackgroundView == null) return;
 		final float scrollPercentAbs = Math.abs(mScrollPercent);
 		final float percent = MathUtils.clamp(1 - (1 - scrollPercentAbs) * (1 - mScalePercent), 1, 0);
+		mBackgroundView.setScaleType(ScaleType.CENTER_CROP);
 		mBackgroundView.setScaleX(percent);
 		mBackgroundView.setScaleY(percent);
 		mBackgroundView.setVisibility(mScrollPercent <= 0 ? View.INVISIBLE : View.VISIBLE);

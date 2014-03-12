@@ -619,5 +619,9 @@
 	<string name="image_preview_scale_type">Image preview scale type</string>
 	<string name="image_preview_scale_type_crop">Crop</string>
 	<string name="image_preview_scale_type_fit_center">Fit center</string>
+	<string name="quote_protected_status_warning_message">This tweet is protected.\n\nProtected users usually don\'t want their tweets to be shared publicly.</string>
+	<string name="send_anyway">Send anyway</string>
+	<string name="my_following_only">My following only</string>
+	<string name="my_following_only_summary">Display notifications from users you follow only.</string>
 
 </resources>

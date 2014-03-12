@@ -82,7 +82,7 @@ public class DraftItem implements Parcelable {
 
 	public DraftItem(final ParcelableStatusUpdate status) {
 		_id = 0;
-		account_ids = status.account_ids;
+		account_ids = Account.getAccountIds(status.accounts);
 		in_reply_to_status_id = status.in_reply_to_status_id;
 		text = status.text;
 		media_uri = ParseUtils.parseString(status.media_uri);

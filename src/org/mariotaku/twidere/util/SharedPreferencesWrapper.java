@@ -10,9 +10,11 @@ import java.util.Set;
 public class SharedPreferencesWrapper {
 
 	private final SharedPreferences mPreferences;
+	private final Class<?> mKeysClass;
 
-	private SharedPreferencesWrapper(final SharedPreferences preferences) {
+	private SharedPreferencesWrapper(final SharedPreferences preferences, final Class<?> keysClass) {
 		mPreferences = preferences;
+		mKeysClass = keysClass;
 	}
 
 	public boolean contains(final String key) {
@@ -94,8 +96,13 @@ public class SharedPreferencesWrapper {
 	}
 
 	public static SharedPreferencesWrapper getInstance(final Context context, final String name, final int mode) {
+		return getInstance(context, name, mode, null);
+	}
+
+	public static SharedPreferencesWrapper getInstance(final Context context, final String name, final int mode,
+			final Class<?> keysClass) {
 		final SharedPreferences prefs = context.getSharedPreferences(name, mode);
-		return new SharedPreferencesWrapper(prefs);
+		return new SharedPreferencesWrapper(prefs, keysClass);
 	}
 
 }

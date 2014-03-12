@@ -275,7 +275,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 				mAccountsAdapter.add(Account.dummyInstance());
 			}
 			final boolean officialKeyOnly = intent.getBooleanExtra(EXTRA_OFFICIAL_KEY_ONLY, false);
-			mAccountsAdapter.addAll(Account.getAccounts(this, false, officialKeyOnly));
+			mAccountsAdapter.addAll(Account.getAccountsList(this, false, officialKeyOnly));
 			switch (conf.getSecondaryFieldType()) {
 				case CustomTabConfiguration.FIELD_TYPE_USER: {
 					mSecondaryFieldLabel.setText(R.string.user);

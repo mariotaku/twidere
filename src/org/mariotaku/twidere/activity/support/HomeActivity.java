@@ -548,8 +548,15 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	}
 
 	@Override
+	protected void onPause() {
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONPAUSE));
+		super.onPause();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
+		sendBroadcast(new Intent(BROADCAST_HOME_ACTIVITY_ONRESUME));
 		mViewPager.setEnabled(!mPreferences.getBoolean(KEY_DISABLE_TAB_SWIPE, false));
 		invalidateOptionsMenu();
 		updateActionsButtonStyle();

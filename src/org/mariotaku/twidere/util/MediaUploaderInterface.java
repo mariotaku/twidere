@@ -34,7 +34,7 @@ import org.mariotaku.twidere.IMediaUploader;
 import org.mariotaku.twidere.model.MediaUploadResult;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 
-public final class ImageUploaderInterface implements Constants, IMediaUploader {
+public final class MediaUploaderInterface implements Constants, IMediaUploader {
 
 	private IMediaUploader mUploader;
 
@@ -51,7 +51,7 @@ public final class ImageUploaderInterface implements Constants, IMediaUploader {
 		}
 	};
 
-	private ImageUploaderInterface(final Context context, final String uploader_name) {
+	private MediaUploaderInterface(final Context context, final String uploader_name) {
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_MEDIA);
 		final ComponentName component = ComponentName.unflattenFromString(uploader_name);
 		intent.setComponent(component);
@@ -85,12 +85,12 @@ public final class ImageUploaderInterface implements Constants, IMediaUploader {
 		}
 	}
 
-	public static ImageUploaderInterface getInstance(final Application application, final String uploaderName) {
+	public static MediaUploaderInterface getInstance(final Application application, final String uploaderName) {
 		if (uploaderName == null) return null;
 		final Intent intent = new Intent(INTENT_ACTION_EXTENSION_UPLOAD_MEDIA);
 		final ComponentName component = ComponentName.unflattenFromString(uploaderName);
 		intent.setComponent(component);
 		if (application.getPackageManager().queryIntentServices(intent, 0).size() != 1) return null;
-		return new ImageUploaderInterface(application, uploaderName);
+		return new MediaUploaderInterface(application, uploaderName);
 	}
 }

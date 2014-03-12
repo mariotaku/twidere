@@ -46,13 +46,14 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.provider.TweetStore.Filters;
-import org.mariotaku.twidere.util.collection.NoDuplicatesArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 @SuppressLint("Registered")
 public class MultiSelectEventHandler implements Constants, ActionMode.Callback, MultiSelectManager.Callback {
@@ -104,19 +105,19 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 				final Extractor extractor = new Extractor();
 				final Intent intent = new Intent(INTENT_ACTION_REPLY_MULTIPLE);
 				final Bundle bundle = new Bundle();
-				final String[] account_names = getAccountScreenNames(mActivity);
-				final NoDuplicatesArrayList<String> all_mentions = new NoDuplicatesArrayList<String>();
+				final String[] accountScreenNames = getAccountScreenNames(mActivity);
+				final Collection<String> allMentions = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 				for (final Object object : selected_items) {
 					if (object instanceof ParcelableStatus) {
 						final ParcelableStatus status = (ParcelableStatus) object;
-						all_mentions.add(status.user_screen_name);
-						all_mentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
+						allMentions.add(status.user_screen_name);
+						allMentions.addAll(extractor.extractMentionedScreennames(status.text_plain));
 					} else if (object instanceof ParcelableUser) {
 						final ParcelableUser user = (ParcelableUser) object;
-						all_mentions.add(user.screen_name);
+						allMentions.add(user.screen_name);
 					}
 				}
-				all_mentions.removeAll(Arrays.asList(account_names));
+				allMentions.removeAll(Arrays.asList(accountScreenNames));
 				final Object first_obj = selected_items.get(0);
 				if (first_obj instanceof ParcelableStatus) {
 					final ParcelableStatus first_status = (ParcelableStatus) first_obj;
@@ -126,7 +127,7 @@ public class MultiSelectEventHandler implements Constants, ActionMode.Callback, 
 					final ParcelableUser first_user = (ParcelableUser) first_obj;
 					bundle.putLong(EXTRA_ACCOUNT_ID, first_user.account_id);
 				}
-				bundle.putStringArray(EXTRA_SCREEN_NAMES, all_mentions.toArray(new String[all_mentions.size()]));
+				bundle.putStringArray(EXTRA_SCREEN_NAMES, allMentions.toArray(new String[allMentions.size()]));
 				intent.putExtras(bundle);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				mActivity.startActivity(intent);

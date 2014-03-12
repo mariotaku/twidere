@@ -69,7 +69,13 @@ public class StatusComposeEditText extends ThemedMultiAutoCompleteTextView imple
 		setAdapter(mAdapter);
 	}
 
-	static class ScreenNameTokenizer implements Tokenizer {
+	@Override
+	protected void replaceText(final CharSequence text) {
+		super.replaceText(text);
+		append(" ");
+	}
+
+	private static class ScreenNameTokenizer implements Tokenizer {
 
 		@Override
 		public int findTokenEnd(final CharSequence text, final int cursor) {
@@ -116,16 +122,10 @@ public class StatusComposeEditText extends ThemedMultiAutoCompleteTextView imple
 				i--;
 			}
 
-			if (i > 0 && text.charAt(i - 1) == ' ')
-				return text + " ";
-			else {
-				if (text instanceof Spanned) {
-					final SpannableString sp = new SpannableString(text + " ");
-					TextUtils.copySpansFrom((Spanned) text, 0, text.length(), Object.class, sp, 0);
-					return sp;
-				} else
-					return text + " ";
-			}
+			if (i > 0 && text.charAt(i - 1) == ' ' || !(text instanceof Spanned)) return text;
+			final SpannableString sp = new SpannableString(text);
+			TextUtils.copySpansFrom((Spanned) text, 0, text.length(), Object.class, sp, 0);
+			return sp;
 		}
 
 		private static boolean isToken(final char character) {

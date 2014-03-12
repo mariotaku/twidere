@@ -734,12 +734,14 @@ public interface TweetStore {
 
 		public static final String ARGUMENTS = "arguments";
 
+		public static final String EXTRAS = "extras";
+
 		public static final String POSITION = "position";
 
-		public static final String[] COLUMNS = new String[] { _ID, NAME, ICON, TYPE, ARGUMENTS, POSITION };
+		public static final String[] COLUMNS = new String[] { _ID, NAME, ICON, TYPE, ARGUMENTS, EXTRAS, POSITION };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT };
+				TYPE_TEXT, TYPE_TEXT, TYPE_INT };
 
 		public static final String DEFAULT_SORT_ORDER = POSITION + " ASC";
 	}

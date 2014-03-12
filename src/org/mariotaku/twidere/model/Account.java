@@ -28,6 +28,9 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.mariotaku.querybuilder.Columns.Column;
+import org.mariotaku.querybuilder.RawItemArray;
+import org.mariotaku.querybuilder.Where;
 import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.util.content.ContentResolverUtils;
 
@@ -135,11 +138,40 @@ public class Account implements Parcelable {
 		return null;
 	}
 
-	public static List<Account> getAccounts(final Context context, final boolean activatedOnly) {
-		return getAccounts(context, activatedOnly, false);
+	public static long[] getAccountIds(final Account[] accounts) {
+		final long[] ids = new long[accounts.length];
+		for (int i = 0, j = accounts.length; i < j; i++) {
+			ids[i] = accounts[i].account_id;
+		}
+		return ids;
 	}
 
-	public static List<Account> getAccounts(final Context context, final boolean activatedOnly,
+	public static Account[] getAccounts(final Context context, final long[] accountIds) {
+		if (context == null) return new Account[0];
+		final String where = accountIds != null ? Where.in(new Column(Accounts.ACCOUNT_ID),
+				new RawItemArray(accountIds)).getSQL() : null;
+		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
+				Accounts.COLUMNS, where, null, null);
+		if (cur == null) return new Account[0];
+		try {
+			final Indices idx = new Indices(cur);
+			cur.moveToFirst();
+			final Account[] names = new Account[cur.getCount()];
+			while (!cur.isAfterLast()) {
+				names[cur.getPosition()] = new Account(cur, idx);
+				cur.moveToNext();
+			}
+			return names;
+		} finally {
+			cur.close();
+		}
+	}
+
+	public static List<Account> getAccountsList(final Context context, final boolean activatedOnly) {
+		return getAccountsList(context, activatedOnly, false);
+	}
+
+	public static List<Account> getAccountsList(final Context context, final boolean activatedOnly,
 			final boolean officialKeyOnly) {
 		if (context == null) return Collections.emptyList();
 		final ArrayList<Account> accounts = new ArrayList<Account>();

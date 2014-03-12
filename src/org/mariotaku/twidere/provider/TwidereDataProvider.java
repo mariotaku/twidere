@@ -1005,7 +1005,7 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		return result;
 	}
 
-	private int notifyMentionsInserted(final ContentValues... values) {
+	private int notifyMentionsInserted(final AccountPreferences[] prefs, final ContentValues... values) {
 		if (values == null || values.length == 0) return 0;
 		// Add statuses that not filtered to list for future use.
 		int result = 0;
@@ -1014,7 +1014,10 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		for (final ContentValues value : values) {
 			final ParcelableStatus status = new ParcelableStatus(value);
 			if (!enabled || !isFiltered(mDatabaseWrapper.getSQLiteDatabase(), status, filtersForRts)) {
-				mNewMentions.add(status);
+				final AccountPreferences pref = AccountPreferences.getAccountPreferences(prefs, status.account_id);
+				if (pref == null || status.user_is_following || !pref.isMyFollowingOnly()) {
+					mNewMentions.add(status);
+				}
 				if (mUnreadMentions.add(new UnreadItem(status.id, status.account_id))) {
 					result++;
 				}
@@ -1091,11 +1094,11 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				break;
 			}
 			case TABLE_ID_MENTIONS: {
-				final int notifiedCount = notifyMentionsInserted(values);
-				final List<ParcelableStatus> items = new ArrayList<ParcelableStatus>(mNewMentions);
-				Collections.sort(items);
 				final AccountPreferences[] prefs = AccountPreferences.getNotificationEnabledPreferences(getContext(),
 						getAccountIds(getContext()));
+				final int notifiedCount = notifyMentionsInserted(prefs, values);
+				final List<ParcelableStatus> items = new ArrayList<ParcelableStatus>(mNewMentions);
+				Collections.sort(items);
 				for (final AccountPreferences pref : prefs) {
 					if (pref.isMentionsNotificationEnabled()) {
 						final long accountId = pref.getAccountId();

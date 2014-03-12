@@ -19,6 +19,7 @@
 
 package org.mariotaku.twidere.model;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -39,7 +40,7 @@ public class ParcelableStatusUpdate implements Parcelable {
 		}
 	};
 
-	public final long[] account_ids;
+	public final Account[] accounts;
 	public final String text;
 	public final ParcelableLocation location;
 	public final Uri media_uri;
@@ -47,25 +48,15 @@ public class ParcelableStatusUpdate implements Parcelable {
 	public final boolean is_possibly_sensitive;
 	public final int media_type;
 
-	public ParcelableStatusUpdate(final DraftItem draft) {
-		account_ids = draft.account_ids;
-		text = draft.text;
-		location = draft.location;
-		media_uri = draft.media_uri != null ? Uri.parse(draft.media_uri) : null;
-		media_type = draft.media_type;
-		in_reply_to_status_id = draft.in_reply_to_status_id;
-		is_possibly_sensitive = draft.is_possibly_sensitive;
-	}
-
 	/**
 	 * @deprecated It has too much arguments to call, use
 	 *             <b>ParcelableStatusUpdate.Builder</b> instead.
 	 */
 	@Deprecated
-	public ParcelableStatusUpdate(final long[] account_ids, final String text, final ParcelableLocation location,
+	public ParcelableStatusUpdate(final Account[] accounts, final String text, final ParcelableLocation location,
 			final Uri media_uri, final int media_type, final long in_reply_to_status_id,
 			final boolean is_possibly_sensitive) {
-		this.account_ids = account_ids;
+		this.accounts = accounts;
 		this.text = text;
 		this.location = location;
 		this.media_uri = media_uri;
@@ -74,8 +65,18 @@ public class ParcelableStatusUpdate implements Parcelable {
 		this.is_possibly_sensitive = is_possibly_sensitive;
 	}
 
+	public ParcelableStatusUpdate(final Context context, final DraftItem draft) {
+		accounts = Account.getAccounts(context, draft.account_ids);
+		text = draft.text;
+		location = draft.location;
+		media_uri = draft.media_uri != null ? Uri.parse(draft.media_uri) : null;
+		media_type = draft.media_type;
+		in_reply_to_status_id = draft.in_reply_to_status_id;
+		is_possibly_sensitive = draft.is_possibly_sensitive;
+	}
+
 	public ParcelableStatusUpdate(final Parcel in) {
-		account_ids = in.createLongArray();
+		accounts = in.createTypedArray(Account.CREATOR);
 		text = in.readString();
 		location = in.readParcelable(ParcelableLocation.class.getClassLoader());
 		media_uri = in.readParcelable(Uri.class.getClassLoader());
@@ -91,15 +92,14 @@ public class ParcelableStatusUpdate implements Parcelable {
 
 	@Override
 	public String toString() {
-		return "ParcelableStatusUpdate{account_ids=" + Arrays.toString(account_ids) + ", content=" + text
-				+ ", location=" + location + ", media_uri=" + media_uri + ", in_reply_to_status_id="
-				+ in_reply_to_status_id + ", is_possibly_sensitive=" + is_possibly_sensitive + ", media_type="
-				+ media_type + "}";
+		return "ParcelableStatusUpdate{accounts=" + Arrays.toString(accounts) + ", content=" + text + ", location="
+				+ location + ", media_uri=" + media_uri + ", in_reply_to_status_id=" + in_reply_to_status_id
+				+ ", is_possibly_sensitive=" + is_possibly_sensitive + ", media_type=" + media_type + "}";
 	}
 
 	@Override
 	public void writeToParcel(final Parcel dest, final int flags) {
-		dest.writeLongArray(account_ids);
+		dest.writeTypedArray(accounts, flags);
 		dest.writeString(text);
 		dest.writeParcelable(location, flags);
 		dest.writeParcelable(media_uri, flags);
@@ -110,7 +110,7 @@ public class ParcelableStatusUpdate implements Parcelable {
 
 	public static final class Builder {
 
-		private long[] account_ids;
+		private Account[] accounts;
 		private String text;
 		private ParcelableLocation location;
 		private Uri media_uri;
@@ -123,7 +123,7 @@ public class ParcelableStatusUpdate implements Parcelable {
 		}
 
 		public Builder(final ParcelableStatusUpdate base) {
-			accountIds(base.account_ids);
+			accounts(base.accounts);
 			text(base.text);
 			media(base.media_uri, base.media_type);
 			location(base.location);
@@ -131,14 +131,14 @@ public class ParcelableStatusUpdate implements Parcelable {
 			isPossiblySensitive(base.is_possibly_sensitive);
 		}
 
-		public Builder accountIds(final long[] account_ids) {
-			this.account_ids = account_ids;
+		public Builder accounts(final Account[] accounts) {
+			this.accounts = accounts;
 			return this;
 		}
 
 		public ParcelableStatusUpdate build() {
-			return new ParcelableStatusUpdate(account_ids, text, location, media_uri, media_type,
-					in_reply_to_status_id, is_possibly_sensitive);
+			return new ParcelableStatusUpdate(accounts, text, location, media_uri, media_type, in_reply_to_status_id,
+					is_possibly_sensitive);
 		}
 
 		public Builder inReplyToStatusId(final long in_reply_to_status_id) {

@@ -215,7 +215,7 @@ public abstract class AccountsListPreference extends PreferenceCategory implemen
 
 		@Override
 		protected List<Account> doInBackground(final Void... params) {
-			return Account.getAccounts(mPreference.getContext(), false);
+			return Account.getAccountsList(mPreference.getContext(), false);
 		}
 
 		@Override

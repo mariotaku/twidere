@@ -21,6 +21,7 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 
 	static {
 		sIconMap.put(R.drawable.ic_iconic_action_twidere, new IconSpec(TwidereIcon.TWIDERE, 0.875f));
+		sIconMap.put(R.drawable.ic_iconic_action_twidere_square, new IconSpec(TwidereIcon.TWIDERE_SQUARE, 0.875f));
 		sIconMap.put(R.drawable.ic_iconic_action_web, new IconSpec(TwidereIcon.WEB, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_compose, new IconSpec(TwidereIcon.COMPOSE, 0.875f));
 		sIconMap.put(R.drawable.ic_iconic_action_color_palette, new IconSpec(TwidereIcon.COLOR_PALETTE, 0.875f));
@@ -75,6 +76,7 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		sIconMap.put(R.drawable.ic_iconic_action_drafts, new IconSpec(TwidereIcon.DRAFTS, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_import, new IconSpec(TwidereIcon.IMPORT, 0.75f));
 		sIconMap.put(R.drawable.ic_iconic_action_export, new IconSpec(TwidereIcon.EXPORT, 0.75f));
+		sIconMap.put(R.drawable.ic_iconic_action_storage, new IconSpec(TwidereIcon.STORAGE, 0.75f));
 	}
 
 	private static int MENU_ICON_SIZE_DP = 32;

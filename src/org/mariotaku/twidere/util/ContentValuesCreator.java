@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mariotaku.jsonserializer.JSONSerializer;
 import org.mariotaku.twidere.TwidereConstants;
+import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
@@ -277,15 +278,15 @@ public final class ContentValuesCreator implements TwidereConstants {
 	}
 
 	public static ContentValues makeStatusDraftContentValues(final ParcelableStatusUpdate status) {
-		return makeStatusDraftContentValues(status, status.account_ids);
+		return makeStatusDraftContentValues(status, Account.getAccountIds(status.accounts));
 	}
 
 	public static ContentValues makeStatusDraftContentValues(final ParcelableStatusUpdate status,
-			final long[] account_ids) {
+			final long[] accountIds) {
 		final ContentValues values = new ContentValues();
 		values.put(Drafts.ACTION_TYPE, Drafts.ACTION_UPDATE_STATUS);
 		values.put(Drafts.TEXT, status.text);
-		values.put(Drafts.ACCOUNT_IDS, ArrayUtils.toString(account_ids, ',', false));
+		values.put(Drafts.ACCOUNT_IDS, ArrayUtils.toString(accountIds, ',', false));
 		values.put(Drafts.IN_REPLY_TO_STATUS_ID, status.in_reply_to_status_id);
 		values.put(Drafts.LOCATION, ParcelableLocation.toString(status.location));
 		values.put(Drafts.IS_POSSIBLY_SENSITIVE, status.is_possibly_sensitive);

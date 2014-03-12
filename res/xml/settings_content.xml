@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:key="settings_content_and_storage"
+	android:key="settings_content"
 	android:title="@string/content_and_storage">
 
 	<PreferenceCategory
@@ -99,31 +99,6 @@
 		<org.mariotaku.twidere.preference.TranslationDestinationPreference
 			android:key="translation_destination"
 			android:title="@string/translation_destination"/>
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="category_storage"
-		android:title="@string/storage">
-		<org.mariotaku.twidere.preference.SeekBarDialogPreference
-			android:defaultValue="100"
-			android:key="database_item_limit"
-			android:summary="@string/database_item_limit_summary"
-			android:title="@string/database_item_limit"
-			app:max="500"
-			app:min="50"/>
-
-		<org.mariotaku.twidere.preference.ClearSearchHistoryPreference
-			android:key="clear_search_history"
-			android:title="@string/clear_search_history"/>
-
-		<org.mariotaku.twidere.preference.ClearCachePreference
-			android:key="clear_cache"
-			android:summary="@string/clear_cache_summary"
-			android:title="@string/clear_cache"/>
-
-		<org.mariotaku.twidere.preference.ClearDatabasesPreference
-			android:key="clear_databases"
-			android:summary="@string/clear_databases_summary"
-			android:title="@string/clear_databases"/>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_safety"

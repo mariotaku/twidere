@@ -28,6 +28,7 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 	private static final int URI_CODE_TWITTER_USER_FOLLOWING = 11;
 	private static final int URI_CODE_TWITTER_USER_FOLLOWERS = 12;
 	private static final int URI_CODE_TWITTER_USER_FAVORITES = 13;
+	private static final int URI_CODE_TWITTER_REDIRECT = 101;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/status/#", URI_CODE_TWITTER_STATUS);
@@ -36,6 +37,7 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/following", URI_CODE_TWITTER_USER_FOLLOWING);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/followers", URI_CODE_TWITTER_USER_FOLLOWERS);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/favorites", URI_CODE_TWITTER_USER_FAVORITES);
+		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/i/redirect", URI_CODE_TWITTER_REDIRECT);
 	}
 
 	private SharedPreferences mPreferences;

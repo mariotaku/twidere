@@ -20,7 +20,7 @@ OS2Version: 0
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 1
 CreationTime: 1391066035
-ModificationTime: 1392473222
+ModificationTime: 1392797109
 OS2TypoAscent: 0
 OS2TypoAOffset: 1
 OS2TypoDescent: 0
@@ -43,10 +43,10 @@ NameList: Adobe Glyph List
 DisplaySize: -72
 AntiAlias: 1
 FitToEm: 0
-WinInfo: 61440 16 6
+WinInfo: 61424 16 6
 BeginPrivate: 0
 EndPrivate
-BeginChars: 65539 76
+BeginChars: 65539 77
 
 StartChar: brand_twidere
 Encoding: 61440 61440 0
@@ -3372,6 +3372,47 @@ SplineSet
  202.667 -2.33301 l 1
  629.333 -2.33301 l 1
  629.333 168.333 l 1
+EndSplineSet
+EndChar
+
+StartChar: uniF010
+Encoding: 61456 61456 76
+Width: 1024
+VWidth: 0
+Flags: HW
+LayerCount: 2
+Fore
+SplineSet
+896 691 m 1
+ 896 -77 l 1
+ 128 -77 l 1
+ 128 691 l 1
+ 896 691 l 1
+186.88 528.12 m 1
+ 284.48 438.307 l 1
+ 366.4 528.12 l 1
+ 186.88 528.12 l 1
+290.667 430.094 m 1
+ 386.667 345.826 l 1
+ 470.934 439.693 l 1
+ 377.066 523.96 l 1
+ 290.667 430.094 l 1
+291.946 245.026 m 1
+ 377.28 338.04 l 1
+ 285.333 423.373 l 1
+ 291.946 245.026 l 1
+437.76 379.64 m 1
+ 446.507 91.5332 l 1
+ 737.493 100.174 l 1
+ 437.76 379.64 l 1
+428.267 380.28 m 1
+ 288.533 230.413 l 1
+ 439.894 94.2002 l 1
+ 428.267 380.28 l 1
+657.493 205.133 m 1
+ 844.16 425.934 l 1
+ 434.134 389.667 l 1
+ 657.493 205.133 l 1
 EndSplineSet
 EndChar
 EndChars

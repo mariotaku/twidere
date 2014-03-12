@@ -49,6 +49,7 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.MainActivity;
 import org.mariotaku.twidere.activity.MainHondaJOJOActivity;
 import org.mariotaku.twidere.app.TwidereApplication;
+import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.MediaUploadResult;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
@@ -62,7 +63,7 @@ import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ContentValuesCreator;
-import org.mariotaku.twidere.util.ImageUploaderInterface;
+import org.mariotaku.twidere.util.MediaUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.StatusShortenerInterface;
@@ -94,11 +95,10 @@ public class BackgroundOperationService extends IntentService implements Constan
 	private SharedPreferences mPreferences;
 	private ContentResolver mResolver;
 	private NotificationManager mNotificationManager;
-	private Builder mBuilder;
 	private AsyncTwitterWrapper mTwitter;
 	private MessagesManager mMessagesManager;
 
-	private ImageUploaderInterface mUploader;
+	private MediaUploaderInterface mUploader;
 	private StatusShortenerInterface mShortener;
 
 	private boolean mUseUploader, mUseShortener;
@@ -117,14 +117,13 @@ public class BackgroundOperationService extends IntentService implements Constan
 		mResolver = getContentResolver();
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mTwitter = app.getTwitterWrapper();
-		mBuilder = new NotificationCompat.Builder(this);
 		mMessagesManager = app.getMessagesManager();
 		final String uploader_component = mPreferences.getString(KEY_IMAGE_UPLOADER, null);
-		final String shortener_component = mPreferences.getString(KEY_TWEET_SHORTENER, null);
+		final String shortenerComponent = mPreferences.getString(KEY_STATUS_SHORTENER, null);
 		mUseUploader = !isEmpty(uploader_component);
-		mUseShortener = !isEmpty(shortener_component);
-		mUploader = mUseUploader ? ImageUploaderInterface.getInstance(app, uploader_component) : null;
-		mShortener = mUseShortener ? StatusShortenerInterface.getInstance(app, shortener_component) : null;
+		mUseShortener = !isEmpty(shortenerComponent);
+		mUploader = mUseUploader ? MediaUploaderInterface.getInstance(app, uploader_component) : null;
+		mShortener = mUseShortener ? StatusShortenerInterface.getInstance(app, shortenerComponent) : null;
 	}
 
 	@Override
@@ -227,6 +226,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		builder.setTicker(title);
 		builder.setContentTitle(title);
 		builder.setContentText(text);
+		builder.setOngoing(true);
 		final Notification notification = builder.build();
 		startForeground(NOTIFICATION_ID_SEND_DIRECT_MESSAGE, notification);
 		final SingleResponse<ParcelableDirectMessage> result = sendDirectMessage(accountId, recipientId, text);
@@ -242,10 +242,12 @@ public class BackgroundOperationService extends IntentService implements Constan
 			mResolver.insert(Drafts.CONTENT_URI, values);
 			showErrorMessage(R.string.action_sending_direct_message, result.exception, true);
 		}
-		stopForeground(true);
+		stopForeground(false);
+		mNotificationManager.cancel(NOTIFICATION_ID_SEND_DIRECT_MESSAGE);
 	}
 
 	private void handleUpdateStatusIntent(final Intent intent) {
+		final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		final ParcelableStatusUpdate status = intent.getParcelableExtra(EXTRA_STATUS);
 		final Parcelable[] status_parcelables = intent.getParcelableArrayExtra(EXTRA_STATUSES);
 		final ParcelableStatusUpdate[] statuses;
@@ -259,13 +261,14 @@ public class BackgroundOperationService extends IntentService implements Constan
 			statuses[0] = status;
 		} else
 			return;
-		startForeground(NOTIFICATION_ID_UPDATE_STATUS, updateUpdateStatusNotificaion(0, null));
+		startForeground(NOTIFICATION_ID_UPDATE_STATUS, updateUpdateStatusNotificaion(this, builder, 0, null));
 		for (final ParcelableStatusUpdate item : statuses) {
-			updateUpdateStatusNotificaion(0, item);
-			final List<SingleResponse<ParcelableStatus>> result = updateStatus(item);
+			mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS,
+					updateUpdateStatusNotificaion(this, builder, 0, item));
+			final List<SingleResponse<ParcelableStatus>> result = updateStatus(builder, item);
 			boolean failed = false;
 			Exception exception = null;
-			final List<Long> failed_account_ids = ListUtils.fromArray(item.account_ids);
+			final List<Long> failed_account_ids = ListUtils.fromArray(Account.getAccountIds(item.accounts));
 
 			for (final SingleResponse<ParcelableStatus> response : result) {
 				if (response.data == null) {
@@ -303,7 +306,8 @@ public class BackgroundOperationService extends IntentService implements Constan
 				mTwitter.refreshAll();
 			}
 		}
-		stopForeground(true);
+		stopForeground(false);
+		mNotificationManager.cancel(NOTIFICATION_ID_UPDATE_STATUS);
 	}
 
 	private void saveDrafts(final ParcelableStatusUpdate status, final List<Long> account_ids) {
@@ -329,7 +333,8 @@ public class BackgroundOperationService extends IntentService implements Constan
 		}
 	}
 
-	private List<SingleResponse<ParcelableStatus>> updateStatus(final ParcelableStatusUpdate statusUpdate) {
+	private List<SingleResponse<ParcelableStatus>> updateStatus(final Builder builder,
+			final ParcelableStatusUpdate statusUpdate) {
 		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
 		final Collection<String> hashtags = extractor.extractHashtags(statusUpdate.text);
 		for (final String hashtag : hashtags) {
@@ -347,7 +352,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 
 		final List<SingleResponse<ParcelableStatus>> results = new ArrayList<SingleResponse<ParcelableStatus>>();
 
-		if (statusUpdate.account_ids.length == 0) return Collections.emptyList();
+		if (statusUpdate.accounts.length == 0) return Collections.emptyList();
 
 		try {
 			if (mUseUploader && mUploader == null) throw new UploaderNotFoundException(this);
@@ -398,7 +403,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 			if (!mUseUploader && imageFile != null && imageFile.exists()) {
 				Utils.downscaleImageIfNeeded(imageFile, 95);
 			}
-			for (final long account_id : statusUpdate.account_ids) {
+			for (final Account account : statusUpdate.accounts) {
 				final StatusUpdate status = new StatusUpdate(shortenedText);
 				status.setInReplyToStatusId(statusUpdate.in_reply_to_status_id);
 				if (statusUpdate.location != null) {
@@ -407,20 +412,8 @@ public class BackgroundOperationService extends IntentService implements Constan
 				if (!mUseUploader && imageFile != null && imageFile.exists()) {
 					try {
 						final ContentLengthInputStream is = new ContentLengthInputStream(imageFile);
-						is.setReadListener(new ReadListener() {
-
-							int percent;
-
-							@Override
-							public void onRead(final long length, final long position) {
-								final int percent = length > 0 ? (int) (position * 100 / length) : 0;
-								if (this.percent != percent) {
-									mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS,
-											updateUpdateStatusNotificaion(percent, statusUpdate));
-								}
-								this.percent = percent;
-							}
-						});
+						is.setReadListener(new StatusMediaUploadListener(this, mNotificationManager, builder,
+								statusUpdate));
 						status.setMedia(imageFile.getName(), is);
 					} catch (final FileNotFoundException e) {
 						status.setMedia(imageFile);
@@ -428,7 +421,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 				}
 				status.setPossiblySensitive(statusUpdate.is_possibly_sensitive);
 
-				final Twitter twitter = getTwitterInstance(this, account_id, true, true);
+				final Twitter twitter = getTwitterInstance(this, account.account_id, true, true);
 				if (twitter == null) {
 					results.add(new SingleResponse<ParcelableStatus>(null, new NullPointerException()));
 					continue;
@@ -447,7 +440,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 							mentioned_hondajojo = statusUpdate.text.contains(HONDAJOJO_SCREEN_NAME);
 						}
 					}
-					final ParcelableStatus result = new ParcelableStatus(twitter_result, account_id, false);
+					final ParcelableStatus result = new ParcelableStatus(twitter_result, account.account_id, false);
 					results.add(new SingleResponse<ParcelableStatus>(result, null));
 				} catch (final TwitterException e) {
 					final SingleResponse<ParcelableStatus> response = SingleResponse.withException(e);
@@ -477,16 +470,16 @@ public class BackgroundOperationService extends IntentService implements Constan
 		return results;
 	}
 
-	private Notification updateUpdateStatusNotificaion(final int progress, final ParcelableStatusUpdate status) {
-		mBuilder.setContentTitle(getString(R.string.updating_status_notification));
+	private static Notification updateUpdateStatusNotificaion(final Context context,
+			final NotificationCompat.Builder builder, final int progress, final ParcelableStatusUpdate status) {
+		builder.setContentTitle(context.getString(R.string.updating_status_notification));
 		if (status != null) {
-			mBuilder.setContentText(status.text);
+			builder.setContentText(status.text);
 		}
-		mBuilder.setSmallIcon(R.drawable.ic_stat_send);
-		mBuilder.setProgress(100, progress, progress >= 100 || progress <= 0);
-		final Notification notification = mBuilder.build();
-		mNotificationManager.notify(NOTIFICATION_ID_UPDATE_STATUS, notification);
-		return notification;
+		builder.setSmallIcon(R.drawable.ic_stat_send);
+		builder.setProgress(100, progress, progress >= 100 || progress <= 0);
+		builder.setOngoing(true);
+		return builder.build();
 	}
 
 	static class ShortenerNotFoundException extends UpdateStatusException {
@@ -502,6 +495,34 @@ public class BackgroundOperationService extends IntentService implements Constan
 
 		public ShortenException(final Context context) {
 			super(context, R.string.error_message_tweet_shorten_failed);
+		}
+	}
+
+	static class StatusMediaUploadListener implements ReadListener {
+		private final Context context;
+		private final NotificationManager manager;
+
+		int percent;
+
+		private final Builder builder;
+		private final ParcelableStatusUpdate statusUpdate;
+
+		StatusMediaUploadListener(final Context context, final NotificationManager manager,
+				final NotificationCompat.Builder builder, final ParcelableStatusUpdate statusUpdate) {
+			this.context = context;
+			this.manager = manager;
+			this.builder = builder;
+			this.statusUpdate = statusUpdate;
+		}
+
+		@Override
+		public void onRead(final long length, final long position) {
+			final int percent = length > 0 ? (int) (position * 100 / length) : 0;
+			if (this.percent != percent) {
+				manager.notify(NOTIFICATION_ID_UPDATE_STATUS,
+						updateUpdateStatusNotificaion(context, builder, percent, statusUpdate));
+			}
+			this.percent = percent;
 		}
 	}
 

@@ -2128,8 +2128,8 @@ public final class Utils implements Constants {
 		return getTwitterInstance(context, account_id, include_entities, include_retweets, true);
 	}
 
-	public static Twitter getTwitterInstance(final Context context, final long account_id,
-			final boolean include_entities, final boolean include_retweets, final boolean use_apache_httpclient) {
+	public static Twitter getTwitterInstance(final Context context, final long accountId,
+			final boolean includeEntities, final boolean includeRetweets, final boolean apacheHttp) {
 		if (context == null) return null;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -2142,7 +2142,7 @@ public final class Utils implements Constants {
 		final String pref_consumer_key = prefs.getString(KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
 		final String pref_consumer_secret = prefs.getString(KEY_CONSUMER_SECRET, TWITTER_CONSUMER_SECRET);
 		final StringBuilder where = new StringBuilder();
-		where.append(Accounts.ACCOUNT_ID + " = " + account_id);
+		where.append(Accounts.ACCOUNT_ID + " = " + accountId);
 		final Cursor c = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
 				Accounts.COLUMNS, where.toString(), null, null);
 		if (c == null) return null;
@@ -2151,7 +2151,7 @@ public final class Utils implements Constants {
 				c.moveToFirst();
 				final ConfigurationBuilder cb = new ConfigurationBuilder();
 				cb.setHostAddressResolver(app.getHostAddressResolver());
-				if (use_apache_httpclient) {
+				if (apacheHttp) {
 					cb.setHttpClientImplementation(HttpClientImpl.class);
 				}
 				cb.setHttpConnectionTimeout(connection_timeout);
@@ -2184,8 +2184,8 @@ public final class Utils implements Constants {
 				if (!isEmpty(signing_oauth_base_url)) {
 					cb.setSigningOAuthBaseURL(signing_oauth_base_url);
 				}
-				cb.setIncludeEntitiesEnabled(include_entities);
-				cb.setIncludeRTsEnabled(include_retweets);
+				cb.setIncludeEntitiesEnabled(includeEntities);
+				cb.setIncludeRTsEnabled(includeRetweets);
 				switch (c.getInt(c.getColumnIndexOrThrow(Accounts.AUTH_TYPE))) {
 					case Accounts.AUTH_TYPE_OAUTH:
 					case Accounts.AUTH_TYPE_XAUTH: {

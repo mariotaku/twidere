@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment implements OnMultiChoiceClickListener,
 		OnClickListener {
@@ -155,10 +156,9 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 			}
 		}
 		final Collection<String> hashtags = mExtractor.extractHashtags(status.text_plain);
-		if (hashtags != null) {
-			for (final String hashtag : hashtags) {
-				list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_KEYWORD, hashtag));
-			}
+		hashtags.addAll(mExtractor.extractHashtags(status.text_plain));
+		for (final String hashtag : hashtags) {
+			list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_KEYWORD, hashtag));
 		}
 		final String source = HtmlEscapeHelper.toPlainText(status.source);
 		list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_SOURCE, source));

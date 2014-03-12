@@ -41,5 +41,14 @@
 			app:dependencyValues="@array/dependency_values_true"
 			app:notificationType="ringtone|vibration|light"/>
 	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="cat_other_settings"
+		android:title="@string/other_settings">
+		<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
+			android:defaultValue="false"
+			android:key="my_following_only"
+			android:summary="@string/my_following_only_summary"
+			android:title="@string/my_following_only"/>
+	</PreferenceCategory>
 
 </PreferenceScreen>
