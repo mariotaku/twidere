@@ -272,7 +272,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
 		mMoreOptionsButton = mHeaderView.findViewById(R.id.more_options);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
-		final View containerView = inflater.inflate(R.layout.list_with_error_message, null);
+		final View containerView = inflater.inflate(R.layout.fragment_details_page, null);
 		((FrameLayout) containerView.findViewById(R.id.list_container)).addView(mListContainer);
 		mErrorRetryContainer = containerView.findViewById(R.id.error_retry_container);
 		mRetryButton = (Button) containerView.findViewById(R.id.retry);

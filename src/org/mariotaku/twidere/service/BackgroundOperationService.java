@@ -57,14 +57,15 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.model.StatusShortenResult;
+import org.mariotaku.twidere.preference.ServicePickerPreference;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ContentValuesCreator;
-import org.mariotaku.twidere.util.MediaUploaderInterface;
 import org.mariotaku.twidere.util.ListUtils;
+import org.mariotaku.twidere.util.MediaUploaderInterface;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.StatusShortenerInterface;
 import org.mariotaku.twidere.util.TwidereValidator;
@@ -118,11 +119,11 @@ public class BackgroundOperationService extends IntentService implements Constan
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		mTwitter = app.getTwitterWrapper();
 		mMessagesManager = app.getMessagesManager();
-		final String uploader_component = mPreferences.getString(KEY_IMAGE_UPLOADER, null);
+		final String uploaderComponent = mPreferences.getString(KEY_MEDIA_UPLOADER, null);
 		final String shortenerComponent = mPreferences.getString(KEY_STATUS_SHORTENER, null);
-		mUseUploader = !isEmpty(uploader_component);
-		mUseShortener = !isEmpty(shortenerComponent);
-		mUploader = mUseUploader ? MediaUploaderInterface.getInstance(app, uploader_component) : null;
+		mUseUploader = !ServicePickerPreference.isNoneValue(uploaderComponent);
+		mUseShortener = !ServicePickerPreference.isNoneValue(shortenerComponent);
+		mUploader = mUseUploader ? MediaUploaderInterface.getInstance(app, uploaderComponent) : null;
 		mShortener = mUseShortener ? StatusShortenerInterface.getInstance(app, shortenerComponent) : null;
 	}
 
@@ -346,7 +347,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		final boolean hasEasterEggRestoreText = statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART1)
 				&& statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART2)
 				&& statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART3);
-		boolean mentioned_hondajojo = false;
+		boolean mentionedHondaJOJO = false;
 		mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 				hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 
@@ -389,7 +390,6 @@ public class BackgroundOperationService extends IntentService implements Constan
 					mShortener.waitForService();
 					try {
 						shortenedResult = mShortener.shorten(statusUpdate, unshortenedText);
-
 					} catch (final Exception e) {
 						throw new ShortenException(this);
 					}
@@ -427,20 +427,20 @@ public class BackgroundOperationService extends IntentService implements Constan
 					continue;
 				}
 				try {
-					final Status twitter_result = twitter.updateStatus(status);
-					if (!mentioned_hondajojo) {
-						final UserMentionEntity[] entities = twitter_result.getUserMentionEntities();
+					final Status resultStatus = twitter.updateStatus(status);
+					if (!mentionedHondaJOJO) {
+						final UserMentionEntity[] entities = resultStatus.getUserMentionEntities();
 						if (entities != null) {
 							for (final UserMentionEntity entity : entities) {
 								if (entity.getId() == HONDAJOJO_ID) {
-									mentioned_hondajojo = true;
+									mentionedHondaJOJO = true;
 								}
 							}
 						} else {
-							mentioned_hondajojo = statusUpdate.text.contains(HONDAJOJO_SCREEN_NAME);
+							mentionedHondaJOJO = statusUpdate.text.contains(HONDAJOJO_SCREEN_NAME);
 						}
 					}
-					final ParcelableStatus result = new ParcelableStatus(twitter_result, account.account_id, false);
+					final ParcelableStatus result = new ParcelableStatus(resultStatus, account.account_id, false);
 					results.add(new SingleResponse<ParcelableStatus>(result, null));
 				} catch (final TwitterException e) {
 					final SingleResponse<ParcelableStatus> response = SingleResponse.withException(e);
@@ -451,7 +451,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 			final SingleResponse<ParcelableStatus> response = SingleResponse.withException(e);
 			results.add(response);
 		}
-		if (mentioned_hondajojo) {
+		if (mentionedHondaJOJO) {
 			final PackageManager pm = getPackageManager();
 			final ComponentName main = new ComponentName(this, MainActivity.class);
 			final ComponentName main2 = new ComponentName(this, MainHondaJOJOActivity.class);

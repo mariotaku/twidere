@@ -115,6 +115,7 @@ import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.model.ParcelableUser;
+import org.mariotaku.twidere.preference.ServicePickerPreference;
 import org.mariotaku.twidere.provider.TweetStore.CacheFiles;
 import org.mariotaku.twidere.provider.TweetStore.Drafts;
 import org.mariotaku.twidere.task.AsyncTask;
@@ -688,9 +689,8 @@ public class ComposeActivity extends BaseSupportDialogActivity implements TextWa
 	@Override
 	protected void onStart() {
 		super.onStart();
-		final String uploader_component = mPreferences.getString(KEY_IMAGE_UPLOADER, null);
-		mImageUploaderUsed = !isEmpty(uploader_component);
-		mStatusShortenerUsed = !isEmpty(mPreferences.getString(KEY_STATUS_SHORTENER, null));
+		mImageUploaderUsed = !ServicePickerPreference.isNoneValue(mPreferences.getString(KEY_MEDIA_UPLOADER, null));
+		mStatusShortenerUsed = !ServicePickerPreference.isNoneValue(mPreferences.getString(KEY_STATUS_SHORTENER, null));
 		setMenu();
 		updateTextCount();
 		final int text_size = mPreferences.getInt(KEY_TEXT_SIZE, getDefaultTextSize(this));

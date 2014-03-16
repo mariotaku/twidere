@@ -3,15 +3,17 @@ package org.mariotaku.twidere.util.theme;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.text.Layout.Alignment;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
+import android.util.TypedValue;
 
-import com.atermenji.android.iconicdroid.IconicFontDrawable;
 import com.atermenji.android.iconicdroid.icon.Icon;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.content.iface.ITwidereContextWrapper;
 import org.mariotaku.twidere.content.res.iface.IThemedResources.DrawableInterceptor;
+import org.mariotaku.twidere.graphic.TextDrawable;
 import org.mariotaku.twidere.graphic.icon.TwidereIcon;
 import org.mariotaku.twidere.util.ThemeUtils;
 
@@ -103,11 +105,21 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 	public Drawable getDrawable(final Resources res, final int resId) {
 		final ActionIconsInterceptor.IconSpec spec = sIconMap.get(resId, null);
 		if (spec == null) return null;
-		final IconicFontDrawable drawable = new IconicFontDrawable(mContext, spec.icon);
-		drawable.setIconPadding(Math.round(mIconSize * (1 - spec.contentFactor)) / 2);
-		drawable.setIntrinsicWidth(mIconSize);
-		drawable.setIntrinsicHeight(mIconSize);
-		drawable.setIconColor(mIconColor);
+		final TextDrawable drawable = new TextDrawable(mContext);
+		final Icon icon = spec.icon;
+		drawable.setText(new String(Character.toChars(icon.getIconUtfValue())));
+		drawable.setTextAlign(Alignment.ALIGN_CENTER);
+		drawable.setTypeface(icon.getIconicTypeface().getTypeface(mContext));
+		drawable.setTextColor(mIconColor);
+		drawable.setTextSize(TypedValue.COMPLEX_UNIT_PX, mIconSize);
+		// drawable.setBounds(0, 0, mIconSize, mIconSize);
+		// final IconicFontDrawable drawable = new IconicFontDrawable(mContext,
+		// spec.icon);
+		// drawable.setIconPadding(Math.round(mIconSize * (1 -
+		// spec.contentFactor)) / 2);
+		// drawable.setIntrinsicWidth(mIconSize);
+		// drawable.setIntrinsicHeight(mIconSize);
+		// drawable.setIconColor(mIconColor);
 		return drawable;
 	}
 

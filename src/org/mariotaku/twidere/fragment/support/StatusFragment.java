@@ -156,16 +156,17 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private ImageView mProfileImageView, mMapView;
 	private Button mFollowButton;
+	private Button mRetryButton;
 	private View mMainContent, mFollowIndicator, mImagePreviewContainer, mGalleryContainer, mLocationContainer,
 			mLocationBackgroundView;
 	private ColorLabelRelativeLayout mProfileView;
 	private MenuBar mMenuBar;
-	private ProgressBar mStatusLoadProgress, mFollowInfoProgress;
+	private ProgressBar mDetailsLoadProgress, mFollowInfoProgress;
 	private Gallery mImagePreviewGallery;
 	private ImageButton mPrevImage, mNextImage;
 	private View mHeaderView;
 	private View mLoadImagesIndicator;
-	private ExtendedFrameLayout mStatusContainer;
+	private ExtendedFrameLayout mDetailsContainer;
 	private ListView mListView;
 	private MediaPreviewAdapter mImagePreviewAdapter;
 
@@ -201,8 +202,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 		@Override
 		public Loader<SingleResponse<ParcelableStatus>> onCreateLoader(final int id, final Bundle args) {
-			mStatusLoadProgress.setVisibility(View.VISIBLE);
+			mDetailsLoadProgress.setVisibility(View.VISIBLE);
 			mMainContent.setVisibility(View.INVISIBLE);
+			mRetryButton.setVisibility(View.GONE);
 			mMainContent.setEnabled(false);
 			setProgressBarIndeterminateVisibility(true);
 			final boolean omitIntentExtra = args != null ? args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true) : true;
@@ -220,10 +222,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		public void onLoadFinished(final Loader<SingleResponse<ParcelableStatus>> loader,
 				final SingleResponse<ParcelableStatus> data) {
 			if (data.data == null) {
+				// TODO
+				mRetryButton.setVisibility(View.VISIBLE);
 				showErrorMessage(getActivity(), getString(R.string.action_getting_status), data.exception, true);
 			} else {
+				mRetryButton.setVisibility(View.GONE);
 				displayStatus(data.data);
-				mStatusLoadProgress.setVisibility(View.GONE);
+				mDetailsLoadProgress.setVisibility(View.GONE);
 				mMainContent.setVisibility(View.VISIBLE);
 				mMainContent.setEnabled(true);
 			}
@@ -549,12 +554,12 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final View view = inflater.inflate(R.layout.fragment_status, null, false);
+		final View view = inflater.inflate(R.layout.fragment_details_page, null, false);
 		mMainContent = view.findViewById(R.id.content);
-		mStatusLoadProgress = (ProgressBar) view.findViewById(R.id.status_load_progress);
+		mDetailsLoadProgress = (ProgressBar) view.findViewById(R.id.details_load_progress);
 		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
-		mStatusContainer = (ExtendedFrameLayout) view.findViewById(R.id.status_container);
-		mStatusContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
+		mDetailsContainer = (ExtendedFrameLayout) view.findViewById(R.id.details_container);
+		mDetailsContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
 		mHeaderView = inflater.inflate(R.layout.header_status, null, false);
 		mImagePreviewContainer = mHeaderView.findViewById(R.id.image_preview);
 		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
@@ -578,6 +583,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mPrevImage = (ImageButton) mHeaderView.findViewById(R.id.prev_image);
 		mNextImage = (ImageButton) mHeaderView.findViewById(R.id.next_image);
 		mLoadImagesIndicator = mHeaderView.findViewById(R.id.load_images);
+		mRetryButton = (Button) view.findViewById(R.id.retry);
 		final View cardView = mHeaderView.findViewById(R.id.card);
 		ThemeUtils.applyThemeAlphaToDrawable(cardView.getContext(), cardView.getBackground());
 		return view;
@@ -894,10 +900,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private boolean shouldUseNativeMenu() {
 		final boolean isInLinkHandler = getActivity() instanceof LinkHandlerActivity;
-		// final boolean isLargeScreen =
-		// getResources().getBoolean(R.bool.is_large_screen);
-		// return isInLinkHandler && (SmartBarUtils.hasSmartBar() ||
-		// !isLargeScreen);
 		return isInLinkHandler && SmartBarUtils.hasSmartBar();
 	}
 

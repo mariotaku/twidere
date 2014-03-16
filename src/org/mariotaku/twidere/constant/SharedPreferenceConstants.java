@@ -195,12 +195,12 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
 	public static final String KEY_NOTIFICATION_LIGHT_COLOR = "notification_light_color";
 	public static final String KEY_SHARE_FORMAT = "share_format";
-	public static final String KEY_IMAGE_UPLOADER = "image_uploader";
 	public static final String KEY_HOME_REFRESH_MENTIONS = "home_refresh_mentions";
 	public static final String KEY_HOME_REFRESH_DIRECT_MESSAGES = "home_refresh_direct_messages";
 	public static final String KEY_HOME_REFRESH_TRENDS = "home_refresh_trends";
 	public static final String KEY_IMAGE_UPLOAD_FORMAT = "image_upload_format";
 	public static final String KEY_STATUS_SHORTENER = "status_shortener";
+	public static final String KEY_MEDIA_UPLOADER = "media_uploader";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_SHOW_ABSOLUTE_TIME = "show_absolute_time";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
@@ -272,7 +272,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_NOTIFICATION_TYPE_MENTIONS = "notification_type_mentions";
 	public static final String KEY_NOTIFICATION_TYPE_DIRECT_MESSAGES = "notification_type_direct_messages";
 	public static final String KEY_MY_FOLLOWING_ONLY = "my_following_only";
-	
+
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_COMPACT_CARDS = "compact_cards";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)

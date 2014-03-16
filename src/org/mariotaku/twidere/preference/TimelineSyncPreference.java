@@ -45,9 +45,4 @@ public class TimelineSyncPreference extends ServicePickerPreference implements C
 		return getContext().getString(R.string.none);
 	}
 
-	@Override
-	protected String getNoneValue() {
-		return VALUE_NONE;
-	}
-
 }

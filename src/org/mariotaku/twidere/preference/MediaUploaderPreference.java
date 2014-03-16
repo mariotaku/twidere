@@ -45,9 +45,4 @@ public class MediaUploaderPreference extends ServicePickerPreference implements 
 		return getContext().getString(R.string.image_uploader_default);
 	}
 
-	@Override
-	protected String getNoneValue() {
-		return VALUE_NONE;
-	}
-
 }

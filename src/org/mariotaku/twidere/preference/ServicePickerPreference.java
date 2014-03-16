@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import java.util.List;
@@ -46,15 +47,13 @@ public abstract class ServicePickerPreference extends AutoInvalidateListPreferen
 
 	protected abstract String getNoneEntry();
 
-	protected abstract String getNoneValue();
-
 	private void init() {
 		final Intent queryIntent = new Intent(getIntentAction());
 		final List<ResolveInfo> infoList = mPackageManager.queryIntentServices(queryIntent, 0);
 		final int infoListSize = infoList.size();
 		final CharSequence[] entries = new CharSequence[infoListSize + 1], values = new CharSequence[infoListSize + 1];
 		entries[0] = getNoneEntry();
-		values[0] = getNoneValue();
+		values[0] = "";
 		for (int i = 0; i < infoListSize; i++) {
 			final ResolveInfo info = infoList.get(i);
 			entries[i + 1] = info.loadLabel(mPackageManager);
@@ -62,6 +61,10 @@ public abstract class ServicePickerPreference extends AutoInvalidateListPreferen
 		}
 		setEntries(entries);
 		setEntryValues(values);
+	}
+
+	public static boolean isNoneValue(final String value) {
+		return TextUtils.isEmpty(value) || "none".equals(value);
 	}
 
 }

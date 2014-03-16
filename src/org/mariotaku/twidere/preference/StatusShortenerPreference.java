@@ -45,9 +45,4 @@ public class StatusShortenerPreference extends ServicePickerPreference implement
 		return getContext().getString(R.string.status_shortener_default);
 	}
 
-	@Override
-	protected String getNoneValue() {
-		return VALUE_NONE;
-	}
-
 }

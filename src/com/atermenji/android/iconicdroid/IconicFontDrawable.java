@@ -222,13 +222,13 @@ public class IconicFontDrawable extends Drawable {
 	}
 
 	private void offsetIcon(final Rect viewBounds) {
-		final float startX = viewBounds.centerX() - mPathBounds.width() / 2;
-		final float offsetX = startX - mPathBounds.left;
-
-		final float startY = viewBounds.centerY() - mPathBounds.height() / 2;
-		final float offsetY = startY - mPathBounds.top;
-
-		mPath.offset(offsetX, offsetY);
+		// final float startX = viewBounds.centerX() - mPathBounds.width() / 2;
+		// final float offsetX = startX - mPathBounds.left;
+		//
+		// final float startY = viewBounds.centerY() - mPathBounds.height() / 2;
+		// final float offsetY = startY - mPathBounds.top;
+		//
+		// mPath.offset(offsetX, offsetY);
 	}
 
 	private void updateIcon(final Icon icon) {
