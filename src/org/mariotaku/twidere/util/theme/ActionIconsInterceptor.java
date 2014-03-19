@@ -120,8 +120,6 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 		drawable.setIntrinsicHeight(mIconSize);
 		drawable.setIconColor(mIconColor);
 		drawable.setBounds(0, 0, mIconSize, mIconSize);
-		drawable.drawContour(true);
-		drawable.setContour(Color.CYAN, 4);
 		return drawable;
 	}
 
