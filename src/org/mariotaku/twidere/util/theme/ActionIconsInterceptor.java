@@ -2,12 +2,14 @@ package org.mariotaku.twidere.util.theme;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Layout.Alignment;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.util.TypedValue;
 
+import com.atermenji.android.iconicdroid.IconicFontDrawable;
 import com.atermenji.android.iconicdroid.icon.Icon;
 
 import org.mariotaku.twidere.R;
@@ -105,21 +107,21 @@ public class ActionIconsInterceptor implements DrawableInterceptor {
 	public Drawable getDrawable(final Resources res, final int resId) {
 		final ActionIconsInterceptor.IconSpec spec = sIconMap.get(resId, null);
 		if (spec == null) return null;
-		final TextDrawable drawable = new TextDrawable(mContext);
-		final Icon icon = spec.icon;
-		drawable.setText(new String(Character.toChars(icon.getIconUtfValue())));
-		drawable.setTextAlign(Alignment.ALIGN_CENTER);
-		drawable.setTypeface(icon.getIconicTypeface().getTypeface(mContext));
-		drawable.setTextColor(mIconColor);
-		drawable.setTextSize(TypedValue.COMPLEX_UNIT_PX, mIconSize);
-		// drawable.setBounds(0, 0, mIconSize, mIconSize);
-		// final IconicFontDrawable drawable = new IconicFontDrawable(mContext,
-		// spec.icon);
-		// drawable.setIconPadding(Math.round(mIconSize * (1 -
-		// spec.contentFactor)) / 2);
-		// drawable.setIntrinsicWidth(mIconSize);
-		// drawable.setIntrinsicHeight(mIconSize);
-		// drawable.setIconColor(mIconColor);
+//		final TextDrawable drawable = new TextDrawable(mContext);
+//		final Icon icon = spec.icon;
+//		drawable.setText(new String(Character.toChars(icon.getIconUtfValue())));
+//		drawable.setTextAlign(Alignment.ALIGN_CENTER);
+//		drawable.setTypeface(icon.getIconicTypeface().getTypeface(mContext));
+//		drawable.setTextColor(mIconColor);
+//		drawable.setTextSize(TypedValue.COMPLEX_UNIT_PX, mIconSize);
+//		drawable.setBounds(0, 0, mIconSize, mIconSize);
+		final IconicFontDrawable drawable = new IconicFontDrawable(mContext, spec.icon);
+		drawable.setIntrinsicWidth(mIconSize);
+		drawable.setIntrinsicHeight(mIconSize);
+		drawable.setIconColor(mIconColor);
+		drawable.setBounds(0, 0, mIconSize, mIconSize);
+		drawable.drawContour(true);
+		drawable.setContour(Color.CYAN, 4);
 		return drawable;
 	}
 

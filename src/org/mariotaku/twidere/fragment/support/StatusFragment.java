@@ -207,9 +207,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mRetryButton.setVisibility(View.GONE);
 			mMainContent.setEnabled(false);
 			setProgressBarIndeterminateVisibility(true);
-			final boolean omitIntentExtra = args != null ? args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true) : true;
-			final long accountId = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-			final long statusId = args != null ? args.getLong(EXTRA_STATUS_ID, -1) : -1;
+			final boolean omitIntentExtra = args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true);
+			final long accountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long statusId = args.getLong(EXTRA_STATUS_ID, -1);
 			return new ParcelableStatusLoader(getActivity(), omitIntentExtra, getArguments(), accountId, statusId);
 		}
 

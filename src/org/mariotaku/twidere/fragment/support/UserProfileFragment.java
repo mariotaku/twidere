@@ -69,6 +69,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -78,7 +79,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
@@ -155,7 +155,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	private ListActionAdapter mAdapter;
 
-	private long mAccountId;
 	private Relationship mFriendship;
 	private ParcelableUser mUser = null;
 	private Locale mLocale;
@@ -164,8 +163,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	private boolean mGetUserInfoLoaderInitialized, mGetFriendShipLoaderInitialized;
 
-	private long mUserId;
-	private String mScreenName;
 	private int mBannerWidth;
 
 	private PopupMenu mOptionsPopupMenu;
@@ -210,15 +207,19 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public Loader<SingleResponse<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
-			mMainContent.setVisibility(View.VISIBLE);
+			mMainContent.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
+			mDetailsLoadProgress.setVisibility(View.VISIBLE);
 			mErrorMessageView.setText(null);
 			mErrorMessageView.setVisibility(View.GONE);
-			setListShown(mUser != null);
 			setProgressBarIndeterminateVisibility(true);
-			final boolean omit_intent_extra = args != null ? args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true) : true;
-			return new ParcelableUserLoader(getActivity(), mAccountId, mUserId, mScreenName, getArguments(),
-					omit_intent_extra, mUser == null || !mUser.is_cache && mUserId != mUser.id);
+			final ParcelableUser user = mUser;
+			final boolean omitIntentExtra = args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true);
+			final long accountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long userId = args.getLong(EXTRA_USER_ID, -1);
+			final String screenName = args.getString(EXTRA_SCREEN_NAME);
+			return new ParcelableUserLoader(getActivity(), accountId, userId, screenName, getArguments(),
+					omitIntentExtra, user == null || !user.is_cache && userId != user.id);
 		}
 
 		@Override
@@ -231,15 +232,17 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				final SingleResponse<ParcelableUser> data) {
 			if (getActivity() == null) return;
 			if (data.data != null && data.data.id > 0) {
-				setListShown(true);
 				displayUser(data.data);
+				mMainContent.setVisibility(View.VISIBLE);
 				mErrorRetryContainer.setVisibility(View.GONE);
+				mDetailsLoadProgress.setVisibility(View.GONE);
 				if (data.data.is_cache) {
-					getLoaderManager().restartLoader(LOADER_ID_USER, null, this);
+//					getLoaderManager().restartLoader(LOADER_ID_USER, null, this);
 				}
-			} else if (mUser != null && mUser.is_cache
-					&& (mUserId == mUser.id || mScreenName != null && mScreenName.equals(mUser.screen_name))) {
-				setListShown(true);
+			} else if (mUser != null && mUser.is_cache) {
+				mMainContent.setVisibility(View.VISIBLE);
+				mErrorRetryContainer.setVisibility(View.GONE);
+				mDetailsLoadProgress.setVisibility(View.GONE);
 				displayUser(mUser);
 			} else {
 				if (data.exception != null) {
@@ -259,7 +262,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		@Override
 		public Loader<SingleResponse<Relationship>> onCreateLoader(final int id, final Bundle args) {
 			invalidateOptionsMenu();
-			return new FriendshipLoader(getActivity(), mAccountId, mUserId);
+			final long accountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			final long userId = args.getLong(EXTRA_USER_ID, -1);
+			return new FriendshipLoader(getActivity(), accountId, userId);
 		}
 
 		@Override
@@ -271,19 +276,22 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		public void onLoadFinished(final Loader<SingleResponse<Relationship>> loader,
 				final SingleResponse<Relationship> data) {
 			mFriendship = null;
-			if (mUser == null) return;
+			final ParcelableUser user = mUser;
 			final Relationship relationship = mFriendship = data.data;
+			if (user == null) return;
 			invalidateOptionsMenu();
+			setMenu(mMenuBar.getMenu());
+			mMenuBar.show();
 			if (relationship != null) {
 				final ContentResolver resolver = getContentResolver();
-				final String where = CachedUsers.USER_ID + " = " + mUserId;
+				final String where = Where.equals(CachedUsers.USER_ID, user.id).getSQL();
 				resolver.delete(CachedUsers.CONTENT_URI, where, null);
 				// I bet you don't want to see blocked user in your auto
 				// complete list.
 				if (!data.data.isSourceBlockingTarget()) {
-					final ContentValues cached_values = ParcelableUser.makeCachedUserContentValues(mUser);
-					if (cached_values != null) {
-						resolver.insert(CachedUsers.CONTENT_URI, cached_values);
+					final ContentValues cachedValues = ParcelableUser.makeCachedUserContentValues(user);
+					if (cachedValues != null) {
+						resolver.insert(CachedUsers.CONTENT_URI, cachedValues);
 					}
 				}
 			}
@@ -294,8 +302,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void displayUser(final ParcelableUser user) {
 		mFriendship = null;
 		mUser = null;
-		mUserId = -1;
-		mAccountId = -1;
 		mAdapter.clear();
 		if (user == null || user.id <= 0 || getActivity() == null) return;
 		final LoaderManager lm = getLoaderManager();
@@ -303,11 +309,8 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
 		final boolean userIsMe = user.account_id == user.id;
 		mErrorRetryContainer.setVisibility(View.GONE);
-		mAccountId = user.account_id;
 		mUser = user;
-		mUserId = user.id;
-		mScreenName = user.screen_name;
-		mProfileNameContainer.drawStart(getUserColor(getActivity(), mUserId, true));
+		mProfileNameContainer.drawStart(getUserColor(getActivity(), user.id, true));
 		mProfileNameContainer.drawEnd(getAccountColor(getActivity(), user.account_id));
 		final String nick = getUserNickname(getActivity(), user.id, true);
 		mNameView
@@ -372,28 +375,28 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mMenuBar.show();
 	}
 
-	public void getUserInfo(final long account_id, final long user_id, final String screen_name,
-			final boolean omit_intent_extra) {
-		mAccountId = account_id;
-		mUserId = user_id;
-		mScreenName = screen_name;
+	public void getUserInfo(final long accountId, final long userId, final String screenName,
+			final boolean omitIntentExtra) {
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
-		if (!isMyAccount(getActivity(), mAccountId)) {
+		if (!isMyAccount(getActivity(), accountId)) {
 			mMainContent.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
 		}
 		final Bundle args = new Bundle();
-		args.putBoolean(EXTRA_OMIT_INTENT_EXTRA, omit_intent_extra);
+		args.putLong(EXTRA_ACCOUNT_ID, accountId);
+		args.putLong(EXTRA_USER_ID, userId);
+		args.putString(EXTRA_SCREEN_NAME, screenName);
+		args.putBoolean(EXTRA_OMIT_INTENT_EXTRA, omitIntentExtra);
 		if (!mGetUserInfoLoaderInitialized) {
 			lm.initLoader(LOADER_ID_USER, args, mUserInfoLoaderCallbacks);
 			mGetUserInfoLoaderInitialized = true;
 		} else {
 			lm.restartLoader(LOADER_ID_USER, args, mUserInfoLoaderCallbacks);
 		}
-		if (account_id == -1 || user_id == -1 && screen_name == null) {
+		if (accountId == -1 || userId == -1 && screenName == null) {
 			mMainContent.setVisibility(View.GONE);
 			mErrorRetryContainer.setVisibility(View.GONE);
 			return;
@@ -439,6 +442,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mMenuBar.setVisibility(shouldUseNativeMenu() ? View.GONE : View.VISIBLE);
 		mMenuBar.inflate(R.menu.menu_user_profile);
 		mMenuBar.setIsBottomBar(true);
+		mMenuBar.setOnMenuItemClickListener(this);
 
 		setListAdapter(mAdapter);
 		getUserInfo(account_id, user_id, screen_name, false);
@@ -446,9 +450,10 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	@Override
 	public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+		final ParcelableUser user = mUser;
 		switch (requestCode) {
 			case REQUEST_SET_COLOR: {
-				if (mUser == null) return;
+				if (user == null) return;
 				if (resultCode == Activity.RESULT_OK) {
 					if (data == null) return;
 					final int color = data.getIntExtra(EXTRA_COLOR, Color.TRANSPARENT);
@@ -459,21 +464,21 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				break;
 			}
 			case REQUEST_ADD_TO_LIST: {
-				if (mUser == null) return;
+				if (user == null) return;
 				if (resultCode == Activity.RESULT_OK && data != null) {
 					final AsyncTwitterWrapper twitter = getTwitterWrapper();
 					final ParcelableUserList list = data.getParcelableExtra(EXTRA_USER_LIST);
 					if (list == null || twitter == null) return;
-					twitter.addUserListMembersAsync(mAccountId, list.id, mUser);
+					twitter.addUserListMembersAsync(user.account_id, list.id, user);
 				}
 				break;
 			}
 			case REQUEST_SELECT_ACCOUNT: {
-				if (mUser == null) return;
+				if (user == null) return;
 				if (resultCode == Activity.RESULT_OK) {
 					if (data == null || !data.hasExtra(EXTRA_ID)) return;
 					final long accountId = data.getLongExtra(EXTRA_ID, -1);
-					openUserProfile(getActivity(), accountId, mUser.id, null);
+					openUserProfile(getActivity(), accountId, user.id, null);
 				}
 				break;
 			}
@@ -483,7 +488,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	@Override
 	public void onClick(final View view) {
-		if (getActivity() == null) return;
+		final FragmentActivity activity = getActivity();
+		final ParcelableUser user = mUser;
+		if (activity == null || user == null) return;
 		switch (view.getId()) {
 			case R.id.retry: {
 				getUserInfo(true);
@@ -491,7 +498,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case ProfileImageBannerLayout.VIEW_ID_PROFILE_IMAGE: {
 				final String profile_image_url_string = getOriginalTwitterProfileImage(mUser.profile_image_url);
-				openImage(getActivity(), profile_image_url_string, false);
+				openImage(activity, profile_image_url_string, false);
 				break;
 			}
 			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER: {
@@ -502,17 +509,17 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			}
 			case R.id.tweets_container: {
 				if (mUser == null) return;
-				openUserTimeline(getActivity(), mAccountId, mUser.id, mUser.screen_name);
+				openUserTimeline(getActivity(), user.account_id, user.id, user.screen_name);
 				break;
 			}
 			case R.id.followers_container: {
 				if (mUser == null) return;
-				openUserFollowers(getActivity(), mAccountId, mUser.id, mUser.screen_name);
+				openUserFollowers(getActivity(), user.account_id, user.id, user.screen_name);
 				break;
 			}
 			case R.id.friends_container: {
 				if (mUser == null) return;
-				openUserFriends(getActivity(), mAccountId, mUser.id, mUser.screen_name);
+				openUserFriends(getActivity(), user.account_id, user.id, user.screen_name);
 				break;
 			}
 			case R.id.more_options: {
@@ -523,7 +530,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				mOptionsPopupMenu = PopupMenu.getInstance(getActivity(), view);
 				mOptionsPopupMenu.inflate(R.menu.menu_user_profile);
 				final Menu menu = mOptionsPopupMenu.getMenu();
-				if (mUser.id != mAccountId) {
+				if (user.id != user.account_id) {
 					setMenuItemAvailability(menu, MENU_BLOCK, mFriendship != null);
 					final MenuItem blockItem = menu.findItem(MENU_BLOCK);
 					if (mFriendship != null && blockItem != null) {
@@ -555,17 +562,12 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				break;
 			}
 			case R.id.name_container: {
-				if (mUser == null || mAccountId != mUserId) return;
+				if (user.account_id != user.id) return;
 				startActivity(new Intent(getActivity(), UserProfileEditorActivity.class));
 				break;
 			}
 		}
 
-	}
-
-	@Override
-	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_user, menu);
 	}
 
 	@Override
@@ -608,9 +610,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onDestroyView() {
 		mUser = null;
 		mFriendship = null;
-		mAccountId = -1;
-		mUserId = -1;
-		mScreenName = null;
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_USER);
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
@@ -635,14 +634,15 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	@Override
 	public void onLinkClick(final String link, final String orig, final long account_id, final int type,
 			final boolean sensitive) {
-		if (mUser == null) return;
+		final ParcelableUser user = mUser;
+		if (user == null) return;
 		switch (type) {
 			case TwidereLinkify.LINK_TYPE_MENTION: {
-				openUserProfile(getActivity(), mAccountId, -1, link);
+				openUserProfile(getActivity(), user.account_id, -1, link);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_HASHTAG: {
-				openTweetSearch(getActivity(), mAccountId, link);
+				openTweetSearch(getActivity(), user.account_id, link);
 				break;
 			}
 			case TwidereLinkify.LINK_TYPE_LINK: {
@@ -667,33 +667,34 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		if (mUser == null || twitter == null) return false;
+		final ParcelableUser user = mUser;
+		if (user == null || twitter == null) return false;
 		switch (item.getItemId()) {
 			case MENU_BLOCK: {
 				if (mFriendship != null) {
 					if (mFriendship.isSourceBlockingTarget()) {
-						twitter.destroyBlockAsync(mAccountId, mUser.id);
+						twitter.destroyBlockAsync(user.account_id, user.id);
 					} else {
-						CreateUserBlockDialogFragment.show(getFragmentManager(), mUser);
+						CreateUserBlockDialogFragment.show(getFragmentManager(), user);
 					}
 				}
 				break;
 			}
 			case MENU_REPORT_SPAM: {
-				ReportSpamDialogFragment.show(getFragmentManager(), mUser);
+				ReportSpamDialogFragment.show(getFragmentManager(), user);
 				break;
 			}
 			case MENU_MUTE_USER: {
 				final ContentResolver resolver = getContentResolver();
-				resolver.delete(Filters.Users.CONTENT_URI, Where.equals(Filters.Users.USER_ID, mUser.id).getSQL(), null);
-				resolver.insert(Filters.Users.CONTENT_URI, makeFilterdUserContentValues(mUser));
+				resolver.delete(Filters.Users.CONTENT_URI, Where.equals(Filters.Users.USER_ID, user.id).getSQL(), null);
+				resolver.insert(Filters.Users.CONTENT_URI, makeFilterdUserContentValues(user));
 				showInfoMessage(getActivity(), R.string.user_muted, false);
 				break;
 			}
 			case MENU_MENTION: {
 				final Intent intent = new Intent(INTENT_ACTION_MENTION);
 				final Bundle bundle = new Bundle();
-				bundle.putParcelable(EXTRA_USER, mUser);
+				bundle.putParcelable(EXTRA_USER, user);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				break;
@@ -702,33 +703,33 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				final Uri.Builder builder = new Uri.Builder();
 				builder.scheme(SCHEME_TWIDERE);
 				builder.authority(AUTHORITY_DIRECT_MESSAGES_CONVERSATION);
-				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(mAccountId));
-				builder.appendQueryParameter(QUERY_PARAM_RECIPIENT_ID, String.valueOf(mUser.id));
+				builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(user.account_id));
+				builder.appendQueryParameter(QUERY_PARAM_RECIPIENT_ID, String.valueOf(user.id));
 				startActivity(new Intent(Intent.ACTION_VIEW, builder.build()));
 				break;
 			}
 			case MENU_SET_COLOR: {
 				final Intent intent = new Intent(getActivity(), ColorPickerDialogActivity.class);
-				intent.putExtra(EXTRA_COLOR, getUserColor(getActivity(), mUser.id, true));
+				intent.putExtra(EXTRA_COLOR, getUserColor(getActivity(), user.id, true));
 				intent.putExtra(EXTRA_ALPHA_SLIDER, false);
 				intent.putExtra(EXTRA_CLEAR_BUTTON, true);
 				startActivityForResult(intent, REQUEST_SET_COLOR);
 				break;
 			}
 			case MENU_CLEAR_NICKNAME: {
-				clearUserNickname(getActivity(), mUser.id);
+				clearUserNickname(getActivity(), user.id);
 				break;
 			}
 			case MENU_SET_NICKNAME: {
-				final String nick = getUserNickname(getActivity(), mUser.id, true);
-				SetUserNicknameDialogFragment.show(getFragmentManager(), mUser.id, nick);
+				final String nick = getUserNickname(getActivity(), user.id, true);
+				SetUserNicknameDialogFragment.show(getFragmentManager(), user.id, nick);
 				break;
 			}
 			case MENU_ADD_TO_LIST: {
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_USER_LIST);
 				intent.setClass(getActivity(), UserListSelectorActivity.class);
-				intent.putExtra(EXTRA_ACCOUNT_ID, mAccountId);
-				intent.putExtra(EXTRA_SCREEN_NAME, getAccountScreenName(getActivity(), mAccountId));
+				intent.putExtra(EXTRA_ACCOUNT_ID, user.account_id);
+				intent.putExtra(EXTRA_SCREEN_NAME, getAccountScreenName(getActivity(), user.account_id));
 				startActivityForResult(intent, REQUEST_ADD_TO_LIST);
 				break;
 			}
@@ -738,6 +739,31 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				intent.putExtra(EXTRA_SINGLE_SELECTION, true);
 				startActivityForResult(intent, REQUEST_SELECT_ACCOUNT);
 				break;
+			}
+			case MENU_EDIT: {
+				final Bundle extras = new Bundle();
+				extras.putLong(EXTRA_ACCOUNT_ID, user.account_id);
+				final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
+				intent.setClass(getActivity(), UserProfileEditorActivity.class);
+				intent.putExtras(extras);
+				startActivity(intent);
+				return true;
+			}
+			case MENU_FOLLOW: {
+				final boolean is_creating_friendship = twitter.isCreatingFriendship(user.account_id, user.id);
+				final boolean is_destroying_friendship = twitter.isDestroyingFriendship(user.account_id, user.id);
+				if (!is_creating_friendship && !is_destroying_friendship) {
+					twitter.createFriendshipAsync(user.account_id, user.id);
+				}
+				return true;
+			}
+			case MENU_UNFOLLOW: {
+				final boolean is_creating_friendship = twitter.isCreatingFriendship(user.account_id, user.id);
+				final boolean is_destroying_friendship = twitter.isDestroyingFriendship(user.account_id, user.id);
+				if (!is_creating_friendship && !is_destroying_friendship) {
+					DestroyFriendshipDialogFragment.show(getFragmentManager(), user);
+				}
+				return true;
 			}
 			default: {
 				if (item.getIntent() != null) {
@@ -755,58 +781,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (mUser != null) {
-			switch (item.getItemId()) {
-				case MENU_EDIT: {
-					final Bundle extras = new Bundle();
-					extras.putLong(EXTRA_ACCOUNT_ID, mUser.account_id);
-					final Intent intent = new Intent(INTENT_ACTION_EDIT_USER_PROFILE);
-					intent.setClass(getActivity(), UserProfileEditorActivity.class);
-					intent.putExtras(extras);
-					startActivity(intent);
-					return true;
-				}
-				case MENU_FOLLOW: {
-					final AsyncTwitterWrapper twitter = getTwitterWrapper();
-					if (twitter != null && mUser != null) {
-						final boolean is_creating_friendship = twitter.isCreatingFriendship(mUser.account_id, mUser.id);
-						final boolean is_destroying_friendship = twitter.isDestroyingFriendship(mUser.account_id,
-								mUser.id);
-						if (!is_creating_friendship && !is_destroying_friendship) {
-							twitter.createFriendshipAsync(mUser.account_id, mUser.id);
-						}
-					}
-					return true;
-				}
-				case MENU_UNFOLLOW: {
-					final AsyncTwitterWrapper twitter = getTwitterWrapper();
-					if (twitter != null && mUser != null) {
-						final boolean is_creating_friendship = twitter.isCreatingFriendship(mUser.account_id, mUser.id);
-						final boolean is_destroying_friendship = twitter.isDestroyingFriendship(mUser.account_id,
-								mUser.id);
-						if (!is_creating_friendship && !is_destroying_friendship) {
-							DestroyFriendshipDialogFragment.show(getFragmentManager(), mUser);
-						}
-					}
-					return true;
-				}
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(final Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		setMenu(menu);
-	}
-
-	@Override
 	public void onSaveInstanceState(final Bundle outState) {
-		outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
-		outState.putLong(EXTRA_USER_ID, mUserId);
-		outState.putString(EXTRA_SCREEN_NAME, mScreenName);
 		outState.putParcelable(EXTRA_USER, mUser);
 		super.onSaveInstanceState(outState);
 	}
@@ -841,36 +816,46 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	}
 
 	private void getFriendship() {
+		final ParcelableUser user = mUser;
 		final LoaderManager lm = getLoaderManager();
 		lm.destroyLoader(LOADER_ID_FRIENDSHIP);
+		final Bundle args = new Bundle();
+		args.putLong(EXTRA_ACCOUNT_ID, user.account_id);
+		args.putLong(EXTRA_USER_ID, user.id);
 		if (!mGetFriendShipLoaderInitialized) {
-			lm.initLoader(LOADER_ID_FRIENDSHIP, null, mFriendshipLoaderCallbacks);
+			lm.initLoader(LOADER_ID_FRIENDSHIP, args, mFriendshipLoaderCallbacks);
 			mGetFriendShipLoaderInitialized = true;
 		} else {
-			lm.restartLoader(LOADER_ID_FRIENDSHIP, null, mFriendshipLoaderCallbacks);
+			lm.restartLoader(LOADER_ID_FRIENDSHIP, args, mFriendshipLoaderCallbacks);
 		}
 	}
 
-	private void getUserInfo(final boolean omit_intent_extra) {
-		getUserInfo(mAccountId, mUserId, mScreenName, omit_intent_extra);
+	private void getUserInfo(final boolean omitIntentExtra) {
+		final ParcelableUser user = mUser;
+		if (user == null) return;
+		getUserInfo(user.account_id, user.id, user.screen_name, omitIntentExtra);
 	}
 
 	private void setMenu(final Menu menu) {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
-		final boolean isMyself = mUser != null && mUser.account_id == mUser.id || mAccountId == mUserId;
-		final boolean isFollowingMe = mFriendship != null && mFriendship.isTargetFollowingSource();
-		final boolean isFollowing = mFriendship != null && mFriendship.isSourceFollowingTarget();
-		final boolean isProtected = mUser != null && mUser.is_protected;
-		final boolean isCreatingFriendship = twitter != null && mUser != null
-				&& twitter.isCreatingFriendship(mUser.account_id, mUser.id);
-		final boolean isDestroyingFriendship = twitter != null && mUser != null
-				&& twitter.isDestroyingFriendship(mUser.account_id, mUser.id);
+		final ParcelableUser user = mUser;
+		final Relationship relationship = mFriendship;
+		if (twitter == null || user == null) return;
+		final boolean isMyself = mUser.account_id == user.id;
+		final boolean isFollowing = relationship != null && relationship.isSourceFollowingTarget();
+		final boolean isProtected = user.is_protected;
+		final boolean creatingFriendship = twitter.isCreatingFriendship(user.account_id, user.id);
+		final boolean destroyingFriendship = twitter.isDestroyingFriendship(user.account_id, user.id);
 		setMenuItemAvailability(menu, MENU_EDIT, isMyself);
 		final MenuItem followItem = menu.findItem(MENU_FOLLOW);
-		if (followItem != null) {
-			followItem.setVisible(!isMyself);
-			followItem.setEnabled(mUser != null && mFriendship != null && !isCreatingFriendship
-					&& !isDestroyingFriendship && !isMyself && isFollowing);
+		followItem.setVisible(!isMyself);
+		followItem.setEnabled(!creatingFriendship && !destroyingFriendship && !isMyself && relationship != null);
+		if (relationship != null) {
+			followItem.setTitle(null);
+			followItem.setIcon(null);
+		} else {
+			followItem.setTitle(isFollowing ? R.string.unfollow : R.string.follow);
+			followItem.setIcon(isFollowing ? R.drawable.ic_iconic_action_cancel : R.drawable.ic_iconic_action_add);
 		}
 	}
 
@@ -898,8 +883,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
-			openUserFavorites(getActivity(), mAccountId, mUser.id, mUser.screen_name);
+			final ParcelableUser user = mUser;
+			if (user == null) return;
+			openUserFavorites(getActivity(), user.account_id, user.id, user.screen_name);
 		}
 
 	}
@@ -948,8 +934,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
-			openIncomingFriendships(getActivity(), mAccountId);
+			final ParcelableUser user = mUser;
+			if (user == null) return;
+			openIncomingFriendships(getActivity(), user.account_id);
 		}
 
 	}
@@ -967,8 +954,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
-			openSavedSearches(getActivity(), mAccountId);
+			final ParcelableUser user = mUser;
+			if (user == null) return;
+			openSavedSearches(getActivity(), user.account_id);
 		}
 
 	}
@@ -986,8 +974,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
-			openUserBlocks(getActivity(), mAccountId);
+			final ParcelableUser user = mUser;
+			if (user == null) return;
+			openUserBlocks(getActivity(), user.account_id);
 		}
 
 	}
@@ -1006,8 +995,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
-			openUserListMemberships(getActivity(), mAccountId, mUser.id, mUser.screen_name);
+			final ParcelableUser user = mUser;
+			if (user == null) return;
+			openUserListMemberships(getActivity(), user.account_id, user.id, user.screen_name);
 		}
 	}
 
@@ -1026,8 +1016,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
-			openUserLists(getActivity(), mAccountId, mUser.id, mUser.screen_name);
+			final ParcelableUser user = mUser;
+			if (user == null) return;
+			openUserLists(getActivity(), user.account_id, user.id, user.screen_name);
 		}
 
 	}
@@ -1045,8 +1036,9 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public void onClick() {
-			if (mUser == null) return;
-			openUserMentions(getActivity(), mAccountId, mUser.screen_name);
+			final ParcelableUser user = mUser;
+			if (user == null) return;
+			openUserMentions(getActivity(), user.account_id, user.screen_name);
 		}
 
 	}
