@@ -12,7 +12,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:padding="@dimen/element_spacing_default"
+		android:padding="@dimen/element_spacing_normal"
 		android:splitMotionEvents="false">
 
 		<org.mariotaku.twidere.view.ColorLabelRelativeLayout
@@ -22,7 +22,7 @@
 			android:background="?android:selectableItemBackground"
 			android:gravity="center_vertical"
 			android:orientation="horizontal"
-			android:padding="@dimen/element_spacing_default"
+			android:padding="@dimen/element_spacing_normal"
 			app:ignorePadding="true">
 
 			<org.mariotaku.twidere.view.ForegroundImageView
@@ -44,7 +44,7 @@
 				android:layout_toRightOf="@+id/profile_image"
 				android:gravity="center_vertical"
 				android:orientation="vertical"
-				android:paddingLeft="@dimen/element_spacing_default">
+				android:paddingLeft="@dimen/element_spacing_normal">
 
 				<org.mariotaku.twidere.view.themed.ThemedTextView
 					android:id="@+id/list_name"

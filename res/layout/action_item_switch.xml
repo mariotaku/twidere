@@ -3,7 +3,7 @@
 	android:layout_width="wrap_content"
 	android:layout_height="match_parent"
 	android:orientation="horizontal"
-	android:padding="@dimen/element_spacing_default">
+	android:padding="@dimen/element_spacing_normal">
 
 	<Switch
 		android:id="@android:id/toggle"

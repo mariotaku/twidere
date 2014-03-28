@@ -18,7 +18,7 @@
 		android:id="@+id/account_selector_divider"
 		android:layout_width="0.2dp"
 		android:layout_height="match_parent"
-		android:layout_margin="@dimen/element_spacing_default"
+		android:layout_margin="@dimen/element_spacing_normal"
 		android:layout_weight="0"
 		android:background="#80808080"/>
 
@@ -41,7 +41,7 @@
 		android:id="@+id/bottom_send_divider"
 		android:layout_width="0.2dp"
 		android:layout_height="match_parent"
-		android:layout_margin="@dimen/element_spacing_default"
+		android:layout_margin="@dimen/element_spacing_normal"
 		android:layout_weight="0"
 		android:background="#80808080"/>
 

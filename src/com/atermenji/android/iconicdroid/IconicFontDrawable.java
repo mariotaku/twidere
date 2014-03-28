@@ -233,7 +233,7 @@ public class IconicFontDrawable extends Drawable {
 		final float textSize = mIconPaint.getTextSize();
 		final float offsetX = viewBounds.centerX() - textSize / 2;
 		final float offsetY = viewBounds.centerY() - (metrics.ascent + metrics.descent) / 2
-				- (metrics.top - metrics.ascent);
+				+ (metrics.bottom - metrics.descent);
 
 		mPath.offset(offsetX, offsetY);
 	}

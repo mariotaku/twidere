@@ -17,10 +17,11 @@ import org.mariotaku.twidere.util.ThemeUtils;
 
 public class ActivityIconsInterceptor implements DrawableInterceptor {
 
-	private static final SparseArray<ActivityIconsInterceptor.IconSpec> sIconMap = new SparseArray<ActivityIconsInterceptor.IconSpec>();
+	private static final SparseArray<IconSpec> sIconMap = new SparseArray<IconSpec>();
 
 	static {
-		sIconMap.put(R.drawable.ic_iconic_twidere, new IconSpec(TwidereIcon.TWIDERE, 0.875f));
+		sIconMap.put(R.drawable.ic_iconic_twidere, new IconSpec(TwidereIcon.TWIDERE, 48));
+		sIconMap.put(R.drawable.ic_iconic_profile_image_default, new IconSpec(TwidereIcon.TWITTER, 128, 0xFF00ABEC));
 	}
 
 	private static int MENU_ICON_SIZE_DP = 48;
@@ -45,23 +46,28 @@ public class ActivityIconsInterceptor implements DrawableInterceptor {
 
 	@Override
 	public Drawable getDrawable(final Resources res, final int resId) {
-		final ActivityIconsInterceptor.IconSpec spec = sIconMap.get(resId, null);
+		final IconSpec spec = sIconMap.get(resId, null);
 		if (spec == null) return null;
 		final IconicFontDrawable drawable = new IconicFontDrawable(mContext, spec.icon);
-		drawable.setIconPadding(Math.round(mIconSize * (1 - spec.contentFactor)) / 2);
 		drawable.setIntrinsicWidth(mIconSize);
 		drawable.setIntrinsicHeight(mIconSize);
-		drawable.setIconColor(mIconColor);
+		drawable.setIconColor(spec.color == 0 ? mIconColor : spec.color);
 		return drawable;
 	}
 
 	private static class IconSpec {
 		private final Icon icon;
-		private final float contentFactor;
+		private final float size;
+		private final int color;
 
-		IconSpec(final Icon icon, final float contentFactor) {
+		IconSpec(final Icon icon, final float size) {
+			this(icon, size, 0);
+		}
+
+		IconSpec(final Icon icon, final float size, final int color) {
 			this.icon = icon;
-			this.contentFactor = contentFactor;
+			this.size = size;
+			this.color = color;
 		}
 	}
 

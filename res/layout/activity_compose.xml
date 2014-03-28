@@ -38,7 +38,7 @@
 				android:id="@+id/edit_text_container"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:padding="@dimen/element_spacing_default">
+				android:padding="@dimen/element_spacing_normal">
 
 				<org.mariotaku.twidere.view.StatusComposeEditText
 					android:id="@+id/edit_text"

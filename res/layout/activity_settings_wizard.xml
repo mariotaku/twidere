@@ -14,7 +14,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="top"
-		android:padding="@dimen/element_spacing_default"
+		android:padding="@dimen/element_spacing_normal"
 		app:lineWidth="@dimen/line_indicator_line_width_wizard"
 		app:selectedColor="?android:colorActivatedHighlight"
 		app:strokeWidth="@dimen/line_indicator_stroke_width_wizard"/>

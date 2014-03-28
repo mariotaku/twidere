@@ -107,6 +107,7 @@ import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.Account.AccountWithCredentials;
 import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableMedia;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.model.SingleResponse;
@@ -893,7 +894,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mLoadImagesIndicator.setVisibility(View.GONE);
 		mGalleryContainer.setVisibility(View.VISIBLE);
 		mImagePreviewAdapter.clear();
-		final List<String> images = MediaPreviewUtils.getSupportedLinksInStatus(mStatus.text_html);
+		// final List<String> images =
+		// MediaPreviewUtils.getSupportedLinksInStatus(mStatus.text_html);
+		final List<String> images = new ArrayList<String>();
+		if (mStatus.medias != null) {
+			for (final ParcelableMedia media : mStatus.medias) {
+				images.add(media.url);
+			}
+		}
 		mImagePreviewAdapter.addAll(images, mStatus.is_possibly_sensitive);
 		updateImageSelectButton(mImagePreviewGallery.getSelectedItemPosition());
 	}

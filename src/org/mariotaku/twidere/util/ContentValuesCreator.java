@@ -31,6 +31,7 @@ import org.mariotaku.twidere.TwidereConstants;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableMedia;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -268,11 +269,14 @@ public final class ContentValuesCreator implements TwidereConstants {
 		}
 		values.put(Statuses.IS_RETWEET, is_retweet);
 		values.put(Statuses.IS_FAVORITE, status.isFavorited());
-		values.put(Statuses.MEDIA_LINK, MediaPreviewUtils.getSupportedFirstLink(status));
-		final JSONArray json = JSONSerializer.toJSONArray(ParcelableUserMention.fromUserMentionEntities(status
-				.getUserMentionEntities()));
-		if (json != null) {
-			values.put(Statuses.MENTIONS, json.toString());
+		final ParcelableMedia[] medias = ParcelableMedia.fromEntities(status);
+		if (medias != null) {
+			values.put(Statuses.MEDIAS, ParseUtils.parseString(JSONSerializer.toJSONArray(medias)));
+			values.put(Statuses.FIRST_MEDIA, medias[0].url);
+		}
+		final JSONArray mentions = JSONSerializer.toJSONArray(ParcelableUserMention.fromStatus(status));
+		if (mentions != null) {
+			values.put(Statuses.MENTIONS, mentions.toString());
 		}
 		return values;
 	}

@@ -5,8 +5,8 @@
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
 	android:paddingBottom="@dimen/element_spacing_small"
-	android:paddingLeft="@dimen/element_spacing_default"
-	android:paddingRight="@dimen/element_spacing_default"
+	android:paddingLeft="@dimen/element_spacing_normal"
+	android:paddingRight="@dimen/element_spacing_normal"
 	android:paddingTop="@dimen/element_spacing_small">
 
 	<LinearLayout
@@ -15,16 +15,16 @@
 		android:baselineAligned="false"
 		android:gravity="center_vertical"
 		android:orientation="horizontal"
-		android:paddingBottom="@dimen/element_spacing_default"
-		android:paddingLeft="@dimen/element_spacing_default"
+		android:paddingBottom="@dimen/element_spacing_normal"
+		android:paddingLeft="@dimen/element_spacing_normal"
 		android:paddingRight="@dimen/element_spacing_large"
-		android:paddingTop="@dimen/element_spacing_default">
+		android:paddingTop="@dimen/element_spacing_normal">
 
 		<org.mariotaku.twidere.view.ProfileImageView
 			android:id="@+id/profile_image"
 			android:layout_width="@dimen/icon_size_card_list_item"
 			android:layout_height="@dimen/icon_size_card_list_item"
-			android:layout_marginRight="@dimen/element_spacing_default"
+			android:layout_marginRight="@dimen/element_spacing_normal"
 			android:layout_weight="0"
 			android:contentDescription="@string/profile_image"
 			android:scaleType="fitCenter"/>
@@ -79,7 +79,7 @@
 			android:id="@+id/my_profile_image"
 			android:layout_width="@dimen/icon_size_card_list_item"
 			android:layout_height="@dimen/icon_size_card_list_item"
-			android:layout_marginLeft="@dimen/element_spacing_default"
+			android:layout_marginLeft="@dimen/element_spacing_normal"
 			android:layout_weight="0"
 			android:contentDescription="@string/my_profile_image"
 			android:scaleType="fitCenter"/>
@@ -117,10 +117,10 @@
 		android:id="@+id/text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingBottom="@dimen/element_spacing_default"
-		android:paddingLeft="@dimen/element_spacing_default"
-		android:paddingRight="@dimen/element_spacing_default"
-		android:paddingTop="@dimen/element_spacing_default"
+		android:paddingBottom="@dimen/element_spacing_normal"
+		android:paddingLeft="@dimen/element_spacing_normal"
+		android:paddingRight="@dimen/element_spacing_normal"
+		android:paddingTop="@dimen/element_spacing_normal"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="?android:attr/textColorSecondary"/>
 
@@ -129,9 +129,9 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:drawablePadding="@dimen/element_spacing_small"
-		android:paddingBottom="@dimen/element_spacing_default"
-		android:paddingLeft="@dimen/element_spacing_default"
-		android:paddingRight="@dimen/element_spacing_default"
+		android:paddingBottom="@dimen/element_spacing_normal"
+		android:paddingLeft="@dimen/element_spacing_normal"
+		android:paddingRight="@dimen/element_spacing_normal"
 		android:paddingTop="@dimen/element_spacing_small"
 		android:singleLine="true"
 		android:textColor="?android:attr/textColorSecondary"/>
@@ -142,9 +142,9 @@
 		android:layout_height="wrap_content"
 		android:gravity="center_vertical"
 		android:orientation="horizontal"
-		android:paddingBottom="@dimen/element_spacing_default"
-		android:paddingLeft="@dimen/element_spacing_default"
-		android:paddingRight="@dimen/element_spacing_default"
+		android:paddingBottom="@dimen/element_spacing_normal"
+		android:paddingLeft="@dimen/element_spacing_normal"
+		android:paddingRight="@dimen/element_spacing_normal"
 		android:paddingTop="@dimen/element_spacing_small">
 
 		<ImageView

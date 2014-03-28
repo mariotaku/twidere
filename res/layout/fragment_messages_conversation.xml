@@ -45,7 +45,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:minHeight="?android:listPreferredItemHeightSmall"
-				android:padding="@dimen/element_spacing_default"
+				android:padding="@dimen/element_spacing_normal"
 				tools:listitem="@layout/list_item_two_line_small"/>
 
 			<TextView
@@ -56,7 +56,7 @@
 				android:clickable="true"
 				android:gravity="center_vertical"
 				android:minHeight="?android:listPreferredItemHeightSmall"
-				android:padding="@dimen/element_spacing_default"
+				android:padding="@dimen/element_spacing_normal"
 				android:text="@string/select_user"
 				android:textAppearance="?android:textAppearanceMedium"/>
 		</LinearLayout>

@@ -518,6 +518,8 @@
 		</activity>
 		<activity
 			android:name=".activity.AssistLauncherActivity"
+			android:excludeFromRecents="true"
+			android:launchMode="singleTask"
 			android:theme="@style/Theme.Launcher">
 			<intent-filter>
 				<action android:name="android.intent.action.ASSIST"/>

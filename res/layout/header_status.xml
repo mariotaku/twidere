@@ -9,14 +9,14 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:padding="@dimen/element_spacing_default">
+		android:padding="@dimen/element_spacing_normal">
 
 		<org.mariotaku.twidere.view.ColorLabelRelativeLayout
 			android:id="@+id/profile"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="?android:selectableItemBackground"
-			android:padding="@dimen/element_spacing_default"
+			android:padding="@dimen/element_spacing_normal"
 			app:ignorePadding="true">
 
 			<ImageView
@@ -135,7 +135,7 @@
 				android:drawablePadding="4dp"
 				android:duplicateParentState="true"
 				android:gravity="center_vertical"
-				android:padding="@dimen/element_spacing_default"
+				android:padding="@dimen/element_spacing_normal"
 				android:singleLine="true"
 				android:text="@string/view_map"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
@@ -148,7 +148,7 @@
 			android:drawableLeft="@drawable/ic_indicator_twitter"
 			android:drawablePadding="4dp"
 			android:gravity="center_vertical"
-			android:padding="@dimen/element_spacing_default"
+			android:padding="@dimen/element_spacing_normal"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 		<org.mariotaku.twidere.view.themed.ThemedTextView
@@ -159,7 +159,7 @@
 			android:drawableLeft="@drawable/ic_indicator_retweet"
 			android:drawablePadding="4dp"
 			android:gravity="center_vertical"
-			android:padding="@dimen/element_spacing_default"
+			android:padding="@dimen/element_spacing_normal"
 			android:singleLine="true"
 			android:text="@string/users_retweeted_this"
 			android:textAppearance="?android:attr/textAppearanceSmall"
@@ -174,7 +174,7 @@
 			android:drawableLeft="@drawable/ic_indicator_reply"
 			android:drawablePadding="4dp"
 			android:gravity="center_vertical"
-			android:padding="@dimen/element_spacing_default"
+			android:padding="@dimen/element_spacing_normal"
 			android:singleLine="true"
 			android:text="@string/view_replies"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
@@ -188,7 +188,7 @@
 			android:drawableLeft="@drawable/ic_indicator_conversation"
 			android:drawablePadding="4dp"
 			android:gravity="center_vertical"
-			android:padding="@dimen/element_spacing_default"
+			android:padding="@dimen/element_spacing_normal"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:visibility="gone"/>

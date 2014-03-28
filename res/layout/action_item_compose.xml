@@ -7,7 +7,7 @@
 	android:contentDescription="@string/send"
 	android:gravity="center"
 	android:orientation="horizontal"
-	android:padding="@dimen/element_spacing_default">
+	android:padding="@dimen/element_spacing_normal">
 
 	<org.mariotaku.twidere.view.StatusTextCountView
 		android:id="@+id/status_text_count"

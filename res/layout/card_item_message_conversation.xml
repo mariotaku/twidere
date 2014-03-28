@@ -41,7 +41,7 @@
 				android:layout_height="wrap_content"
 				android:minHeight="@dimen/icon_size_card_list_item"
 				android:orientation="vertical"
-				android:padding="@dimen/element_spacing_default">
+				android:padding="@dimen/element_spacing_normal">
 
 				<org.mariotaku.twidere.view.HandleSpanClickTextView
 					android:id="@+id/incoming_text"
@@ -104,7 +104,7 @@
 				android:layout_height="wrap_content"
 				android:minHeight="@dimen/icon_size_card_list_item"
 				android:orientation="vertical"
-				android:padding="@dimen/element_spacing_default">
+				android:padding="@dimen/element_spacing_normal">
 
 				<org.mariotaku.twidere.view.HandleSpanClickTextView
 					android:id="@+id/outgoing_text"

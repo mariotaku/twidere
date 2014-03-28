@@ -201,6 +201,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 			final boolean isMention = ParcelableUserMention.hasMention(status.mentions, status.account_id);
 			final boolean isMyStatus = status.account_id == status.user_id;
+			final boolean hasMedia = status.first_media != null;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
 			holder.setHighlightColor(getCardHighlightColor(!mMentionsHighlightDisabled && isMention,
 					!mFavoritesHighlightDisabled && status.is_favorite, status.is_retweet));
@@ -225,7 +226,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			}
 			holder.time.setTime(status.timestamp);
 			holder.setStatusType(!mFavoritesHighlightDisabled && status.is_favorite, isValidLocation(status.location),
-					status.has_media, status.is_possibly_sensitive);
+					hasMedia, status.is_possibly_sensitive);
 			holder.setIsReplyRetweet(status.in_reply_to_status_id > 0, status.is_retweet);
 			if (status.is_retweet) {
 				holder.setRetweetedBy(status.retweet_count, status.retweeted_by_id, status.retweeted_by_name,
@@ -242,7 +243,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 				holder.profile_image.setVisibility(View.GONE);
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean hasPreview = mDisplayImagePreview && status.has_media && status.media_link != null;
+			final boolean hasPreview = mDisplayImagePreview && hasMedia;
 			holder.image_preview_container.setVisibility(hasPreview ? View.VISIBLE : View.GONE);
 			if (hasPreview) {
 				if (mImagePreviewScaleType != null) {
@@ -252,9 +253,9 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
-				} else if (!status.media_link.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
+				} else if (!status.first_media.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
 					holder.image_preview.setBackgroundResource(0);
-					loader.displayPreviewImage(holder.image_preview, status.media_link, mImageLoadingHandler);
+					loader.displayPreviewImage(holder.image_preview, status.first_media, mImageLoadingHandler);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -282,8 +283,8 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 		switch (view.getId()) {
 			case R.id.image_preview: {
 				final ParcelableStatus status = getStatus(position);
-				if (status == null || status.media_link == null) return;
-				openImage(mContext, status.media_link, status.is_possibly_sensitive);
+				if (status == null || status.first_media == null) return;
+				openImage(mContext, status.first_media, status.is_possibly_sensitive);
 				break;
 			}
 			case R.id.my_profile_image:

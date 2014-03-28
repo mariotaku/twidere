@@ -84,7 +84,6 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -122,6 +121,7 @@ import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 import org.mariotaku.twidere.view.ColorLabelLinearLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.ProfileImageBannerLayout;
 import org.mariotaku.twidere.view.ProfileImageView;
 import org.mariotaku.twidere.view.iface.IExtendedView.OnSizeChangedListener;
 
@@ -131,7 +131,7 @@ import twitter4j.TwitterException;
 
 import java.util.Locale;
 
-public class UserProfileFragment extends BaseSupportListFragment implements OnClickListener, OnItemClickListener,
+public class UserProfileFragment2 extends BaseSupportListFragment implements OnClickListener, OnItemClickListener,
 		OnItemLongClickListener, OnMenuItemClickListener, OnLinkClickListener, Panes.Right, OnSizeChangedListener,
 		OnSharedPreferenceChangeListener {
 
@@ -149,6 +149,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 			mFriendsContainer;
 	private Button mRetryButton;
 	private ColorLabelLinearLayout mProfileNameContainer;
+	private ProfileImageBannerLayout mProfileImageBannerLayout;
 	private ListView mListView;
 	private View mHeaderView;
 
@@ -168,6 +169,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	private View mMainContent;
 	private ProgressBar mDetailsLoadProgress;
 	private MenuBar mMenuBar;
+	private ExtendedFrameLayout mDetailsContainer;
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 
@@ -205,13 +207,11 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 		@Override
 		public Loader<SingleResponse<ParcelableUser>> onCreateLoader(final int id, final Bundle args) {
-			if (mUser == null) {
-				mMainContent.setVisibility(View.GONE);
-				mErrorRetryContainer.setVisibility(View.GONE);
-				mDetailsLoadProgress.setVisibility(View.VISIBLE);
-				mErrorMessageView.setText(null);
-				mErrorMessageView.setVisibility(View.GONE);
-			}
+			mMainContent.setVisibility(View.GONE);
+			mErrorRetryContainer.setVisibility(View.GONE);
+			mDetailsLoadProgress.setVisibility(View.VISIBLE);
+			mErrorMessageView.setText(null);
+			mErrorMessageView.setVisibility(View.GONE);
 			setProgressBarIndeterminateVisibility(true);
 			final ParcelableUser user = mUser;
 			final boolean omitIntentExtra = args.getBoolean(EXTRA_OMIT_INTENT_EXTRA, true);
@@ -343,8 +343,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mFollowersCount.setText(getLocalizedNumber(mLocale, user.followers_count));
 		mFriendsCount.setText(getLocalizedNumber(mLocale, user.friends_count));
 		if (mPreferences.getBoolean(KEY_DISPLAY_PROFILE_IMAGE, true)) {
-			mProfileImageLoader.displayProfileImage(mProfileImageView,
-					getOriginalTwitterProfileImage(user.profile_image_url));
+			mProfileImageLoader.displayProfileImage(mProfileImageView, user.profile_image_url);
 			final int def_width = getResources().getDisplayMetrics().widthPixels;
 			final int width = mBannerWidth > 0 ? mBannerWidth : def_width;
 			mProfileBannerView.setImageBitmap(null);
@@ -439,6 +438,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		mFollowersContainer.setOnClickListener(this);
 		mFriendsContainer.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
+		mProfileImageBannerLayout.setOnSizeChangedListener(this);
 		setListAdapter(null);
 		mListView = getListView();
 		mListView.addHeaderView(mHeaderView, null, false);
@@ -502,13 +502,12 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				getUserInfo(true);
 				break;
 			}
-			case R.id.profile_image: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_IMAGE: {
 				final String profile_image_url_string = getOriginalTwitterProfileImage(mUser.profile_image_url);
 				openImage(activity, profile_image_url_string, false);
 				break;
 			}
-			case R.id.profile_banner:
-			case R.id.profile_banner_space: {
+			case ProfileImageBannerLayout.VIEW_ID_PROFILE_BANNER: {
 				final String profile_banner_url = mUser.profile_banner_url;
 				if (profile_banner_url == null) return;
 				openImage(getActivity(), profile_banner_url + "/ipad_retina", false);
@@ -580,10 +579,36 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		final View view = inflater.inflate(R.layout.fragment_details_page, null, false);
-		final ExtendedFrameLayout detailsContainer = (ExtendedFrameLayout) view.findViewById(R.id.details_container);
-		inflater.inflate(R.layout.header_user_profile_banner, detailsContainer, true);
-		detailsContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
-		mHeaderView = inflater.inflate(R.layout.header_user_profile, null, false);
+		mMainContent = view.findViewById(R.id.content);
+		mDetailsLoadProgress = (ProgressBar) view.findViewById(R.id.details_load_progress);
+		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
+		mDetailsContainer = (ExtendedFrameLayout) view.findViewById(R.id.details_container);
+		mDetailsContainer.addView(super.onCreateView(inflater, container, savedInstanceState));
+		mHeaderView = inflater.inflate(R.layout.header_user_profile_orig, null, false);
+		mNameView = (TextView) mHeaderView.findViewById(R.id.name);
+		mScreenNameView = (TextView) mHeaderView.findViewById(R.id.screen_name);
+		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
+		mLocationView = (TextView) mHeaderView.findViewById(R.id.location);
+		mURLView = (TextView) mHeaderView.findViewById(R.id.url);
+		mCreatedAtView = (TextView) mHeaderView.findViewById(R.id.created_at);
+		mTweetsContainer = mHeaderView.findViewById(R.id.tweets_container);
+		mTweetCount = (TextView) mHeaderView.findViewById(R.id.statuses_count);
+		mFollowersContainer = mHeaderView.findViewById(R.id.followers_container);
+		mFollowersCount = (TextView) mHeaderView.findViewById(R.id.followers_count);
+		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
+		mFriendsCount = (TextView) mHeaderView.findViewById(R.id.friends_count);
+		mProfileNameContainer = (ColorLabelLinearLayout) mHeaderView.findViewById(R.id.profile_name_container);
+		mProfileImageBannerLayout = (ProfileImageBannerLayout) mHeaderView.findViewById(R.id.profile_image_banner);
+		mProfileImageView = mProfileImageBannerLayout.getProfileImageView();
+		mProfileBannerView = mProfileImageBannerLayout.getProfileBannerImageView();
+		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
+		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
+		mURLContainer = mHeaderView.findViewById(R.id.url_container);
+		mErrorRetryContainer = view.findViewById(R.id.error_retry_container);
+		mRetryButton = (Button) view.findViewById(R.id.retry);
+		mErrorMessageView = (TextView) view.findViewById(R.id.error_message);
+		final View cardView = mHeaderView.findViewById(R.id.card);
+		ThemeUtils.applyThemeAlphaToDrawable(cardView.getContext(), cardView.getBackground());
 		return view;
 	}
 
@@ -768,15 +793,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	}
 
 	@Override
-	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-			final int totalItemCount) {
-		super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-		final float factor = -mHeaderView.getTop() / (mHeaderView.getWidth() * 0.5f);
-//		Log.d(LOGTAG, String.format("onScroll %f", factor));
-		mProfileBannerView.setAlpha(1.0f - factor);
-	}
-
-	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
 		if (mUser == null || !ParseUtils.parseString(mUser.id).equals(key)) return;
 		displayUser(mUser);
@@ -803,42 +819,6 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
-	}
-
-	@Override
-	public void onViewCreated(final View view, final Bundle savedInstanceState) {
-		final Context context = view.getContext();
-		super.onViewCreated(view, savedInstanceState);
-		mMainContent = view.findViewById(R.id.content);
-		mDetailsLoadProgress = (ProgressBar) view.findViewById(R.id.details_load_progress);
-		mMenuBar = (MenuBar) view.findViewById(R.id.menu_bar);
-		mErrorRetryContainer = view.findViewById(R.id.error_retry_container);
-		mRetryButton = (Button) view.findViewById(R.id.retry);
-		mErrorMessageView = (TextView) view.findViewById(R.id.error_message);
-		mProfileBannerView = (ImageView) view.findViewById(R.id.profile_banner);
-		mNameView = (TextView) mHeaderView.findViewById(R.id.name);
-		mScreenNameView = (TextView) mHeaderView.findViewById(R.id.screen_name);
-		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
-		mLocationView = (TextView) mHeaderView.findViewById(R.id.location);
-		mURLView = (TextView) mHeaderView.findViewById(R.id.url);
-		mCreatedAtView = (TextView) mHeaderView.findViewById(R.id.created_at);
-		mTweetsContainer = mHeaderView.findViewById(R.id.tweets_container);
-		mTweetCount = (TextView) mHeaderView.findViewById(R.id.statuses_count);
-		mFollowersContainer = mHeaderView.findViewById(R.id.followers_container);
-		mFollowersCount = (TextView) mHeaderView.findViewById(R.id.followers_count);
-		mFriendsContainer = mHeaderView.findViewById(R.id.friends_container);
-		mFriendsCount = (TextView) mHeaderView.findViewById(R.id.friends_count);
-		mProfileNameContainer = (ColorLabelLinearLayout) mHeaderView.findViewById(R.id.profile_name_container);
-		mProfileImageView = (ProfileImageView) mHeaderView.findViewById(R.id.profile_image);
-		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
-		mLocationContainer = mHeaderView.findViewById(R.id.location_container);
-		mURLContainer = mHeaderView.findViewById(R.id.url_container);
-		final View cardView = mHeaderView.findViewById(R.id.card);
-		ThemeUtils.applyThemeAlphaToDrawable(context, cardView.getBackground());
-		// final View profileBottomLayer =
-		// mHeaderView.findViewById(R.id.profile_layer_bottom);
-		// ViewAccessor.setBackground(profileBottomLayer,
-		// ThemeUtils.getWindowBackground(cotnext));
 	}
 
 	private void getFriendship() {

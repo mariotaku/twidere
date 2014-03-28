@@ -1511,22 +1511,21 @@ public final class Utils implements Constants {
 		return getDefaultTwitterInstance(context, include_entities, true, true);
 	}
 
-	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities,
-			final boolean include_retweets) {
+	public static Twitter getDefaultTwitterInstance(final Context context, final boolean includeEntities,
+			final boolean includeRetweets) {
 		if (context == null) return null;
-		return getDefaultTwitterInstance(context, include_entities, include_retweets, true);
+		return getDefaultTwitterInstance(context, includeEntities, includeRetweets, !MIUIDetector.isMIUI());
 	}
 
-	public static Twitter getDefaultTwitterInstance(final Context context, final boolean include_entities,
-			final boolean include_retweets, final boolean use_httpclient) {
+	public static Twitter getDefaultTwitterInstance(final Context context, final boolean includeEntities,
+			final boolean includeRetweets, final boolean apacheHttp) {
 		if (context == null) return null;
-		return getTwitterInstance(context, getDefaultAccountId(context), include_entities, include_retweets,
-				use_httpclient);
+		return getTwitterInstance(context, getDefaultAccountId(context), includeEntities, includeRetweets, apacheHttp);
 	}
 
-	public static String getDisplayName(final Context context, final long user_id, final String name,
-			final String screen_name) {
-		return getDisplayName(context, user_id, name, screen_name, false);
+	public static String getDisplayName(final Context context, final long userId, final String name,
+			final String screenName) {
+		return getDisplayName(context, userId, name, screenName, false);
 	}
 
 	public static String getDisplayName(final Context context, final long user_id, final String name,
@@ -2120,12 +2119,12 @@ public final class Utils implements Constants {
 
 	public static Twitter getTwitterInstance(final Context context, final long account_id,
 			final boolean include_entities) {
-		return getTwitterInstance(context, account_id, include_entities, true, true);
+		return getTwitterInstance(context, account_id, include_entities, true, !MIUIDetector.isMIUI());
 	}
 
-	public static Twitter getTwitterInstance(final Context context, final long account_id,
-			final boolean include_entities, final boolean include_retweets) {
-		return getTwitterInstance(context, account_id, include_entities, include_retweets, true);
+	public static Twitter getTwitterInstance(final Context context, final long accountId,
+			final boolean includeEntities, final boolean includeRetweets) {
+		return getTwitterInstance(context, accountId, includeEntities, includeRetweets, !MIUIDetector.isMIUI());
 	}
 
 	public static Twitter getTwitterInstance(final Context context, final long accountId,
@@ -2134,9 +2133,9 @@ public final class Utils implements Constants {
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int connection_timeout = prefs.getInt(KEY_CONNECTION_TIMEOUT, 10) * 1000;
-		final boolean enable_gzip_compressing = prefs.getBoolean(KEY_GZIP_COMPRESSING, true);
-		final boolean ignore_ssl_error = prefs.getBoolean(KEY_IGNORE_SSL_ERROR, false);
-		final boolean enable_proxy = prefs.getBoolean(KEY_ENABLE_PROXY, false);
+		final boolean enableGzip = prefs.getBoolean(KEY_GZIP_COMPRESSING, true);
+		final boolean ignoreSslError = prefs.getBoolean(KEY_IGNORE_SSL_ERROR, false);
+		final boolean enableProxy = prefs.getBoolean(KEY_ENABLE_PROXY, false);
 		// Here I use old consumer key/secret because it's default key for older
 		// versions
 		final String pref_consumer_key = prefs.getString(KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY);
@@ -2156,9 +2155,9 @@ public final class Utils implements Constants {
 				}
 				cb.setHttpConnectionTimeout(connection_timeout);
 				setUserAgent(context, cb);
-				cb.setGZIPEnabled(enable_gzip_compressing);
-				cb.setIgnoreSSLError(ignore_ssl_error);
-				if (enable_proxy) {
+				cb.setGZIPEnabled(enableGzip);
+				cb.setIgnoreSSLError(ignoreSslError);
+				if (enableProxy) {
 					final String proxy_host = prefs.getString(KEY_PROXY_HOST, null);
 					final int proxy_port = ParseUtils.parseInt(prefs.getString(KEY_PROXY_PORT, "-1"));
 					if (!isEmpty(proxy_host) && proxy_port > 0) {
@@ -3498,7 +3497,6 @@ public final class Utils implements Constants {
 	}
 
 	private static void parseEntities(final HtmlBuilder builder, final EntitySupport entities) {
-		final URLEntity[] urls = entities.getURLEntities();
 		// Format media.
 		final MediaEntity[] medias = entities.getMediaEntities();
 		if (medias != null) {
@@ -3510,6 +3508,7 @@ public final class Utils implements Constants {
 				}
 			}
 		}
+		final URLEntity[] urls = entities.getURLEntities();
 		if (urls != null) {
 			for (final URLEntity url : urls) {
 				final URL expanded_url = url.getExpandedURL();

@@ -22,7 +22,7 @@
 	android:descendantFocusability="blocksDescendants"
 	android:gravity="center_vertical"
 	android:minHeight="?android:attr/listPreferredItemHeight"
-	android:padding="@dimen/element_spacing_default"
+	android:padding="@dimen/element_spacing_normal"
 	app:ignorePadding="true">
 
 	<ImageView
@@ -41,7 +41,7 @@
 		android:layout_toLeftOf="@android:id/checkbox"
 		android:layout_toRightOf="@android:id/icon"
 		android:orientation="vertical"
-		android:padding="@dimen/element_spacing_default">
+		android:padding="@dimen/element_spacing_normal">
 
 		<TextView
 			android:id="@android:id/text1"

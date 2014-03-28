@@ -59,5 +59,6 @@
 	<item name="ic_iconic_action_export" type="drawable"/>
 	<item name="ic_iconic_action_storage" type="drawable"/>
 	<item name="ic_iconic_twidere" type="drawable"/>
+	<item name="ic_iconic_profile_image_default" type="drawable"/>
 
 </resources>

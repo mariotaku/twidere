@@ -30,7 +30,7 @@
 				android:layout_height="wrap_content"
 				android:gravity="center"
 				android:lineSpacingMultiplier="1.25"
-				android:padding="@dimen/element_spacing_default"
+				android:padding="@dimen/element_spacing_normal"
 				android:text="@string/wizard_page_finished_text"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textSize="@dimen/text_size_wizard_text"

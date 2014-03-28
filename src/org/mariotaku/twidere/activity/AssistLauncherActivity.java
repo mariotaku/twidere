@@ -25,7 +25,7 @@ public class AssistLauncherActivity extends Activity implements Constants {
 		}
 		final Intent intent = new Intent(action);
 		intent.setClass(this, ComposeActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		startActivity(intent);
 		finish();
 	}

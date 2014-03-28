@@ -380,7 +380,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT);
 			lp.leftMargin = lp.topMargin = lp.bottomMargin = lp.rightMargin = getResources().getDimensionPixelSize(
-					R.dimen.element_spacing_default);
+					R.dimen.element_spacing_normal);
 			view.addView(mEditText, lp);
 			builder.setView(view);
 			mEditText.setText(args.getString(EXTRA_TEXT));

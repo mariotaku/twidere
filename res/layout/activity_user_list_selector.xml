@@ -65,7 +65,7 @@
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				android:orientation="horizontal"
-				android:padding="@dimen/element_spacing_default">
+				android:padding="@dimen/element_spacing_normal">
 
 				<AutoCompleteTextView
 					android:id="@+id/edit_screen_name"

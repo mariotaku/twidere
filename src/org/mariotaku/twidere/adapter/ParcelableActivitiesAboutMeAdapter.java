@@ -238,6 +238,7 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 			}
 
 			final boolean isMyStatus = status.account_id == status.user_id;
+			final boolean hasMedia = status.first_media != null;
 			holder.setUserColor(getUserColor(mContext, status.user_id));
 			holder.setHighlightColor(getCardHighlightColor(false, !mFavoritesHighlightDisabled && status.is_favorite,
 					status.is_retweet));
@@ -262,7 +263,7 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 			}
 			holder.time.setTime(status.timestamp);
 			holder.setStatusType(!mFavoritesHighlightDisabled && status.is_favorite,
-					ParcelableLocation.isValidLocation(status.location), status.has_media, status.is_possibly_sensitive);
+					ParcelableLocation.isValidLocation(status.location), hasMedia, status.is_possibly_sensitive);
 			holder.setIsReplyRetweet(status.in_reply_to_status_id > 0, status.is_retweet);
 			if (status.is_retweet) {
 				holder.setRetweetedBy(status.retweet_count, status.retweeted_by_id, status.retweeted_by_name,
@@ -279,17 +280,17 @@ public class ParcelableActivitiesAboutMeAdapter extends BaseParcelableActivities
 				holder.profile_image.setVisibility(View.GONE);
 				holder.my_profile_image.setVisibility(View.GONE);
 			}
-			final boolean hasPreview = mDisplayImagePreview && status.has_media && status.media_link != null;
+			final boolean hasPreview = mDisplayImagePreview && hasMedia;
 			holder.image_preview_container.setVisibility(hasPreview ? View.VISIBLE : View.GONE);
 			if (hasPreview) {
 				if (status.is_possibly_sensitive && !mDisplaySensitiveContents) {
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
-				} else if (!status.media_link.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
+				} else if (!status.first_media.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
 					holder.image_preview.setBackgroundResource(0);
 					final ImageLoaderWrapper imageLoader = getImageLoader();
-					imageLoader.displayPreviewImage(holder.image_preview, status.media_link, mImageLoadingHandler);
+					imageLoader.displayPreviewImage(holder.image_preview, status.first_media, mImageLoadingHandler);
 				}
 				holder.image_preview.setTag(position);
 			}

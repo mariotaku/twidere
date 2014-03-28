@@ -150,11 +150,11 @@ public class SwipeBackLayout extends FrameLayout {
 		setEdgeTrackingEnabled(mode);
 
 		final int shadowLeft = a
-				.getResourceId(R.styleable.SwipeBackLayout_shadowLeft, R.drawable.swipeback_shadow_left);
+				.getResourceId(R.styleable.SwipeBackLayout_shadowLeft, R.drawable.shadow_left);
 		final int shadowRight = a.getResourceId(R.styleable.SwipeBackLayout_shadowRight,
-				R.drawable.swipeback_shadow_right);
+				R.drawable.shadow_right);
 		final int shadowBottom = a.getResourceId(R.styleable.SwipeBackLayout_shadowBottom,
-				R.drawable.swipeback_shadow_bottom);
+				R.drawable.shadow_bottom);
 		final int scrimColor = a.getColor(R.styleable.SwipeBackLayout_scrimColor, DEFAULT_SCRIM_COLOR);
 		final float scrimAlpha = a.getFloat(R.styleable.SwipeBackLayout_scrimAlpha, Color.alpha(scrimColor) / 255.0f);
 		final float scalePercent = a.getFraction(R.styleable.SwipeBackLayout_scalePercent, 1, 1, 1);

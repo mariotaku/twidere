@@ -135,13 +135,13 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			final String name = cursor.getString(mIndices.user_name);
 			final String inReplyToName = cursor.getString(mIndices.in_reply_to_user_name);
 			final String inReplyToScreenName = cursor.getString(mIndices.in_reply_to_user_screen_name);
-			final String mediaLink = cursor.getString(mIndices.media_link);
+			final String firstMedia = cursor.getString(mIndices.first_media);
 
 			// Tweet type (favorite/location/media)
 			final boolean isFavorite = cursor.getShort(mIndices.is_favorite) == 1;
 			final boolean hasLocation = !TextUtils.isEmpty(cursor.getString(mIndices.location));
 			final boolean possiblySensitive = cursor.getInt(mIndices.is_possibly_sensitive) == 1;
-			final boolean hasMedia = mediaLink != null;
+			final boolean hasMedia = firstMedia != null;
 
 			// User type (protected/verified)
 			final boolean isVerified = cursor.getShort(mIndices.is_verified) == 1;
@@ -207,7 +207,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			}
 			final boolean hasPreview = mDisplayImagePreview && hasMedia;
 			holder.image_preview_container.setVisibility(hasPreview ? View.VISIBLE : View.GONE);
-			if (hasPreview && mediaLink != null) {
+			if (hasPreview && firstMedia != null) {
 				if (mImagePreviewScaleType != null) {
 					holder.image_preview.setScaleType(mImagePreviewScaleType);
 				}
@@ -215,9 +215,9 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 					holder.image_preview.setImageDrawable(null);
 					holder.image_preview.setBackgroundResource(R.drawable.image_preview_nsfw);
 					holder.image_preview_progress.setVisibility(View.GONE);
-				} else if (!mediaLink.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
+				} else if (!firstMedia.equals(mImageLoadingHandler.getLoadingUri(holder.image_preview))) {
 					holder.image_preview.setBackgroundResource(0);
-					mImageLoader.displayPreviewImage(holder.image_preview, mediaLink, mImageLoadingHandler);
+					mImageLoader.displayPreviewImage(holder.image_preview, firstMedia, mImageLoadingHandler);
 				}
 				holder.image_preview.setTag(position);
 			}
@@ -325,8 +325,8 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 		switch (view.getId()) {
 			case R.id.image_preview: {
 				final ParcelableStatus status = getStatus(position);
-				if (status == null || status.media_link == null) return;
-				openImage(mContext, status.media_link, status.is_possibly_sensitive);
+				if (status == null || status.first_media == null) return;
+				openImage(mContext, status.first_media, status.is_possibly_sensitive);
 				break;
 			}
 			case R.id.my_profile_image:
