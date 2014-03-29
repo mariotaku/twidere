@@ -22,8 +22,16 @@ package org.mariotaku.twidere.util;
 import static android.text.TextUtils.isEmpty;
 import static org.mariotaku.twidere.util.Utils.matcherGroup;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.model.ParcelableMedia;
 import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.util.HtmlLinkExtractor.HtmlLink;
 
@@ -37,8 +45,10 @@ import twitter4j.http.HttpResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -183,6 +193,48 @@ public class MediaPreviewUtils {
 			PATTERN_MOBYPICTURE, PATTERN_PHOTOZOU };
 
 	private static final String URL_PHOTOZOU_PHOTO_INFO = "https://api.photozou.jp/rest/photo_info.json";
+
+	public static void addToLinearLayout(final LinearLayout container, final ImageLoaderWrapper loader,
+			final List<ParcelableMedia> medias, final int maxColumnCount, final OnMediaClickListener listener) {
+		if (container.getOrientation() != LinearLayout.VERTICAL) throw new IllegalArgumentException();
+		final Context context = container.getContext();
+		final ImageLoadingHandler loadingHandler = new ImageLoadingHandler();
+		final LayoutInflater inflater = LayoutInflater.from(context);
+		final ListIterator<ParcelableMedia> iterator = medias.listIterator();
+		final int imageCount = medias.size();
+		final double imageCountSqrt = Math.sqrt(imageCount);
+		final int bestColumnCount = imageCountSqrt % 1 == 0 ? (int) imageCountSqrt : maxColumnCount;
+		final int firstColumn = imageCount % bestColumnCount, fullRowCount = imageCount / bestColumnCount;
+		final int rowCount = fullRowCount + (firstColumn > 0 ? 1 : 0);
+		final View.OnClickListener clickListener = new ImageGridClickListener(listener);
+		container.setMotionEventSplittingEnabled(false);
+		for (int currentRow = 0; currentRow < rowCount; currentRow++) {
+			final LinearLayout rowContainer = new LinearLayout(context);
+			rowContainer.setOrientation(LinearLayout.HORIZONTAL);
+			rowContainer.setMotionEventSplittingEnabled(false);
+			container.addView(rowContainer, LinearLayout.LayoutParams.MATCH_PARENT,
+					LinearLayout.LayoutParams.WRAP_CONTENT);
+			final int columnCount = currentRow == 0 && firstColumn > 0 ? firstColumn : bestColumnCount;
+			for (int currentColumn = 0; currentColumn < columnCount; currentColumn++) {
+				final ParcelableMedia media = iterator.next();
+				final View item = inflater.inflate(R.layout.grid_item_image_preview, rowContainer, false);
+				item.setTag(media);
+				if (listener != null) {
+					item.setOnClickListener(clickListener);
+				}
+				final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) item.getLayoutParams();
+				lp.weight = 1.0f;
+				rowContainer.addView(item, lp);
+				final ImageView imageView = (ImageView) item.findViewById(R.id.image_preview_item);
+				loader.displayPreviewImage(imageView, media.url, loadingHandler);
+			}
+		}
+	}
+
+	public static void addToLinearLayout(final LinearLayout container, final ImageLoaderWrapper loader,
+			final ParcelableMedia[] medias, final int maxColumnCount, final OnMediaClickListener listener) {
+		addToLinearLayout(container, loader, Arrays.asList(medias), maxColumnCount, listener);
+	}
 
 	public static PreviewMedia getAllAvailableImage(final String link, final boolean fullImage) {
 		try {
@@ -400,6 +452,25 @@ public class MediaPreviewUtils {
 		if (isEmpty(id)) return null;
 		final String preview = String.format("http://yfrog.com/%s:%s", id, fullImage ? "medium" : "iphone");
 		return PreviewMedia.newImage(preview, orig);
+
+	}
+
+	public interface OnMediaClickListener {
+		void onMediaClick(View view, ParcelableMedia media);
+	}
+
+	private static class ImageGridClickListener implements View.OnClickListener {
+		private final OnMediaClickListener mListener;
+
+		ImageGridClickListener(final OnMediaClickListener listener) {
+			mListener = listener;
+		}
+
+		@Override
+		public void onClick(final View v) {
+			if (mListener == null) return;
+			mListener.onMediaClick(v, (ParcelableMedia) v.getTag());
+		}
 
 	}
 }

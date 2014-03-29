@@ -237,7 +237,6 @@
   <string name="image_upload_format">Формат твіта із зображенням</string>
   <string name="image_upload_format_summary">\"[LINK]\" = посилання зображення\n\"[TEXT]\" = Текст твіту\n(Розширення тільки)</string>
   <string name="tweet_shortener">Твіт надто короткий</string>
-  <string name="status_shortener_default">Нічого(Відміна надсилання)</string>
   <string name="error_message_status_too_long">Твіт надто довгий.</string>
   <string name="error_message_no_content">Нема вмісту</string>
   <string name="error_message_tweet_shorten_failed">Помилка скорочувача посилань.</string>
@@ -410,7 +409,7 @@
   <string name="search_name_saved">Пошук \"<xliff:g id="name">%s</xliff:g>\" збережено.</string>
   <string name="search_deleted">Пошук вилучено.</string>
   <string name="search_name_deleted">Пошук \"<xliff:g id="name">%s</xliff:g>\" вилучено.</string>
-  <string name="import_from">Імпортувати з…</string>
+  <string name="import_from">Імпортувати з&#8230;</string>
   <string name="link_to_quoted_status">Посилання на цитований твіт</string>
   <string name="followed_user">Підписаний на <xliff:g id="user">%s</xliff:g>.</string>
   <string name="sent_follow_request_to_user">Надіслати запит на підписку до <xliff:g id="user">%s</xliff:g>.</string>
@@ -464,7 +463,7 @@
   <string name="enable_in_home_timeline">Увімкнути у домашній стрічці</string>
   <string name="enable_for_rts">Увімкнути для RTs</string>
   <string name="safety">Безпечність</string>
-  <string name="updating_status_notification">Надсилання твіту…</string>
+  <string name="updating_status_notification">Надсилання твіту&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Запит</string>
   <string name="nickname_only">Лише прізвисько</string>
@@ -506,8 +505,6 @@
   <string name="delete_user_list_confirm_message">Вилучити список <xliff:g id="name">%s</xliff:g>? Це не можна відмінити.</string>
   <string name="unsubscribe_from_user_list">Відписатися від списку <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Відписатися від списку <xliff:g id="name">%s</xliff:g>? Ви зможете пізніше повторно підписатися на цей список.</string>
-  <string name="destroy_saved_search">Вилучити збережений пошук \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="destroy_saved_search_confirm_message">Вилучити збережений пошук \"<xliff:g id="name">%s</xliff:g>\"? Ви можете стисло повторно зберегти цей пошук.</string>
   <string name="signing_in_error_browser_sign_in_hint">Помилка при вході, вам потрібно використати вхід через браузер. (Він ігноруватиме ваші налаштування API при вході)</string>
   <string name="report_user">Повідомити про <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Повідомити про <xliff:g id="name">%s</xliff:g> як про спамера? Ви також заблокуєте цього користувача.</string>
@@ -588,8 +585,8 @@
   <string name="denied_users_follow_request">Відхилений запит на підписку від <xliff:g id="user">%s</xliff:g>.</string>
   <string name="import_settings">Імпорт налаштувань</string>
   <string name="export_settings">Експорт налаштувань</string>
-  <string name="export_settings_type_dialog_title">Експорт налаштувань…</string>
-  <string name="import_settings_type_dialog_title">Імпорт налаштувань…</string>
+  <string name="export_settings_type_dialog_title">Експорт налаштувань&#8230;</string>
+  <string name="import_settings_type_dialog_title">Імпорт налаштувань&#8230;</string>
   <string name="nicknames">Псевдо</string>
   <string name="user_colors">Кольори користувача</string>
   <string name="import_export">Імпорт/експорт</string>

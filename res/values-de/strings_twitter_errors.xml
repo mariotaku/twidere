@@ -8,7 +8,7 @@
   <string name="error_64">Dein Account ist gesperrt und hat keinen Zugriff auf diese Funktion.</string>
   <string name="error_130">Twitter ist temporär überlastet.</string>
   <string name="error_131">Twitter-Server nicht erreichbar, bitte später noch einmal versuchen.</string>
-  <string name="error_135">Bitte überprüfe Deine System-Zeit.</string>
+  <string name="error_135">Bitte überprüfe deine System-Zeit.</string>
   <string name="error_162">Sie wurden von diesem Benutzer gesperrt.</string>
   <string name="error_172">Du hast diese Suche bereits gespeichert.</string>
   <string name="error_179">Du kannst Tweets eines geschützten Benutzers nicht sehen.</string>

@@ -5,12 +5,14 @@
   <string name="error_34">هذه التغريدة أو صفحة أو مستخدم غير موجود.</string>
   <string name="error_88">تم تجاوز حد التغريدات المسموح به، يرجى المحاولة لاحقا.</string>
   <string name="error_89">بيانات تسجيل الدخول غير صحيحة أو انتهت صلاحيتها، المرجو إعادة تسجيل الدخول.</string>
-  <string name="error_64">إن حسابك موقف ولا يملك الصلاحية للولوج  إلى هذه الخصية.</string>
+  <string name="error_64">إن حسابك موقف ولا يملك الصلاحية للولوج  إلى هذه الخاصية.</string>
   <string name="error_130">إن تويتر فوق قدرته الاستيعابية مؤقتا.</string>
   <string name="error_131">يحتمل أن يكون خادم تويتر معطل مؤقتا، المرجو إعادة المحاولة لاحقاً.</string>
   <string name="error_135">المرجو التحقق من ساعة النظام.</string>
+  <string name="error_162">لقد تم حضرك من طرف هذا المستخدم.</string>
+  <string name="error_172">لقد قمت بحفظ هذا البحث سابقا.</string>
   <string name="error_179">لا يمكنك مشاهدة التغريدات المحمية لهذا المستخدم.</string>
   <string name="error_187">لقد قمت بإرسال هذه التغريدة سابقا.</string>
-  <string name="error_193">الصورة التي ترفعت كبيرة جدا.</string>
+  <string name="error_193">الصورة التي ترفع كبيرة جدا.</string>
   <string name="error_215">قد تحتاج إلى إعادة تسجيل الدخول من جديد.</string>
 </resources>

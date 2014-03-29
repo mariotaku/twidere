@@ -94,7 +94,6 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
-import org.mariotaku.twidere.util.MIUIDetector;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.SmartBarUtils;
@@ -349,16 +348,16 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			final SupportTabSpec tab = mPagerAdapter.getTab(position);
 			if (tab == null) {
 				title = R.string.compose;
-				icon = R.drawable.ic_iconic_action_new_message;
+				icon = R.drawable.ic_iconic_action_compose;
 			} else {
 				if (classEquals(DirectMessagesFragment.class, tab.cls)) {
 					icon = R.drawable.ic_iconic_action_new_message;
-					title = R.string.compose;
+					title = R.string.new_direct_message;
 				} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
 					icon = R.drawable.ic_iconic_action_search;
 					title = android.R.string.search_go;
 				} else {
-					icon = R.drawable.ic_iconic_action_new_message;
+					icon = R.drawable.ic_iconic_action_compose;
 					title = R.string.compose;
 				}
 			}
@@ -796,7 +795,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		} else {
 			if (classEquals(DirectMessagesFragment.class, tab.cls)) {
 				icon = R.drawable.ic_iconic_action_new_message;
-				title = R.string.compose;
+				title = R.string.new_direct_message;
 			} else if (classEquals(TrendsSuggectionsFragment.class, tab.cls)) {
 				icon = R.drawable.ic_iconic_action_search;
 				title = android.R.string.search_go;

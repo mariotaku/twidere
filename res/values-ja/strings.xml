@@ -30,7 +30,7 @@
   <string name="home">ホーム</string>
   <string name="mentions">つながり</string>
   <string name="error_occurred">エラーが発生しました。もう一度お試しください。</string>
-  <string name="error_already_logged_in">あなたは既にログインしています。</string>
+  <string name="error_already_logged_in">あなたは既にサインインしています。</string>
   <string name="no_account_selected">アカウントが選択されていません。</string>
   <string name="empty_account_selection_disallowed">最低でもひとつのアカウントを選んでください。</string>
   <string name="error_unknown_error">エラー：詳細不明、バグかもしれません…</string>
@@ -108,8 +108,8 @@
   <string name="unfollow">フォローを解除</string>
   <string name="bottom_compose_button">ツイートボタンを下に置く</string>
   <string name="bottom_compose_button_summary">ツイートボタンを下に置きます。</string>
-  <string name="leftside_compose_button">ツイートボタンを左に配置</string>
-  <string name="leftside_compose_button_summary">ツイートボタンを左に配置します。</string>
+  <string name="leftside_compose_button">つぶやきボタンを左に置く</string>
+  <string name="leftside_compose_button_summary">つぶやきボタンを左に置きます。</string>
   <string name="bottom_send_button">送信ボタンを下に置く</string>
   <string name="load_item_limit">ツイートの読み込み上限</string>
   <string name="load_item_limit_summary">一度に読み込むツイートの数を制限します。</string>
@@ -228,8 +228,9 @@
   <string name="share_format">共有形式</string>
   <string name="share_format_summary">\"[TITLE]\" = タイトル\n\"[TEXT]\" = ツイート内容</string>
   <string name="network">ネットワーク</string>
-  <string name="content_and_storage">コンテンツ &amp; ストレージ</string>
+  <string name="content_and_storage">コンテンツとストレージ</string>
   <string name="image_uploader">画像アップローダー</string>
+  <string name="media_uploader">メディアのアップロード先</string>
   <string name="image_uploader_default">デフォルト（Twitter）</string>
   <string name="home_refresh">ホームTLの更新</string>
   <string name="error_message_image_upload_failed">画像をアップロードできません。</string>
@@ -237,7 +238,8 @@
   <string name="image_upload_format">画像付きツイートの書式</string>
   <string name="image_upload_format_summary">\"[LINK]\" = 画像リンク\n\"[TEXT]\" = ツイート内容\n(拡張機能のみ)</string>
   <string name="tweet_shortener">ツイート短縮サービス</string>
-  <string name="status_shortener_default">なし(送信を取り消す)</string>
+  <string name="status_shortener">ツイート短縮サービス</string>
+  <string name="status_shortener_default">なし (送信を取り消す)</string>
   <string name="error_message_status_too_long">ツイートのテキストが長過ぎます。</string>
   <string name="error_message_no_content">コンテンツなし</string>
   <string name="error_message_tweet_shorten_failed">ツイートを短縮できません。</string>
@@ -505,9 +507,11 @@
   <string name="delete_user_list">リスト<xliff:g id="name">%s</xliff:g>を削除</string>
   <string name="delete_user_list_confirm_message">リスト<xliff:g id="name">%s</xliff:g>を削除しますか? 復元はできません。</string>
   <string name="unsubscribe_from_user_list">リスト<xliff:g id="name">%s</xliff:g>の保存を解除</string>
-  <string name="unsubscribe_from_user_list_confirm_message">リスト<xliff:g id="name">%s</xliff:g>の保存を解除しますか? 後で保存し直すことも出来ます。</string>
-  <string name="destroy_saved_search">保存した検索 \"<xliff:g id="name">%s</xliff:g>\"を削除</string>
-  <string name="destroy_saved_search_confirm_message">保存した検索\"<xliff:g id="name">%s</xliff:g>\"を削除しますか? 再保存がすぐにはできないようになります。</string>
+  <string name="unsubscribe_from_user_list_confirm_message">リスト<xliff:g id="name">%s</xliff:g>の購読を解除しますか? 後で購読し直すことも出来ます。</string>
+  <string name="destroy_status">ツイートの削除</string>
+  <string name="destroy_status_confirm_message">このツイートを削除しますか?</string>
+  <string name="destroy_saved_search">保存した検索\"<xliff:g id="name">%s</xliff:g>\"を削除</string>
+  <string name="destroy_saved_search_confirm_message">保存した検索\"<xliff:g id="name">%s</xliff:g>\"を削除しますか?後で保存し直すこともできます。</string>
   <string name="signing_in_error_browser_sign_in_hint">ログインエラー、ブラウザでログインする方法を試してみてください。(カスタムAPI設定は無視されます)</string>
   <string name="report_user"><xliff:g id="name">%s</xliff:g>をスパム報告する</string>
   <string name="report_user_confirm_message"><xliff:g id="name">%s</xliff:g>をスパム報告しますか? 同時にブロックもします。</string>
@@ -562,7 +566,7 @@
   <string name="N_new_messages_quantity_other"><xliff:g id="items">%d</xliff:g>件の未読DM</string>
   <string name="share_subject_format"><xliff:g id="name">%1$s</xliff:g> (@<xliff:g id="screen_name">%2$s</xliff:g>) - <xliff:g id="time">%3$s</xliff:g></string>
   <string name="rate_limit">API制限</string>
-  <string name="wizard_hint_rate_limit">API制限が発生するのはTwitterのせいなので開発者を責めないでください。</string>
+  <string name="wizard_hint_rate_limit">API制限が発生するのはTwitterの方針なので開発者を責めないでください。</string>
   <string name="preparing_database">データベースの準備中</string>
   <string name="preparing_database_toast">データベースの準備中、お待ちください</string>
   <string name="action_name_saved_at_time"><xliff:g id="action">%1$s</xliff:g> - 保存日時:<xliff:g id="time">%2$s</xliff:g></string>
@@ -588,8 +592,8 @@
   <string name="denied_users_follow_request"><xliff:g id="user">%s</xliff:g>さんのフォローリクエストを拒否しました。</string>
   <string name="import_settings">設定のインポート</string>
   <string name="export_settings">設定のエクスポート</string>
-  <string name="export_settings_type_dialog_title">設定をエクスポート中…</string>
-  <string name="import_settings_type_dialog_title">設定のインポート…</string>
+  <string name="export_settings_type_dialog_title">設定をエクスポート中&#8230;</string>
+  <string name="import_settings_type_dialog_title">設定のインポート&#8230;</string>
   <string name="nicknames">ニックネーム</string>
   <string name="user_colors">ユーザー色</string>
   <string name="import_export">インポート/エクスポート</string>
@@ -597,9 +601,25 @@
   <string name="progress">進捗</string>
   <string name="hidden_settings">隠し設定</string>
   <string name="hidden_settings_warning_title">警告: これらの設定は危なっかしいかも！</string>
-  <string name="hidden_settings_warning_message">よくわからない場合これらの設定を変えないでください。もしかしたら\n * あなたの猫が殺されたり\n * 北朝鮮の核兵器が発射されたり\n * すべての魔法少女が魔女化したり\n * 宇宙が再構築されたり\nするかもしれません…</string>
-  <string name="force_using_private_apis">非公開APIを強制的に利用する</string>
+  <string name="hidden_settings_warning_message">よくわからない場合この設定を変えないでください。もしかしたら\n * 藪から出てきた蛇に噛まれたり\n * 北朝鮮の核兵器が発射されたり\n * すべての魔法少女が魔女化したり\n * 宇宙が再構築されたり\nするかもしれません…</string>
+  <string name="force_using_private_apis">非公開APIの使用を強制する</string>
   <string name="status_text_limit">ツイート文字数制限</string>
   <string name="load_more_from_top">上からさらに読み込む</string>
-  <string name="load_more_from_top_summary">下から上に読みたい場合に便利です</string>
+  <string name="load_more_from_top_summary">下から上に読みたい場合に便利です。</string>
+  <string name="twitter_link_handler">Twitterリンクハンドラ</string>
+  <string name="compose_now">Tweet Now</string>
+  <string name="compose_now_summary">ホームキーを上にスワイプしたときに出るGoogle Nowショートカットを「ツイートする」に変更します。</string>
+  <string name="compose_now_action">Tweet Nowアクション</string>
+  <string name="open_with_account">アカウントを選んで開く</string>
+  <string name="card_highlight_option">カードの強調オプション</string>
+  <string name="card_highlight_option_highlight">ハイライト</string>
+  <string name="card_highlight_option_line">下線</string>
+  <string name="timeline_sync_service">タイムライン同期サービス</string>
+  <string name="image_preview_scale_type">画像プレビューの表示形式</string>
+  <string name="image_preview_scale_type_crop">切り取り</string>
+  <string name="image_preview_scale_type_fit_center">中央表示</string>
+  <string name="quote_protected_status_warning_message">このツイートはロックされています。\n\n非公開ユーザーのツイートを公開しないでください。</string>
+  <string name="send_anyway">送信する</string>
+  <string name="my_following_only">フォロー中のみ</string>
+  <string name="my_following_only_summary">フォローしているユーザーからの通知だけを表示するようにします。</string>
 </resources>

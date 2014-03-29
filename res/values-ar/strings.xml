@@ -238,7 +238,6 @@
   <string name="error_message_image_uploader_not_found">لم يتم العثور على مركز رفع الصور،ربما تم إلغاء تثبيته.</string>
   <string name="image_upload_format">شكل تغيردة ذات صورة</string>
   <string name="tweet_shortener">مقصِّر التغريدة</string>
-  <string name="status_shortener_default">لايوجد (ألغي الارسال)</string>
   <string name="error_message_status_too_long">تغريدتك طويلة جدا.</string>
   <string name="error_message_no_content">لايجد أي محتوى</string>
   <string name="error_message_tweet_shorten_failed">فشل في تقصير التغريدة.</string>
@@ -316,6 +315,9 @@
   <string name="action_subscribing_to_list">الإنخراط في القائمة</string>
   <string name="action_unsubscribing_from_list">إلغاء الانخراط باللائحة</string>
   <string name="action_saving_search">جاري حفظ البحث</string>
+  <string name="action_deleting_search">جارِ حذف البحث</string>
+  <string name="action_accepting_follow_request">جارِ قبول طلب التتبع</string>
+  <string name="action_denying_follow_request">جارِ رفض طلب التتبع</string>
   <string name="status_is_duplicate">تغريدتك هذه مزدوجة</string>
   <string name="data_profiling">إحصائيات الاستخدام</string>
   <string name="enable_data_profiling">تمكين التبليغ</string>
@@ -382,7 +384,8 @@
   <string name="direct_message_sent">تم إرسال الرسالة المباشرة.</string>
   <string name="direct_message_deleted">تم حذف الرسالة المباشرة.</string>
   <string name="search_saved">تم حفض البحث.</string>
-  <string name="import_from">استيراد من …</string>
+  <string name="search_deleted">بحث محذوف.</string>
+  <string name="import_from">استيراد من &#8230;</string>
   <string name="link_to_quoted_status">ربط لتغريدة مقتبسة</string>
   <string name="followed_user">تم تتبع <xliff:g id="user">%s</xliff:g>.</string>
   <string name="unfollowed_user">تم إلغاء تتبع <xliff:g id="user">%s</xliff:g>.</string>
@@ -400,9 +403,11 @@
   <string name="subscribe">الانخراط</string>
   <string name="unsubscribe">إلغاء الإنخراط</string>
   <string name="original_status">التغريدة الأصلية</string>
+  <string name="compose_quit_action">عند إلغاء \"التأليف\"</string>
   <string name="ask">سأل</string>
   <string name="no_close_after_status_updated">ترك \"كتابة التغريدة\" مفتوح بعد إرسال التغريدة</string>
   <string name="status_saved_to_draft">تم حفض التغربدة كمسودة.</string>
+  <string name="default_account">الحساب الافتراضي</string>
   <string name="empty_content">محتوى فارغ</string>
   <string name="fast_image_loading">تحميل سريع للصور</string>
   <string name="fast_image_loading_summary">فعل كي تشحن الصور بسرعة، عطل هذا إذا تعذر إضهار بعض الصور.</string>
@@ -419,8 +424,9 @@
   <string name="no_rule">ولا قاعدة</string>
   <string name="enable_in_mentions">تفعيل في الإشارات</string>
   <string name="enable_in_home_timeline">تفعيل في الخط الزمني الرئيسي</string>
+  <string name="enable_for_rts">تفعيل من أجل إعادة التغريدات</string>
   <string name="safety">الأمن</string>
-  <string name="updating_status_notification">جاري إرسال التغريدة…</string>
+  <string name="updating_status_notification">جاري إرسال التغريدة&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">طلب</string>
   <string name="nickname_only">اللقب فقط</string>
@@ -428,6 +434,7 @@
   <string name="input_text">إدخال النص</string>
   <string name="users_lists_with_name">قواءم <xliff:g id="name">%s</xliff:g></string>
   <string name="lists_following_user_with_name">قوائم تتبع <xliff:g id="name">%s</xliff:g></string>
+  <string name="highlight">تعليم</string>
   <string name="underline">تسطير</string>
   <string name="users_statuses">تغريدات المستخدم</string>
   <string name="card_animation">حركة البطاقات</string>
@@ -437,14 +444,16 @@
   <string name="wizard_page_welcome_title">مرحبا</string>
   <string name="wizard_page_welcome_text">شكر ﻹختياكك تويدر.\nهل ترغب في إعداده الأن ؟</string>
   <string name="wizard_page_welcome_yes">نعم</string>
+  <string name="wizard_page_welcome_not_now">ليس الأن</string>
   <string name="wizard_page_welcome_import_settings">إستيراد الإعدادات</string>
   <string name="wizard_page_theme_text">اختر ثيم يُعجبك.</string>
   <string name="wizard_page_tabs_text">أضف بعض للتبويبات إلى تويدر.\nتتبع الأشخاص أو الأشياء التي تهتم بشأنها.</string>
-  <string name="wizard_page_tabs_unchanged_message">يمكنك فضافت تبويبات من \"إعدادات\" - \"تبويبات\"</string>
+  <string name="wizard_page_tabs_unchanged_message">يمكنك إضافة تبويبات من \"إعدادات\" - \"تبويبات\"</string>
   <string name="wizard_page_cards_text">إعداد مكونات البطاقة.</string>
   <string name="wizard_page_hints_text">بعض الإشارات المفيدة.</string>
   <string name="wizard_page_finished_title">إنتهى</string>
   <string name="wizard_page_finished_text">الأن تويدر جاهز للإستعمال.</string>
+  <string name="invalid_tab">تبويبة معطلة</string>
   <string name="send_crash_report">إرسال تقرير حول تعطل تويدر</string>
   <string name="add_to_filter">الإضافة إلى لائحة الكتم</string>
   <string name="user_filter_name">المستخدم : <xliff:g id="name">%s</xliff:g></string>
@@ -461,6 +470,7 @@
   <string name="pay_via_paypal">الدفع عن طريق PayPal مباشرة</string>
   <string name="pay_via_paypal_summary">عندما ترى \"هذا المستلم ليس مؤهلا لتلقي الأموال\"</string>
   <string name="donate_via_alipay">التبرع عبر Alipay</string>
+  <string name="unread_count">عدد غير المقروء</string>
   <string name="developed_by">من تطوير</string>
   <string name="project_account">حساب المشروع</string>
   <string name="donators">المتبرعون</string>
@@ -487,7 +497,28 @@
   <string name="wizard_hint_compose_select_account">إضغط على هذه اﻷيقونة لاختيار الحساب عند كتابة تغريدة.</string>
   <string name="wizard_hint_quote_format">حدد شكل الإقتباس اامفضل لديك في \"الإعدادات تاء\" - \"اامحتوي و التخزين\"</string>
   <string name="wizard_hint_filters">يمكنك كتم التغريدات الغير مرغوب فيها من الخط الزمني والإخطارات باستعمال \"قواعد الكتم\".</string>
+  <string name="view_replies">مشاهدة الردود</string>
+  <string name="rate_limit">الحد القصوي</string>
   <string name="update_status">إرسال التغريدة</string>
   <string name="sending_direct_message">جارِ إرسال رسالة مباشرة</string>
+  <string name="center">الوسط</string>
+  <string name="multi_select">اختيار متعدد</string>
+  <string name="long_click_to_open_menu">اضغط مطولا لفتح القائمة</string>
+  <string name="swipe_back">مرر للإغلاق</string>
+  <string name="tab_display_option_icon">أيقونة</string>
+  <string name="tab_display_option_label">تسمية</string>
+  <string name="tab_display_option_icon_and_label">أيقونة وتسمية</string>
+  <string name="highlight_and_underline">تعليم وتسطير</string>
+  <string name="back">العودة</string>
   <string name="accept">الموافقة</string>
+  <string name="deny">رفض</string>
+  <string name="import_settings">استيراد الإعدادات</string>
+  <string name="export_settings">تصدير الإعدادات</string>
+  <string name="export_settings_type_dialog_title">تصدير الإعدادات&#8230;</string>
+  <string name="import_settings_type_dialog_title">استيراد الإعدادات&#8230;</string>
+  <string name="nicknames">أسماء مستعارة</string>
+  <string name="user_colors">ألوان المستخدم</string>
+  <string name="progress">التقدم</string>
+  <string name="hidden_settings">إعدادات مخفية</string>
+  <string name="hidden_settings_warning_title">تحذير: هذه الإعدادات قد تسبب ضررا!</string>
 </resources>

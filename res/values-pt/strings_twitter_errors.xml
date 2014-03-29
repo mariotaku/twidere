@@ -4,8 +4,15 @@
   <string name="error_32">Não foi possível autenticar você, talvez seja necessário logar novamente.</string>
   <string name="error_34">Este tweet, usuário ou página não existe.</string>
   <string name="error_88">Limite de acessos atingido, tente mais tarde.</string>
+  <string name="error_89">Suas informações de login estão incorretas ou expiradas, por favor logue-se novamente.</string>
   <string name="error_64">Sua conta está suspensa e não pode acessar esta função.</string>
   <string name="error_130">O Twitter está sobrecarregado.</string>
   <string name="error_131">O servidor do Twitter está temporariamente fora do ar, tente mais tarde.</string>
+  <string name="error_135">Por favor verifique o relógio do sistema.</string>
+  <string name="error_162">Você foi bloqueado por este usuário.</string>
+  <string name="error_172">Você já salvou esta pesquisa.</string>
+  <string name="error_179">Você não pode ver este tweet, ele está protegido.</string>
+  <string name="error_187">Você já enviou este tweet.</string>
   <string name="error_193">A foto que você enviou é grande demais.</string>
+  <string name="error_215">Talvez seja preciso se logar novamente.</string>
 </resources>

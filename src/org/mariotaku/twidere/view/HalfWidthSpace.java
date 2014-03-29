@@ -33,12 +33,6 @@ public class HalfWidthSpace extends View {
 		}
 	}
 
-	@Override
-	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-		super.onScrollChanged(l, t, oldl, oldt);
-		Log.d("Twidere", String.format("l:%d, t: %d", l, t));
-	}
-
 	/**
 	 * Draw nothing.
 	 * 
@@ -53,5 +47,11 @@ public class HalfWidthSpace extends View {
 		final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
 		setMeasuredDimension(width, height);
 		super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+	}
+
+	@Override
+	protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
+		super.onScrollChanged(l, t, oldl, oldt);
+		Log.d("Twidere", String.format("l:%d, t: %d", l, t));
 	}
 }

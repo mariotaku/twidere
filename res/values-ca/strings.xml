@@ -108,7 +108,7 @@
   <string name="unfollow">Deixa de seguir</string>
   <string name="bottom_compose_button">Botó «redacta» a sota</string>
   <string name="bottom_compose_button_summary">Mostra el botó de redactar a la part de baix. Activeu-ho si teniu una pantalla gran.</string>
-  <string name="leftside_compose_button">Botó de redacta al costat esquerre</string>
+  <string name="leftside_compose_button">Botó de redacta al costat esquerra</string>
   <string name="leftside_compose_button_summary">Mostra el botó de redactar a la part esquerra.</string>
   <string name="bottom_send_button">Botó «envia» a sota</string>
   <string name="load_item_limit">Límit d\'elements per càrrega</string>
@@ -237,7 +237,6 @@
   <string name="image_upload_format">Format de les piulades amb imatge</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Enllaç de la imatge\n\"[TEXT]\" = Contingut de la piulada\n(sols l\'extensió)</string>
   <string name="tweet_shortener">Servei per escurçar piulades</string>
-  <string name="status_shortener_default">Cap (Avorta l\'enviament)</string>
   <string name="error_message_status_too_long">Piulada massa llarga.</string>
   <string name="error_message_no_content">Sense contingut</string>
   <string name="error_message_tweet_shorten_failed">Ha fallat l\'escurçador de piulades.</string>
@@ -410,7 +409,7 @@
   <string name="search_name_saved">La cerca «<xliff:g id="name">%s</xliff:g>» ha estat desada.</string>
   <string name="search_deleted">La cerca ha estat esborrada.</string>
   <string name="search_name_deleted">La cerca «<xliff:g id="name">%s</xliff:g>» ha estat esborrada.</string>
-  <string name="import_from">Importa des de…</string>
+  <string name="import_from">Importa des de&#8230;</string>
   <string name="link_to_quoted_status">Enllaça la piulada citada</string>
   <string name="followed_user">Esteu seguint <xliff:g id="user">%s</xliff:g>.</string>
   <string name="sent_follow_request_to_user">S\'ha soŀlicitat a <xliff:g id="user">%s</xliff:g> que us segueixi.</string>
@@ -464,7 +463,7 @@
   <string name="enable_in_home_timeline">Habilita en la cronologia</string>
   <string name="enable_for_rts">Habilita per a repiulades</string>
   <string name="safety">Seguretat</string>
-  <string name="updating_status_notification">S\'està enviant la piulada…</string>
+  <string name="updating_status_notification">S\'està enviant la piulada&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Consulta</string>
   <string name="nickname_only">Només el sobrenom</string>
@@ -506,6 +505,8 @@
   <string name="delete_user_list_confirm_message">Voleu esborrar la llista <xliff:g id="name">%s</xliff:g>? Aquesta acció no es pot desfer.</string>
   <string name="unsubscribe_from_user_list">Canceŀla la subscripció a la llista <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Voleu canceŀlar la subscripció a la llista <xliff:g id="name">%s</xliff:g>? Podreu tornar a subscriure-us-hi més endavant.</string>
+  <string name="destroy_status">Esborra piulada</string>
+  <string name="destroy_status_confirm_message">Esborrar aquesta piulada?</string>
   <string name="destroy_saved_search">Esborra la cerca desada «<xliff:g id="name">%s</xliff:g>»</string>
   <string name="destroy_saved_search_confirm_message">Voleu esborrar la cerca desada «<xliff:g id="name">%s</xliff:g>»? Podeu tornar a desar-la quan vulgueu.</string>
   <string name="signing_in_error_browser_sign_in_hint">Hi ha hagut un error mentre s\'accedia. Proveu el mètode d\'accedir a través d\'un navegador.
@@ -589,8 +590,8 @@
   <string name="denied_users_follow_request">S\'ha denegat la soŀlicitud de seguiment de <xliff:g id="user">%s</xliff:g>.</string>
   <string name="import_settings">Importa paràmetres</string>
   <string name="export_settings">Exporta els paràmetres</string>
-  <string name="export_settings_type_dialog_title">Exporta els paràmetres…</string>
-  <string name="import_settings_type_dialog_title">Importa paràmetres…</string>
+  <string name="export_settings_type_dialog_title">Exporta els paràmetres&#8230;</string>
+  <string name="import_settings_type_dialog_title">Importa paràmetres&#8230;</string>
   <string name="nicknames">Sobrenoms</string>
   <string name="user_colors">Colors de l\'usuari</string>
   <string name="import_export">Importar/Exportar</string>
@@ -603,4 +604,10 @@
   <string name="status_text_limit">Límit de llargària del tuit</string>
   <string name="load_more_from_top">Carrega piulades amagades per sobre</string>
   <string name="load_more_from_top_summary">Útil si t\'estimes més llegir d\'avall cap amunt</string>
+  <string name="twitter_link_handler">Gestor de links de Twitter</string>
+  <string name="compose_now">Composa ara</string>
+  <string name="compose_now_summary">Reemplaça drecera Google Now per pantalla de Composar</string>
+  <string name="compose_now_action">Acció Composa Ara</string>
+  <string name="open_with_account">Obre amb compte</string>
+  <string name="card_highlight_option">Opció de destacament de targetes</string>
 </resources>

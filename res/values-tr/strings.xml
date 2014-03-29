@@ -237,7 +237,6 @@
   <string name="image_upload_format">Resim ile tweet şekli</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Resim kısayolu\n\"[TEXT]\" = Tweet içeriği\n(yalnızca Eklenti)</string>
   <string name="tweet_shortener">Tweet kısaltıcı</string>
-  <string name="status_shortener_default">Hiçbiri (Göndermekten vazgeç)</string>
   <string name="error_message_status_too_long">Tweet çok uzun.</string>
   <string name="error_message_no_content">İçerik yok</string>
   <string name="error_message_tweet_shorten_failed">Tweet kısaltılamadı.</string>
@@ -415,7 +414,7 @@ Twidere toplanmış verileri sadece WiFi kullanılabilir olduğunda ve cihazın�
   <string name="search_name_saved">Arama \"<xliff:g id="name">%s</xliff:g>\" kaydedildi.</string>
   <string name="search_deleted">Arama silindi.</string>
   <string name="search_name_deleted">Arama \"<xliff:g id="name">%s</xliff:g>\" silindi.</string>
-  <string name="import_from">Şuradan import…</string>
+  <string name="import_from">Şuradan import&#8230;</string>
   <string name="link_to_quoted_status">Alıntılanmış tweet\'a link</string>
   <string name="followed_user"><xliff:g id="user">%s</xliff:g> takiplendi.</string>
   <string name="sent_follow_request_to_user"><xliff:g id="user">%s</xliff:g> kişisine takip isteği gönderildi.</string>
@@ -433,7 +432,7 @@ Twidere toplanmış verileri sadece WiFi kullanılabilir olduğunda ve cihazın�
   <string name="added_N_users_to_list_quantity_one"><xliff:g id="items">%1$d</xliff:g> kullanıcısı "<xliff:g id="list">%2$s</xliff:g>\" listesine eklendi.</string>
   <string name="enable_for_rts">RTlere izin ver</string>
   <string name="safety">Güvenlik</string>
-  <string name="updating_status_notification">Tweet gönderiliyor…</string>
+  <string name="updating_status_notification">Tweet gönderiliyor&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g>(<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Sorgu</string>
   <string name="nickname_only">Sadece lakap</string>

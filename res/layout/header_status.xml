@@ -87,7 +87,7 @@
 			android:background="#40808080"/>
 
 		<include
-			layout="@layout/image_preview"
+			layout="@layout/image_preview_grid"
 			android:visibility="gone"/>
 
 		<org.mariotaku.twidere.view.themed.ThemedTextView

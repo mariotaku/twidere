@@ -31,6 +31,7 @@ public interface TweetStore {
 	public static final String TYPE_INT = "INTEGER";
 	public static final String TYPE_INT_UNIQUE = "INTEGER UNIQUE";
 	public static final String TYPE_BOOLEAN = "INTEGER(1)";
+	public static final String TYPE_BOOLEAN_DEFAULT_TRUE = "INTEGER(1) DEFAULT 1";
 	public static final String TYPE_TEXT = "TEXT";
 	public static final String TYPE_TEXT_NOT_NULL = "TEXT NOT NULL";
 
@@ -696,7 +697,7 @@ public interface TweetStore {
 		public static final String MY_RETWEET_ID = "my_retweet_id";
 
 		public static final String MEDIAS = "medias";
-		
+
 		public static final String FIRST_MEDIA = "first_media";
 
 		public static final String MENTIONS = "mentions";

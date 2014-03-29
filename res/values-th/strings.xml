@@ -237,7 +237,6 @@
   <string name="image_upload_format">รูปแบบทวีตพร้อมรูปภาพ</string>
   <string name="image_upload_format_summary">\"[LINK]\" = ลิงค์รูป\n\"[TEXT]\" = เนื้อหาทวีต\n(Extension เท่านั้น)</string>
   <string name="tweet_shortener">ตัวย่อทวีต</string>
-  <string name="status_shortener_default">ไม่มี (ยกเลิกการส่ง)</string>
   <string name="error_message_status_too_long">ทวีตยาวเกินไป</string>
   <string name="error_message_no_content">ไม่มีเนื้อหา</string>
   <string name="error_message_tweet_shorten_failed">การย่อทวีตล้มเหลว</string>
@@ -321,14 +320,69 @@
   <string name="data_profiling_summary">Twidere เข้าร่วมเป็นส่วนหนึ่งของการวิจัยเกี่ยวกับการคาดเดาพฤติกรรมทางสังคมของผู้ใช้เพื่อแคชข้อมูลล่วงหน้า โดยนักศึกษาในมหาวิทยาลัย UC Davis\n\nเหล่านี้คือข้อมูลและเหตุผลที่เราต้องการตรวจเก็บ:\nข้อมูลที่ตรวจเก็บ:\n1. ID ทวิตเตอร์ของผู้ใช้\n2. ไทม์ไลน์โฮมของผู้ใช้ (การคาดเดาข้อมูลมีพื้นฐานจากความสนใจและพฤติกรรมทางสังคมของผู้ใช้)\n3. ทวีตที่ผู้ใช้เปิดดู (การคาดเดาข้อมูลมีพื้นฐานจากความสนใจและพฤติกรรมทางสังคมของผู้ใช้)\n4. ตำแหน่งที่อยู่ของผู้ใช้อย่างคร่าวๆ (สำหรับใช้คาดเดาว่าเมื่อไหร่ผู้ใช้จะะเข้าใช้ทวิตเตอร์)\n\nTwidere จะส่งข้อมูลที่ตรวจเก็บได้ผ่านทาง Wifi และเมื่ออุกกรณ์ของผู้ใช้นั้นกำลังชาร์จแบตเตอรี่อยู่เท่านั้น ดังนั้นจึงวางใจได้ว่าจะไม่ทำให้มีการใช้ปริมาณแพ็คเกจข้อมูลเพิ่มเติมใดๆ รวมถึงไม่เปลืองแบตผู้ใช้ด้วยเช่นกัน</string>
   <string name="data_profiling">สถิติการใช้งาน</string>
   <string name="enable_data_profiling">เปิดการรายงาน</string>
+  <string name="data_profiling_notification_title">สถิติการใช้งาน</string>
+  <string name="data_profiling_notification_desc">เปิดหรือปิดการติดตามสถิติการใช้งาน</string>
+  <string name="silent_notifications">การเตือนแบบเงียบ</string>
+  <string name="silent_notifications_summary">ปิดเสียงเตือนและการสั่นสำหรับการแจ้งเตือน</string>
+  <string name="disable_background_service">ปิดการทำงานเซอร์วิสที่ทำงานอยู่เบื้องหลัง</string>
+  <string name="text_copied">ข้อความถูกคัดลอกไปยังคลิปบอร์ดแล้ว</string>
+  <string name="amount_usd">จำนวน (ดอลลาร์สหรัฐ)</string>
+  <string name="donate">บริจาค</string>
+  <string name="edit_profile">แก้ไขข้อมูลส่วนตัว</string>
+  <string name="display_sensitive_contents">แสดงเนื้อหาที่อ่อนไหว</string>
+  <string name="mark_as_sensitive">ระบุเป็นเนื้อหาที่อ่อนไหว</string>
+  <string name="remove_sensitive_mark">เลิกระบุว่าเป็นเนื้อหาที่อ่อนไหว</string>
+  <string name="none">ไม่มี</string>
+  <string name="large">ใหญ่</string>
+  <string name="small">เล็ก</string>
+  <string name="clear_search_history">ล้างประวัติการค้นหา</string>
+  <string name="permission_description_none">ไม่ต้องการสิทธิ์ใดๆ เพิ่มเติม</string>
+  <string name="permission_description_refresh">รีเฟรชไทม์ไลน์ (รวมถึงข้อความด่วน)</string>
+  <string name="accept_permission_request">ยอมรับ</string>
+  <string name="no_thanks">ไม่, ขอบคุณ</string>
   <string name="revoke_permissions">เพิกถอนสิทธิ์</string>
   <string name="fast_scroll_thumb">แสดงแถบสกรอลบาร์</string>
   <string name="indicate_my_status">ทำเครื่องหมายข้อความของฉัน</string>
   <string name="default_ringtone">เสียงเตือน</string>
   <string name="phishing_link_warning">คำเตือนลิงค์หลอกลวง</string>
+  <string name="phishing_link_warning_message_2">คุณต้องการทำต่อใช่หรือไม่?</string>
+  <string name="image_preload_options">ตัวเลือกการโหลดภาพล่วงหน้า</string>
+  <string name="profile_images">ภาพแทนตัว</string>
+  <string name="preview_images">แสดงตัวอย่างภาพ</string>
+  <string name="preload_wifi_only">โหลดล่วงหน้าเมื่อใช้ Wifi เท่านั้น</string>
+  <string name="disable_tab_swipe">ปิดการปัดแท็บ</string>
+  <string name="sign_in_method_introduction_title">มันทำงานอย่างไร?</string>
   <string name="edit_draft">แก้ไขแบบร่าง</string>
   <string name="profile_image">ภาพโปรไฟล์</string>
   <string name="my_profile_image">ภาพโปรไฟล์ของฉัน</string>
+  <string name="theme_color">สีของธีม</string>
+  <string name="wrong_url_format">รูปแบบ URL ผิด</string>
+  <string name="wrong_username_password">username/password ไม่ถูกต้อง</string>
   <string name="network_error">ข้อผิดพลาดของเครือข่าย</string>
-  <string name="import_from">นำเข้าจาก…</string>
+  <string name="status_updated">ข้อความถูกส่งแล้ว</string>
+  <string name="status_deleted">ข้อความถูกลบแล้ว</string>
+  <string name="search_deleted">ลบการค้นหาแล้ว</string>
+  <string name="import_from">นำเข้าจาก&#8230;</string>
+  <string name="followed_user">ติดตาม <xliff:g id="user">%s</xliff:g></string>
+  <string name="sent_follow_request_to_user">ส่งคำขอติดตามถึง <xliff:g id="user">%s</xliff:g></string>
+  <string name="unfollowed_user">เลิกติดตาม <xliff:g id="user">%s</xliff:g></string>
+  <string name="unblocked_user">เลิกปิดกั้น <xliff:g id="user">%s</xliff:g>.</string>
+  <string name="profile_banner_image_updated">อัพเดทภาพส่วนหัวเรียบร้อยแล้ว</string>
+  <string name="profile_image_updated">ภาพโปรไฟล์คุณได้อัพเดทเรียบร้อยแล้ว</string>
+  <string name="unsubscribed_from_list">เลิกรับสมัครข้อมูลจากรายชื่อ \"<xliff:g id="list">%s</xliff:g>\"</string>
+  <string name="subscribe">รับข่าวสาร</string>
+  <string name="unsubscribe">เลิกรับข่าวสาร</string>
+  <string name="original_status">ทวีตเดิม</string>
+  <string name="ask">ถาม</string>
+  <string name="status_saved_to_draft">บันทึกข้อความร่างแล้ว</string>
+  <string name="default_account">บัญชีหลัก</string>
+  <string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (ทวีต <xliff:g id="daily_tweet">%2$d</xliff:g> ต่อวัน)</string>
+  <string name="select_user">เลือกผู้ใช้</string>
+  <string name="add_to_list">เพิ่มไปยังรายการ</string>
+  <string name="account_delete_confirm_title">ลบบัญชี</string>
+  <string name="account_delete_confirm_message">บัญชีนี้จะถูกลบออกจาก Twidere</string>
+  <string name="theme">ธีม</string>
+  <string name="theme_dark">มืด</string>
+  <string name="theme_light">สว่าง</string>
+  <string name="settings_interface">อินเตอร์เฟส</string>
 </resources>

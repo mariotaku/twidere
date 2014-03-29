@@ -30,7 +30,7 @@
   <string name="home">主頁</string>
   <string name="mentions">提及</string>
   <string name="error_occurred">發生錯誤，請重試</string>
-  <string name="error_already_logged_in">你已經登錄</string>
+  <string name="error_already_logged_in">您已經登入</string>
   <string name="no_account_selected">沒有選擇帳號</string>
   <string name="empty_account_selection_disallowed">請選擇至少一個帳號</string>
   <string name="error_unknown_error">錯誤：未知錯誤，這很可能是個bug</string>
@@ -80,7 +80,7 @@
   <string name="clear_cache">清除緩存</string>
   <string name="clear_cache_summary">清除儲存的個人資料圖片緩存</string>
   <string name="clear_databases">清除資料庫</string>
-  <string name="clear_databases_summary">清除資料庫中的推文、私信等。不必擔心，你的帳號信息不會丟失</string>
+  <string name="clear_databases_summary">清除資料庫中的推文、私信等。不必擔心，你的帳號資訊不會遺失</string>
   <string name="look_and_feel">觀感</string>
   <string name="display_profile_image">顯示個人資料圖片</string>
   <string name="image_load_summary">關閉可以加快列表的滾動速度，以及減少數據流量</string>
@@ -237,7 +237,6 @@
   <string name="image_upload_format">上傳圖片的推文格式</string>
   <string name="image_upload_format_summary">\"[LINK]\" = 圖片連結\n\"[TEXT]\" = 推文內容\n（僅第三方有效。）</string>
   <string name="tweet_shortener">推文縮短服務</string>
-  <string name="status_shortener_default">無（不發送過長推文）</string>
   <string name="error_message_status_too_long">推文太長</string>
   <string name="error_message_no_content">沒有內容</string>
   <string name="error_message_tweet_shorten_failed">推文縮短失敗</string>
@@ -410,7 +409,7 @@
   <string name="search_name_saved">搜尋 \"<xliff:g id="name">%s</xliff:g>\" 已儲存</string>
   <string name="search_deleted">搜尋已刪除</string>
   <string name="search_name_deleted">搜尋 \"<xliff:g id="name">%s</xliff:g>\" 已刪除</string>
-  <string name="import_from">匯入從…</string>
+  <string name="import_from">匯入從&#8230;</string>
   <string name="link_to_quoted_status">連結到引用的推文</string>
   <string name="followed_user">關注了 <xliff:g id="user">%s</xliff:g></string>
   <string name="sent_follow_request_to_user">向 <xliff:g id="user">%s</xliff:g> 送出了關注請求</string>
@@ -464,7 +463,7 @@
   <string name="enable_in_home_timeline">在主頁時間軸啟用</string>
   <string name="enable_for_rts">在轉推啟用</string>
   <string name="safety">安全</string>
-  <string name="updating_status_notification">正在發送推文…</string>
+  <string name="updating_status_notification">正在發送推文&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g>（<xliff:g id="nickname">%2$s</xliff:g>）</string>
   <string name="query">查詢</string>
   <string name="nickname_only">僅顯示暱稱</string>

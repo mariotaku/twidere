@@ -42,7 +42,7 @@ public class MediaPreviewAdapter extends ArrayAdapter<String> implements Constan
 	private boolean mIsPossiblySensitive;
 
 	public MediaPreviewAdapter(final Context context) {
-		super(context, R.layout.image_preview_item);
+		super(context, R.layout.gallery_item_image_preview);
 		mImageLoader = ((TwidereApplication) context.getApplicationContext()).getImageLoaderWrapper();
 		mPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mImageLoadingHandler = new ImageLoadingHandler();

@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 
 import org.mariotaku.twidere.Constants;
@@ -90,7 +91,8 @@ public class ShortTimeView extends ThemedTextView implements Constants, OnShared
 		if (mShowAbsoluteTime) {
 			setText(formatSameDayTime(getContext(), mTime));
 		} else {
-			setText(getRelativeTimeSpanString(mTime));
+			setText(getRelativeTimeSpanString(mTime, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS,
+					DateUtils.FORMAT_ABBREV_ALL));
 		}
 	}
 

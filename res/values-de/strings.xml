@@ -80,7 +80,7 @@
   <string name="clear_cache">Cache löschen</string>
   <string name="clear_cache_summary">Lösche Profilbild-Cache.</string>
   <string name="clear_databases">Lösche Datenbank</string>
-  <string name="clear_databases_summary">Alle Tweets, Profile und Nachrichten löschen. Deine Account-Informationen werden nicht gelöscht.</string>
+  <string name="clear_databases_summary">Alle Tweets, Profile und Nachrichten löschen. Deine Konto-Informationen werden nicht gelöscht.</string>
   <string name="look_and_feel">Aussehen</string>
   <string name="display_profile_image">Zeige Profilbilder</string>
   <string name="image_load_summary">Deaktivierung um die Scroll-Geschwindigkeit zu erhöhen und den Datenverbrauch zu verringern.</string>
@@ -237,7 +237,7 @@
   <string name="image_upload_format">Tweet-Format mit Bild</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Bild link\n\"[TEXT]\" = Text inhalt\n(Nur mit Erweiterung)</string>
   <string name="tweet_shortener">Tweet-Verkürzungsdienst</string>
-  <string name="status_shortener_default">Nicht kürzen (Senden abbrechen)</string>
+  <string name="status_shortener">Tweet-Verkürzungsdienst</string>
   <string name="error_message_status_too_long">Der Tweet ist zu lang.</string>
   <string name="error_message_no_content">Kein Inhalt</string>
   <string name="error_message_tweet_shorten_failed">Tweet-Verkürzung schlug fehl.</string>
@@ -410,7 +410,7 @@
   <string name="search_name_saved">Suche \"<xliff:g id="name">%s</xliff:g>\" gespeichert.</string>
   <string name="search_deleted">Suche gelöscht.</string>
   <string name="search_name_deleted">Suche \"<xliff:g id="name">%s</xliff:g>\" gelöscht.</string>
-  <string name="import_from">Importiere aus…</string>
+  <string name="import_from">Importiere aus&#8230;</string>
   <string name="link_to_quoted_status">Link zum zitierten Tweet</string>
   <string name="followed_user">Folge <xliff:g id="user">%s</xliff:g>.</string>
   <string name="sent_follow_request_to_user">Follower-Anfrage an <xliff:g id="user">%s</xliff:g> senden.</string>
@@ -506,8 +506,8 @@
   <string name="delete_user_list_confirm_message">Liste <xliff:g id="name">%s</xliff:g> wirklich löschen? Das kann nicht rückgängig gemacht werden.</string>
   <string name="unsubscribe_from_user_list">Aus Liste <xliff:g id="name">%s</xliff:g> austragen</string>
   <string name="unsubscribe_from_user_list_confirm_message">Aus Liste <xliff:g id="name">%s</xliff:g> wirklich austragen? Du kannst Dich jederzeit wieder eintragen.</string>
-  <string name="destroy_saved_search">Lösche gepeicherte Suche \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="destroy_saved_search_confirm_message">Lösche gespeicherte Suche \"<xliff:g id="name">%s</xliff:g>\"? Du kannst diese Suche in Kürze erneut speichern.</string>
+  <string name="destroy_status">Tweet löschen</string>
+  <string name="destroy_status_confirm_message">Tweet löschen?</string>
   <string name="signing_in_error_browser_sign_in_hint">Fehler bei der Anmeldung, bitte melde Dich im Browser an.</string>
   <string name="report_user"><xliff:g id="name">%s</xliff:g> melden</string>
   <string name="report_user_confirm_message"><xliff:g id="name">%s</xliff:g> als Spam melden? Dieser Benutzer wird gleichzeitig geblockt.</string>
@@ -588,8 +588,8 @@
   <string name="denied_users_follow_request">Follower-Anfrage von <xliff:g id="user">%s</xliff:g> wurde abgelehnt.</string>
   <string name="import_settings">Einstellungen importieren</string>
   <string name="export_settings">Einstellungen exportieren</string>
-  <string name="export_settings_type_dialog_title">Einstellungen exportieren…</string>
-  <string name="import_settings_type_dialog_title">Einstellungen importieren…</string>
+  <string name="export_settings_type_dialog_title">Einstellungen exportieren&#8230;</string>
+  <string name="import_settings_type_dialog_title">Einstellungen importieren&#8230;</string>
   <string name="nicknames">Spitznamen</string>
   <string name="user_colors">Benutzerfarben</string>
   <string name="import_export">Importieren/Exportieren</string>
@@ -602,4 +602,5 @@
   <string name="status_text_limit">Tweet Text Limit</string>
   <string name="load_more_from_top">Neues von Oben laden</string>
   <string name="load_more_from_top_summary">Nützlich wenn Sie von Unten nach Oben lesen wollen</string>
+  <string name="send_anyway">Trotzdem senden</string>
 </resources>

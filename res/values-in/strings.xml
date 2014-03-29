@@ -237,7 +237,6 @@
   <string name="image_upload_format">Tweet format dengan gambar</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Tautan gambar\n\"[TEXT]\" = Isi tweet\n(Ekstensi saja)</string>
   <string name="tweet_shortener">Penyingkat tweet</string>
-  <string name="status_shortener_default">Tidak ada (batal mengirim)</string>
   <string name="error_message_status_too_long">Kicauan terlalu panjang.</string>
   <string name="error_message_no_content">Tidak ada konten</string>
   <string name="error_message_tweet_shorten_failed">Penyingkat kicauan gagal.</string>
@@ -410,7 +409,7 @@
   <string name="search_name_saved">Pencarian \"<xliff:g id="name">%s</xliff:g>\" tersimpan.</string>
   <string name="search_deleted">Pencarian terhapus.</string>
   <string name="search_name_deleted">Pencarian \"<xliff:g id="name">%s</xliff:g>\" terhapus.</string>
-  <string name="import_from">Impor dari…</string>
+  <string name="import_from">Impor dari&#8230;</string>
   <string name="link_to_quoted_status">Link ke tweet kutipan</string>
   <string name="followed_user"><xliff:g id="user">%s</xliff:g> diikuti.</string>
   <string name="sent_follow_request_to_user">Mengirim permintaan mengikuti ke <xliff:g id="user">%s</xliff:g>.</string>
@@ -464,7 +463,7 @@
   <string name="enable_in_home_timeline">Aktifkan di Beranda timeline</string>
   <string name="enable_for_rts">Aktifkan untuk RTs</string>
   <string name="safety">Keamanan</string>
-  <string name="updating_status_notification">Mengirim tweet…</string>
+  <string name="updating_status_notification">Mengirim tweet&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Menanyakan</string>
   <string name="nickname_only">Hanya nama panggilan</string>
@@ -506,8 +505,10 @@
   <string name="delete_user_list_confirm_message">Hapus daftar <xliff:g id="name">%s</xliff:g>? Hal ini tidak bisa di kembalikan.</string>
   <string name="unsubscribe_from_user_list">Berhenti berlangganan dari daftar <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Berhenti berlangganan dari daftar <xliff:g id="name">%s</xliff:g>? Kamu bisa berlangganan kembali lain waktu.</string>
-  <string name="destroy_saved_search">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="destroy_saved_search_confirm_message">Hapus pencarian yang tersimpan \"<xliff:g id="name">%s</xliff:g>\"? Kamu bisa menyimpan kembali pencarian.</string>
+  <string name="destroy_status">Hapus tweet</string>
+  <string name="destroy_status_confirm_message">Hapus tweet ini?</string>
+  <string name="destroy_saved_search">Hapus pencarian tersimpan \"<xliff:g id="name">%s</xliff:g>\"</string>
+  <string name="destroy_saved_search_confirm_message">Hapus pencarian tersimpan \"<xliff:g id="name">%s</xliff:g>\"? Anda bisa menyimpan ulang pencarian ini nanti.</string>
   <string name="signing_in_error_browser_sign_in_hint">Kesalahan saat masuk, Anda mungkin perlu menggunakan browser untuk masuk. (Ini akan mengabaikan pengaturan kustom API selama masuk)</string>
   <string name="report_user">Laporkan <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Laporkan <xliff:g id="name">%s</xliff:g> karena spam? Kamu juga bisa blokir pengguna ini.</string>
@@ -588,8 +589,8 @@
   <string name="denied_users_follow_request">Permintaan mengikuti  <xliff:g id="user">%s</xliff:g> ditolak.</string>
   <string name="import_settings">Impor pengaturan</string>
   <string name="export_settings">Ekspor pengaturan</string>
-  <string name="export_settings_type_dialog_title">Ekspor pengaturan…</string>
-  <string name="import_settings_type_dialog_title">Impor pengaturan…</string>
+  <string name="export_settings_type_dialog_title">Ekspor pengaturan&#8230;</string>
+  <string name="import_settings_type_dialog_title">Impor pengaturan&#8230;</string>
   <string name="nicknames">Nama panggilan</string>
   <string name="user_colors">Warna pengguna</string>
   <string name="import_export">Impor/Ekspor</string>
@@ -602,4 +603,10 @@
   <string name="status_text_limit">Batas teks tweet</string>
   <string name="load_more_from_top">Muat lebih banyak dari atas</string>
   <string name="load_more_from_top_summary">Berguna jika Anda lebih suka membaca dari bawah ke atas</string>
+  <string name="twitter_link_handler">Pengendali tautan Twitter</string>
+  <string name="compose_now">Buat Sekarang</string>
+  <string name="compose_now_summary">Gantikan jalan pintas Google Now untuk layar Pembuatan</string>
+  <string name="compose_now_action">tindakan Pembuatan Sekarang</string>
+  <string name="open_with_account">Buka dengan akun</string>
+  <string name="card_highlight_option">Pilihan kartu sorotan</string>
 </resources>

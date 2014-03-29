@@ -108,7 +108,7 @@
   <string name="unfollow">언팔로우</string>
   <string name="bottom_compose_button">\"작성\" 버튼을 아래로</string>
   <string name="bottom_compose_button_summary">작성 버튼을 아래로 옮깁니다. 화면이 크다면 설정하십시오.</string>
-  <string name="leftside_compose_button">좌측 작성 버튼</string>
+  <string name="leftside_compose_button">작성 버튼을 왼쪽으로</string>
   <string name="leftside_compose_button_summary">작성 버튼을 왼쪽으로 옮깁니다.</string>
   <string name="bottom_send_button">\"전송\" 버튼 아래에 두기</string>
   <string name="load_item_limit">불러들일 항목 제한</string>
@@ -237,7 +237,6 @@
   <string name="image_upload_format">이미지 올릴 때 양식</string>
   <string name="image_upload_format_summary">\"[LINK]\" = 이미지 주소\n\"[TEXT]\" = 트윗할 내용\n(플러그인에서만)</string>
   <string name="tweet_shortener">트윗 축약 서비스</string>
-  <string name="status_shortener_default">없음 (전송 취소)</string>
   <string name="error_message_status_too_long">트윗이 너무 깁니다. </string>
   <string name="error_message_no_content">내용 없음</string>
   <string name="error_message_tweet_shorten_failed">트윗 축약 실패.</string>
@@ -320,8 +319,8 @@
   <string name="action_updating_details">세부사항 변경하는 중</string>
   <string name="action_blocking">차단하는 중</string>
   <string name="action_unblocking">차단해제하는 중</string>
-  <string name="action_following">팔로우하는 중</string>
-  <string name="action_unfollowing">언팔로우하는 중</string>
+  <string name="action_following">팔로우</string>
+  <string name="action_unfollowing">언팔로우</string>
   <string name="action_creating_list">리스트 만드는 중</string>
   <string name="action_adding_member">멤버 추가하는 중</string>
   <string name="action_signing_in">로그인하는 중</string>
@@ -506,8 +505,6 @@
   <string name="delete_user_list_confirm_message"><xliff:g id="name">%s</xliff:g> 리스트를 삭제하겠습니까? 되돌릴 수 없습니다.</string>
   <string name="unsubscribe_from_user_list"><xliff:g id="name">%s</xliff:g> 리스트 구독 취소</string>
   <string name="unsubscribe_from_user_list_confirm_message"><xliff:g id="name">%s</xliff:g> 리스트를 구독취소하겠습니까? 나중에 다시 구독할 수 있습니다.</string>
-  <string name="destroy_saved_search">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어 삭제</string>
-  <string name="destroy_saved_search_confirm_message">저장된 \"<xliff:g id="name">%s</xliff:g>\" 검색어를 삭제하겠습니까? 한 동안 재저장을 할 수 없게 됩니다.</string>
   <string name="signing_in_error_browser_sign_in_hint">로그인 오류입니다. 브라우저로 로그인하여 주십시오. (커스텀 API 설정은 무시됩니다)</string>
   <string name="report_user"><xliff:g id="name">%s</xliff:g>님을 스팸 신고하기</string>
   <string name="report_user_confirm_message"><xliff:g id="name">%s</xliff:g>님을 스팸 신고하겠습니까? 이 사용자를 차단하게 됩니다.</string>
@@ -596,4 +593,16 @@
   <string name="user_colors">사용자 색상</string>
   <string name="import_export">가져오기/내보내기</string>
   <string name="theme_background_alpha">테마 배경 투명값</string>
+  <string name="progress">진행</string>
+  <string name="hidden_settings">숨겨진 설정</string>
+  <string name="hidden_settings_warning_title">경고: 이 설정은 위험할 수 있습니다!</string>
+  <string name="hidden_settings_warning_message">이것이 무엇인지 잘 모르겠다면 \"절대\" 이 설정을 바꾸지 마십시오. 잘못되면\n
+* 당신의 고양이가 죽고\n
+* 북한에 핵미사일이 발사되고\n
+* 모든 마법소녀가 마녀가 될 것이며\n
+* 우주를 파괴할 것입니다.</string>
+  <string name="force_using_private_apis">프라이빗 APIs를 강제로 사용</string>
+  <string name="status_text_limit">텍스트 리밋 트윗</string>
+  <string name="load_more_from_top">위에서부터 더 많이 불러오기</string>
+  <string name="load_more_from_top_summary">밑에서 위로 읽으려 할 때 더 편합니다.</string>
 </resources>

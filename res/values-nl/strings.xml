@@ -237,7 +237,6 @@
   <string name="image_upload_format">Tweet formaat met foto</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Afbeelding link\n\"[TEXT]\" = Tweet inhoud\n(Alleen uitbreiding)</string>
   <string name="tweet_shortener">Tweet verkorter</string>
-  <string name="status_shortener_default">Niets (Verzending afbreken)</string>
   <string name="error_message_status_too_long">Tweet te lang.</string>
   <string name="error_message_no_content">Geen inhoud</string>
   <string name="error_message_tweet_shorten_failed">Tweet inkorten mislukt.</string>
@@ -410,7 +409,7 @@
   <string name="search_name_saved">Zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" opgeslagen.</string>
   <string name="search_deleted">Zoekopdracht verwijderd.</string>
   <string name="search_name_deleted">Zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderd.</string>
-  <string name="import_from">Importeren uit…</string>
+  <string name="import_from">Importeren uit&#8230;</string>
   <string name="link_to_quoted_status">Link naar geciteerde tweet</string>
   <string name="followed_user"><xliff:g id="user">%s</xliff:g> gevolgt.</string>
   <string name="sent_follow_request_to_user">Verstuur volg verzoek naar <xliff:g id="user">%s</xliff:g>.</string>
@@ -464,7 +463,7 @@
   <string name="enable_in_home_timeline">Inschakelen in thuis tijdlijn</string>
   <string name="enable_for_rts">Inschakelen voor retweets</string>
   <string name="safety">Veiligheid</string>
-  <string name="updating_status_notification">Tweet versturen…</string>
+  <string name="updating_status_notification">Tweet versturen&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Vraag</string>
   <string name="nickname_only">Alleen bijnaam</string>
@@ -506,8 +505,6 @@
   <string name="delete_user_list_confirm_message">Verwijder lijst <xliff:g id="name">%s</xliff:g>? Dit kan niet worden hersteld.</string>
   <string name="unsubscribe_from_user_list">Afmelden van lijst <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Afmelden van lijst <xliff:g id="name">%s</xliff:g>? Je kan je later weer abonneren op deze lijst.</string>
-  <string name="destroy_saved_search">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderd</string>
-  <string name="destroy_saved_search_confirm_message">Opgeslagen zoekopdracht \"<xliff:g id="name">%s</xliff:g>\" verwijderen? Je kunt deze zoekopdracht binnenkort opnieuw opslaan.</string>
   <string name="signing_in_error_browser_sign_in_hint">Fout bij het ​​aanmelden, misschien moet je de browser inlog methode gebruiken. (Dit zal aangepaste API instellingen negeren tijdens aanmelden)</string>
   <string name="report_user">Rapporteer <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Rapporteer <xliff:g id="name">%s</xliff:g> voor spam? Je zult deze gebruiker ook blokkeren.</string>
@@ -588,8 +585,8 @@
   <string name="denied_users_follow_request">Volgaanvraag van <xliff:g id="user">%s</xliff:g> geweigerd.</string>
   <string name="import_settings">Importeer instellingen</string>
   <string name="export_settings">Exporteer instellingen</string>
-  <string name="export_settings_type_dialog_title">Exporteer instellingen…</string>
-  <string name="import_settings_type_dialog_title">Importeer instellingen…</string>
+  <string name="export_settings_type_dialog_title">Exporteer instellingen&#8230;</string>
+  <string name="import_settings_type_dialog_title">Importeer instellingen&#8230;</string>
   <string name="nicknames">Bijnamen</string>
   <string name="user_colors">Gebruikerskleuren</string>
   <string name="import_export">Importeren/exporteren</string>

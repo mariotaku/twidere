@@ -3,7 +3,7 @@
 <resources>
   <string name="error_32">Impossible de vous authentifier, veuillez vous connecter à nouveau.</string>
   <string name="error_34">Ce tweet, cet utilisateur ou cette page n\'existe pas.</string>
-  <string name="error_88">Limite de rafraîchissement dépassée, essayez de nouveau plus tard.</string>
+  <string name="error_88">Limite de rafraîchissement dépassée, essayez à nouveau plus tard.</string>
   <string name="error_89">Vous informations de connexion sont incorrectes ou votre session est expirée. Veuillez vous identifier à nouveau.</string>
   <string name="error_64">Votre compte a été suspendu et n\'est pas autorisé à accéder à cette fonctionnalité.</string>
   <string name="error_130">Twitter est temporairement surchargé.</string>

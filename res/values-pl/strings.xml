@@ -60,6 +60,7 @@
   <string name="pick_from_gallery">Wybierz z galerii</string>
   <string name="statuses">Ćwierki</string>
   <string name="followers">Obserwujący</string>
+  <string name="following">Obserwuje</string>
   <string name="about">O...</string>
   <string name="open_source_license">Licencja open source</string>
   <string name="api">API</string>
@@ -234,7 +235,6 @@
   <string name="image_upload_format">Format ćwierka z obrazem</string>
   <string name="image_upload_format_summary">\"[LINK]\" = Image link\n\"[TEXT]\" = Zawartość ćwierka\n(tylko rozszerzenie)</string>
   <string name="tweet_shortener">Skracanie ćwierka</string>
-  <string name="status_shortener_default">Brak (przerwij wysyłanie)</string>
   <string name="error_message_status_too_long">Ćwierk za długi.</string>
   <string name="error_message_no_content">Brak zawartości</string>
   <string name="error_message_tweet_shorten_failed">Skracanie ćwierka nie powiodło się.</string>
@@ -407,7 +407,7 @@ Twidere używa znacznie prostszego mechanizmu logowania, bez otwierania okna prz
   <string name="search_name_saved">Wyszukiwanie \"<xliff:g id="name">%s</xliff:g>\" zapisane.</string>
   <string name="search_deleted">Wyszukiwanie usunięte.</string>
   <string name="search_name_deleted">Wyszukiwanie \"<xliff:g id="name">%s</xliff:g>\" usunięte.</string>
-  <string name="import_from">Importuj z…</string>
+  <string name="import_from">Importuj z&#8230;</string>
   <string name="link_to_quoted_status">Odnośnik do cytowanego ćwierka</string>
   <string name="followed_user">Obserwujesz <xliff:g id="user">%s</xliff:g>.</string>
   <string name="sent_follow_request_to_user">Wysłano żądania obserwacji do <xliff:g id="user">%s</xliff:g>.</string>
@@ -461,7 +461,7 @@ Twidere używa znacznie prostszego mechanizmu logowania, bez otwierania okna prz
   <string name="enable_in_home_timeline">Włącz w strumieniu głównym</string>
   <string name="enable_for_rts">Włącz dla przesłanych ponownie</string>
   <string name="safety">Bezpieczeństwo</string>
-  <string name="updating_status_notification">Wysyłanie ćwierka…</string>
+  <string name="updating_status_notification">Wysyłanie ćwierka&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
   <string name="query">Zapytanie</string>
   <string name="nickname_only">Tylko pseudonim</string>
@@ -501,6 +501,8 @@ Twidere używa znacznie prostszego mechanizmu logowania, bez otwierania okna prz
   <string name="unfollow_user_confirm_message">Przestań obserwować <xliff:g id="name">%s</xliff:g>? Nie będziesz już widzieć ćwierków od tego użytkownika.</string>
   <string name="delete_user_list">Usuń listę <xliff:g id="name">%s</xliff:g></string>
   <string name="delete_user_list_confirm_message">Usunąć listę <xliff:g id="name">%s</xliff:g>? Nie będzie można cofnąć.</string>
+  <string name="destroy_status">Usuń ćwierk</string>
+  <string name="destroy_status_confirm_message">Usunąć ten ćwierk?</string>
   <string name="report_user">Zgłoś <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Zgłoś <xliff:g id="name">%s</xliff:g> za spam? Użytkownik zostanie także zablokowany.</string>
   <string name="twidere_test">Test Twidere</string>
@@ -566,8 +568,8 @@ Twidere używa znacznie prostszego mechanizmu logowania, bez otwierania okna prz
   <string name="denied_users_follow_request">Odmówiono żądania obserwowania od <xliff:g id="user">%s</xliff:g>.</string>
   <string name="import_settings">Importuj ustawienia</string>
   <string name="export_settings">Eksportuj ustawienia</string>
-  <string name="export_settings_type_dialog_title">Eksportowanie ustawień…</string>
-  <string name="import_settings_type_dialog_title">Importowanie ustawień…</string>
+  <string name="export_settings_type_dialog_title">Eksportowanie ustawień&#8230;</string>
+  <string name="import_settings_type_dialog_title">Importowanie ustawień&#8230;</string>
   <string name="nicknames">Pseudonimy</string>
   <string name="user_colors">Kolory użytkownika</string>
   <string name="import_export">Import/Eksport</string>

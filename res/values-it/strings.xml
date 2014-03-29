@@ -236,7 +236,6 @@
   <string name="image_upload_format">Formato Tweet con immagine</string>
   <string name="image_upload_format_summary">\"[LINK]\" = link all\'immagine\n\"[TEXT]\" = Testo del tweet\n(Solo con Estensioni)</string>
   <string name="tweet_shortener">Abbreviatore di Tweet</string>
-  <string name="status_shortener_default">Nessuno (annulla invio)</string>
   <string name="error_message_status_too_long">Tweet troppo lungo.</string>
   <string name="error_message_no_content">Nessun contenuto</string>
   <string name="error_message_tweet_shorten_failed">Abbreviazione del tweet non riuscita.</string>
@@ -319,6 +318,7 @@
   <string name="action_updating_details">aggiornamento dettagli</string>
   <string name="action_blocking">blocco</string>
   <string name="action_unblocking">sblocco</string>
+  <string name="action_following">Stai seguendo</string>
   <string name="action_unfollowing">Smetti di seguire</string>
   <string name="action_creating_list">creazione lista</string>
   <string name="action_adding_member">aggiunta membro</string>
@@ -408,7 +408,7 @@
   <string name="search_name_saved">Ricerca \"<xliff:g id="name">%s</xliff:g>\" salvata.</string>
   <string name="search_deleted">Ricerca eliminata.</string>
   <string name="search_name_deleted">Ricerca \"<xliff:g id="name">%s</xliff:g>\" eliminata.</string>
-  <string name="import_from">Importa da…</string>
+  <string name="import_from">Importa da&#8230;</string>
   <string name="link_to_quoted_status">Link al tweet quotato</string>
   <string name="followed_user">Seguito <xliff:g id="user">%s</xliff:g>.</string>
   <string name="sent_follow_request_to_user">Richiesta di follow inviata a <xliff:g id="user">%s</xliff:g>.</string>
@@ -456,14 +456,17 @@
   <string name="theme_dark">Scuro</string>
   <string name="theme_light">Chiaro</string>
   <string name="settings_interface">Interfaccia</string>
+  <string name="no_rule">Nessuna regola</string>
   <string name="enable_in_mentions">Abilita nelle menzioni</string>
   <string name="enable_in_home_timeline">Abilita nella timeline</string>
   <string name="enable_for_rts">Abilita per i Retweet</string>
   <string name="safety">Sicurezza</string>
-  <string name="updating_status_notification">Invio del tweet…</string>
+  <string name="updating_status_notification">Invio del tweet&#8230;</string>
   <string name="name_with_nickname"><xliff:g id="name">%1$s</xliff:g> (<xliff:g id="nickname">%2$s</xliff:g>)</string>
+  <string name="query">Interroga</string>
   <string name="nickname_only">Solo nickname</string>
   <string name="nickname_only_summary">Sostituisci username con il nickname quando disponibile</string>
+  <string name="input_text">Immissione testo</string>
   <string name="users_lists_with_name">Liste di <xliff:g id="name">%s</xliff:g></string>
   <string name="lists_following_user_with_name">Liste che seguono <xliff:g id="name">%s</xliff:g></string>
   <string name="highlight">Evidenzia</string>
@@ -500,8 +503,6 @@
   <string name="delete_user_list_confirm_message">Eliminare lisra <xliff:g id="name">%s</xliff:g>? Non potrà essere annullato.</string>
   <string name="unsubscribe_from_user_list">Annulla l\'iscrizione alla lista <xliff:g id="name">%s</xliff:g></string>
   <string name="unsubscribe_from_user_list_confirm_message">Annullare l\'iscrizione alla lista  <xliff:g id="name">%s</xliff:g>? Potrai riscriverti in seguito.</string>
-  <string name="destroy_saved_search">Elimina ricerca salvata \"<xliff:g id="name">%s</xliff:g>\"</string>
-  <string name="destroy_saved_search_confirm_message">Eliminare ricerca salvata \"<xliff:g id="name">%s</xliff:g>\"? Potrai risalvare questa ricerca a breve.</string>
   <string name="signing_in_error_browser_sign_in_hint">Errore durante il login, potresti aver bisogno di usare il login da browser. (ignorando eventuali impostazioni API personalizzate)</string>
   <string name="report_user">Segnala <xliff:g id="name">%s</xliff:g></string>
   <string name="report_user_confirm_message">Segnalare <xliff:g id="name">%s</xliff:g> per spam? Bloccherai anche questo utente.</string>
@@ -510,6 +511,7 @@
   <string name="pay_via_paypal">Paga direttamente con PayPal</string>
   <string name="pay_via_paypal_summary">Quando vedi \"Questo destinatario non può ricevere fondi\"</string>
   <string name="donate_via_alipay">Dona via Alipay</string>
+  <string name="staggered_home_timeline">Home Timeline sfalsata</string>
   <string name="unread_count">Conteggio elementi non letti</string>
   <string name="developed_by">Sviluppato da</string>
   <string name="donators">Donatori</string>
@@ -525,6 +527,7 @@
   <string name="delete_user">Elimina utente <xliff:g id="name">%s</xliff:g></string>
   <string name="delete_users">Elimina utenti</string>
   <string name="delete_user_confirm_message">Eliminare <xliff:g id="name">%s</xliff:g>? Non è reversibile.</string>
+  <string name="general">Generale</string>
   <string name="hints">Suggerimenti</string>
   <string name="theme_background">Sfondo del tema</string>
   <string name="theme_background_default">Predefinito</string>
@@ -537,6 +540,9 @@
   <string name="view_replies">Visualizza Risposte</string>
   <string name="compact_cards">Schede compatte</string>
   <string name="compact_cards_summary">Visualizza più schede sullo schermo</string>
+  <string name="dashclock_mentions_unread_count_description">Contatore menzioni non lette</string>
+  <string name="dashclock_messages_unread_count_name">Contatore messaggi Twidere non letti</string>
+  <string name="dashclock_messages_unread_count_description">Contatore messaggi non letti</string>
   <string name="N_new_statuses_quantity_one"><xliff:g id="items">%d</xliff:g> nuovo tweet</string>
   <string name="N_new_statuses_quantity_other"><xliff:g id="items">%d</xliff:g> nuovi tweet</string>
   <string name="N_new_mentions_quantity_one"><xliff:g id="items">%d</xliff:g> nuova menzione</string>
@@ -555,15 +561,24 @@
   <string name="long_click_to_open_menu">Tenere premuto per aprire il menu</string>
   <string name="swipe_back">Swipe per chiudere</string>
   <string name="tab_display_option_icon">Icona</string>
+  <string name="highlight_and_underline">Evidenziare e sottolineare</string>
   <string name="back">Indietro</string>
   <string name="translation_destination">Lingua</string>
   <string name="accept">Accetta</string>
+  <string name="deny">Rifiuta</string>
+  <string name="accepted_users_follow_request">Richiesta <xliff:g id="user">%s</xliff:g>di follow accettata.</string>
+  <string name="denied_users_follow_request">Richiesta <xliff:g id="user">%s</xliff:g>di follow negata.</string>
   <string name="import_settings">Importa settaggi</string>
   <string name="export_settings">Esporta settaggi</string>
-  <string name="export_settings_type_dialog_title">Esporta settaggi…</string>
-  <string name="import_settings_type_dialog_title">Importa settaggi…</string>
+  <string name="export_settings_type_dialog_title">Esporta settaggi&#8230;</string>
+  <string name="import_settings_type_dialog_title">Importa settaggi&#8230;</string>
   <string name="nicknames">Nickname</string>
+  <string name="user_colors">Colori personalizzati</string>
   <string name="import_export">Importa/Esporta</string>
+  <string name="progress">Avanzamento</string>
+  <string name="hidden_settings">Impostazioni nascoste</string>
   <string name="hidden_settings_warning_title">ATTENZIONE: queste opzioni possono far male!</string>
   <string name="force_using_private_apis">Forza l\'uso di API private</string>
+  <string name="status_text_limit">Limite di testo del Tweet</string>
+  <string name="load_more_from_top_summary">Utile se si preferisce leggere dal basso verso l\'alto</string>
 </resources>
