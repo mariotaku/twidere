@@ -6,6 +6,7 @@
 	<dimen name="element_spacing_small">4dp</dimen>
 	<dimen name="element_spacing_normal">8dp</dimen>
 	<dimen name="element_spacing_large">16dp</dimen>
+	<dimen name="element_spacing_xlarge">24dp</dimen>
 	<dimen name="icon_size_list_item">56dp</dimen>
 	<dimen name="icon_size_list_item_small">42dp</dimen>
 	<dimen name="icon_size_card_list_item">48dp</dimen>
@@ -41,7 +42,7 @@
 	<dimen name="item_menu_padding_start_default">6dp</dimen>
 	<dimen name="item_menu_padding_bottom_default">2dp</dimen>
 	<dimen name="item_menu_padding_end_default">10dp</dimen>
-	<dimen name="item_menu_card_padding_compact">20dp</dimen>
+	<dimen name="item_menu_card_padding_compact">28dp</dimen>
 
 	<!-- Dimensions for color picker -->
 	<dimen name="color_button_width">48dp</dimen>

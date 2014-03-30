@@ -19,7 +19,6 @@
 
 package org.mariotaku.twidere.fragment.support;
 
-import static org.mariotaku.twidere.util.Utils.addIntentToMenu;
 import static org.mariotaku.twidere.util.Utils.clearListViewChoices;
 import static org.mariotaku.twidere.util.Utils.configBaseCardAdapter;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
@@ -27,13 +26,11 @@ import static org.mariotaku.twidere.util.Utils.openUserProfile;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
@@ -41,7 +38,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import org.mariotaku.menucomponent.widget.PopupMenu;
 import org.mariotaku.twidere.adapter.ParcelableUsersAdapter;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.loader.support.DummyParcelableUsersLoader;
@@ -59,7 +55,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		MultiSelectManager.Callback, MenuButtonClickListener {
 
 	private SharedPreferences mPreferences;
-	private PopupMenu mPopupMenu;
 	private MultiSelectManager mMultiSelectManager;
 
 	private ParcelableUsersAdapter mAdapter;
@@ -252,10 +247,11 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	@Override
 	public void onStop() {
 		mMultiSelectManager.unregisterCallback(this);
-		if (mPopupMenu != null) {
-			mPopupMenu.dismiss();
-		}
 		super.onStop();
+	}
+
+	protected UserMenuDialogFragment createMenuDialog() {
+		return new UserMenuDialogFragment();
 	}
 
 	protected ParcelableUser getSelectedUser() {
@@ -267,10 +263,6 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	}
 
 	protected abstract Loader<List<ParcelableUser>> newLoaderInstance(Context context, Bundle args);
-
-	protected void onPrepareItemMenu(final Menu menu) {
-
-	}
 
 	protected final void removeUsers(final long... user_ids) {
 		if (user_ids == null || user_ids.length == 0) return;
@@ -296,22 +288,10 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 	private void showMenu(final View view, final ParcelableUser user) {
 		mSelectedUser = user;
 		if (view == null || user == null) return;
-		if (mPopupMenu != null && mPopupMenu.isShowing()) {
-			mPopupMenu.dismiss();
-		}
-		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-		final int menuRes = getUserMenuResource();
-		if (menuRes != 0) {
-			mPopupMenu.inflate(menuRes);
-		}
-		final Menu menu = mPopupMenu.getMenu();
-		onPrepareItemMenu(menu);
-		final Intent extensionsIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER);
-		final Bundle extensionsExtras = new Bundle();
-		extensionsExtras.putParcelable(EXTRA_USER, user);
-		extensionsIntent.putExtras(extensionsExtras);
-		addIntentToMenu(getActivity(), menu, extensionsIntent);
-		mPopupMenu.setOnMenuItemClickListener(this);
-		mPopupMenu.show();
+		final UserMenuDialogFragment df = createMenuDialog();
+		final Bundle args = new Bundle();
+		args.putParcelable(EXTRA_USER, user);
+		df.setArguments(args);
+		df.show(getChildFragmentManager(), "user_menu");
 	}
 }

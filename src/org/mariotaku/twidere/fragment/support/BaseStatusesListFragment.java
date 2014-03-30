@@ -45,7 +45,6 @@ import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.activity.support.StatusMenuDialogFragment;
 import org.mariotaku.twidere.adapter.iface.IBaseCardAdapter.MenuButtonClickListener;
 import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.model.Account;

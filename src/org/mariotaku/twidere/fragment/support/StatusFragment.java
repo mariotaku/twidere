@@ -593,6 +593,11 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
+	public void onItemsCleared() {
+
+	}
+
+	@Override
 	public void onMediaClick(final View view, final ParcelableMedia media) {
 		final ParcelableStatus status = mStatus;
 		if (status == null) return;
@@ -600,12 +605,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		ProfilingUtil.profile(getActivity(), mStatus.account_id, "Large image click, " + mStatus.id + ", " + media.url);
 		openImage(getActivity(), media.url, mStatus.is_possibly_sensitive);
 	}
-
-	@Override
-	public void onItemsCleared() {
-
-	}
-
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {

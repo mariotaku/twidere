@@ -3,7 +3,6 @@ package org.mariotaku.jsonserializer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mariotaku.twidere.util.Utils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -86,7 +85,7 @@ public class JSONSerializer {
 
 	static String jsonToString(final JSONArray json) {
 		if (json == null) return null;
-		if (Utils.isDebugBuild()) {
+		if (JSONSerializerUtils.isDebugBuild()) {
 			try {
 				return json.toString(4);
 			} catch (final JSONException e) {
@@ -99,7 +98,7 @@ public class JSONSerializer {
 
 	static String jsonToString(final JSONObject json) {
 		if (json == null) return null;
-		if (Utils.isDebugBuild()) {
+		if (JSONSerializerUtils.isDebugBuild()) {
 			try {
 				return json.toString(4);
 			} catch (final JSONException e) {

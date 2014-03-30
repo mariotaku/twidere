@@ -21,15 +21,10 @@ package org.mariotaku.twidere.fragment.support;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.loader.support.IDsUsersLoader;
 import org.mariotaku.twidere.loader.support.IncomingFriendshipsLoader;
-import org.mariotaku.twidere.model.Account;
-import org.mariotaku.twidere.model.Account.AccountWithCredentials;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
@@ -64,12 +59,8 @@ public class IncomingFriendshipsFragment extends CursorSupportUsersListFragment 
 	}
 
 	@Override
-	protected void onPrepareItemMenu(final Menu menu) {
-		final AccountWithCredentials account = Account.getAccountWithCredentials(getActivity(), getAccountId());
-		if (AccountWithCredentials.isOfficialCredentials(getActivity(), account)) {
-			final MenuInflater inflater = new MenuInflater(getActivity());
-			inflater.inflate(R.menu.action_incoming_friendship, menu);
-		}
+	protected UserMenuDialogFragment createMenuDialog() {
+		return new IncomingFriendshipsMenuDialogFragment();
 	}
 
 }

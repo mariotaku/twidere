@@ -737,6 +737,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	private boolean handleMenuItemClick(final MenuItem item) {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		final ParcelableUser user = mUser;
+		final Relationship relationship = mFriendship;
 		if (user == null || twitter == null) return false;
 		switch (item.getItemId()) {
 			case MENU_BLOCK: {
@@ -819,18 +820,16 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 				return true;
 			}
 			case MENU_FOLLOW: {
-				final boolean is_creating_friendship = twitter.isCreatingFriendship(user.account_id, user.id);
-				final boolean is_destroying_friendship = twitter.isDestroyingFriendship(user.account_id, user.id);
-				if (!is_creating_friendship && !is_destroying_friendship) {
-					twitter.createFriendshipAsync(user.account_id, user.id);
-				}
-				return true;
-			}
-			case MENU_UNFOLLOW: {
-				final boolean is_creating_friendship = twitter.isCreatingFriendship(user.account_id, user.id);
-				final boolean is_destroying_friendship = twitter.isDestroyingFriendship(user.account_id, user.id);
-				if (!is_creating_friendship && !is_destroying_friendship) {
-					DestroyFriendshipDialogFragment.show(getFragmentManager(), user);
+				if (relationship == null) return false;
+				final boolean isFollowing = relationship.isSourceFollowingTarget();
+				final boolean isCreatingFriendship = twitter.isCreatingFriendship(user.account_id, user.id);
+				final boolean isDestroyingFriendship = twitter.isDestroyingFriendship(user.account_id, user.id);
+				if (!isCreatingFriendship && !isDestroyingFriendship) {
+					if (isFollowing) {
+						DestroyFriendshipDialogFragment.show(getFragmentManager(), user);
+					} else {
+						twitter.createFriendshipAsync(user.account_id, user.id);
+					}
 				}
 				return true;
 			}

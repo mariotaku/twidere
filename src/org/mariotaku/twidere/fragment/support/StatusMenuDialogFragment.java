@@ -1,4 +1,4 @@
-package org.mariotaku.twidere.activity.support;
+package org.mariotaku.twidere.fragment.support;
 
 import static org.mariotaku.twidere.util.Utils.setMenuForStatus;
 
@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.activity.support.MenuDialogFragment;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.util.Utils;
 

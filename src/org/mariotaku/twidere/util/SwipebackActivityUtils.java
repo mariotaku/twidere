@@ -50,7 +50,7 @@ public class SwipebackActivityUtils implements TwidereConstants {
 	public static void setActivityScreenshot(final Activity activity, final Intent target) {
 		if (activity == null || target == null) return;
 		final SharedPreferences prefs = activity.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-		if (!prefs.getBoolean(KEY_SWIPE_BACK, true)) return;
+		if (!prefs.getBoolean(KEY_SWIPE_BACK, false)) return;
 		final TwidereApplication app = TwidereApplication.getInstance(activity);
 		final SwipebackScreenshotManager sm = app.getSwipebackScreenshotManager();
 		final long key = System.currentTimeMillis();

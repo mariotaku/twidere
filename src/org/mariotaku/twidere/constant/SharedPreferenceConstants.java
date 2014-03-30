@@ -277,7 +277,7 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_COMPACT_CARDS = "compact_cards";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_LONG_CLICK_TO_OPEN_MENU = "long_click_to_open_menu";
-	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_SWIPE_BACK = "swipe_back";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_FORCE_USING_PRIVATE_APIS = "force_using_private_apis";

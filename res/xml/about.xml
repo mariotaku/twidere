@@ -79,11 +79,18 @@
 				android:data="twidere://user?user_id=144878723&amp;finish_only=true"/>
 		</Preference>
 		<Preference
-			android:summary="Adjusted icon for 0.0.13 version and later"
+			android:summary="Adjusted icon from 0.0.13 version to 0.2.9.10 version"
 			android:title="lordfriend">
 			<intent
 				android:action="android.intent.action.VIEW"
 				android:data="twidere://user?user_id=450691326&amp;finish_only=true"/>
+		</Preference>
+		<Preference
+			android:summary="Designed 3D Twidere icon"
+			android:title="Linkzero">
+			<intent
+				android:action="android.intent.action.VIEW"
+				android:data="twidere://user?user_id=12630242&amp;finish_only=true"/>
 		</Preference>
 		<Preference
 			android:summary="He taught me some useful things about SQLite"

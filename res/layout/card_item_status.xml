@@ -19,7 +19,7 @@
 		android:orientation="horizontal"
 		android:paddingBottom="@dimen/element_spacing_normal"
 		android:paddingLeft="@dimen/element_spacing_normal"
-		android:paddingRight="@dimen/element_spacing_large"
+		android:paddingRight="@dimen/element_spacing_xlarge"
 		android:paddingTop="@dimen/element_spacing_normal">
 
 		<org.mariotaku.twidere.view.ProfileImageView

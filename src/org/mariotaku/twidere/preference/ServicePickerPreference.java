@@ -43,6 +43,12 @@ public abstract class ServicePickerPreference extends AutoInvalidateListPreferen
 		init();
 	}
 
+	@Override
+	public CharSequence getSummary() {
+		if (isNoneValue(getValue())) return getNoneEntry();
+		return super.getSummary();
+	}
+
 	protected abstract String getIntentAction();
 
 	protected abstract String getNoneEntry();
