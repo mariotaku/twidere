@@ -18,6 +18,11 @@ public class SummaryEditTextPreference extends AutoFixEditTextPreference {
 	}
 
 	@Override
+	public CharSequence getSummary() {
+		return getText();
+	}
+
+	@Override
 	public void setText(final String text) {
 		super.setText(text);
 		setSummary(text);

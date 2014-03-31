@@ -515,7 +515,6 @@ public class SettingsWizardActivity extends Activity implements Constants {
 				final ContentValues values = new ContentValues();
 				final CustomTabConfiguration conf = CustomTabUtils.getTabConfiguration(type);
 				values.put(Tabs.TYPE, type);
-				values.put(Tabs.NAME, mActivity.getString(conf.getDefaultTitle()));
 				values.put(Tabs.ICON, CustomTabUtils.findTabIconKey(conf.getDefaultIcon()));
 				values.put(Tabs.POSITION, i++);
 				values_list.add(values);

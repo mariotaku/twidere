@@ -217,14 +217,14 @@ public class CustomTabUtils implements Constants {
 		if (cur == null) return Collections.emptyList();
 		final ArrayList<SupportTabSpec> tabs = new ArrayList<SupportTabSpec>();
 		cur.moveToFirst();
-		final int idx_name = cur.getColumnIndex(Tabs.NAME), idxIcon = cur.getColumnIndex(Tabs.ICON), idxType = cur
+		final int idxName = cur.getColumnIndex(Tabs.NAME), idxIcon = cur.getColumnIndex(Tabs.ICON), idxType = cur
 				.getColumnIndex(Tabs.TYPE), idxArguments = cur.getColumnIndex(Tabs.ARGUMENTS), idxPosition = cur
 				.getColumnIndex(Tabs.POSITION);
 		while (!cur.isAfterLast()) {
 			final String type = cur.getString(idxType);
 			final int position = cur.getInt(idxPosition);
 			final String iconType = cur.getString(idxIcon);
-			final String name = cur.getString(idx_name);
+			final String name = cur.getString(idxName);
 			final Bundle args = ParseUtils.jsonToBundle(cur.getString(idxArguments));
 			args.putInt(EXTRA_TAB_POSITION, position);
 			final CustomTabConfiguration conf = getTabConfiguration(type);
