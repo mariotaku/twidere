@@ -42,8 +42,8 @@ import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.accessor.ViewAccessor;
 import org.mariotaku.twidere.view.iface.ICardItemView;
-import org.mariotaku.twidere.view.iface.IExtendedViewGroup;
-import org.mariotaku.twidere.view.iface.IExtendedViewGroup.TouchInterceptor;
+import org.mariotaku.twidere.view.iface.IExtendedView;
+import org.mariotaku.twidere.view.iface.IExtendedView.TouchInterceptor;
 
 public class ThemePreviewPreference extends Preference implements Constants, OnSharedPreferenceChangeListener {
 
@@ -81,8 +81,8 @@ public class ThemePreviewPreference extends Preference implements Constants, OnS
 	}
 
 	private static void setPreviewView(final Context context, final View view, final int themeRes) {
-		if (view instanceof IExtendedViewGroup) {
-			((IExtendedViewGroup) view).setTouchInterceptor(new DummyTouchInterceptor());
+		if (view instanceof IExtendedView) {
+			((IExtendedView) view).setTouchInterceptor(new DummyTouchInterceptor());
 		}
 		final View windowBackgroundView = view.findViewById(R.id.theme_preview_window_background);
 		final View windowContentOverlayView = view.findViewById(R.id.theme_preview_window_content_overlay);
@@ -144,17 +144,17 @@ public class ThemePreviewPreference extends Preference implements Constants, OnS
 	private static class DummyTouchInterceptor implements TouchInterceptor {
 
 		@Override
-		public void dispatchTouchEvent(final ViewGroup view, final MotionEvent event) {
+		public void dispatchTouchEvent(final View view, final MotionEvent event) {
 
 		}
 
 		@Override
-		public boolean onInterceptTouchEvent(final ViewGroup view, final MotionEvent event) {
+		public boolean onInterceptTouchEvent(final View view, final MotionEvent event) {
 			return true;
 		}
 
 		@Override
-		public boolean onTouchEvent(final ViewGroup view, final MotionEvent event) {
+		public boolean onTouchEvent(final View view, final MotionEvent event) {
 			return false;
 		}
 

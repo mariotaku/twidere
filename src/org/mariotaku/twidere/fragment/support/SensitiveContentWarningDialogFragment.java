@@ -25,7 +25,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -33,7 +32,8 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 
-public class SensitiveContentWarningDialogFragment extends BaseSupportDialogFragment implements OnClickListener {
+public class SensitiveContentWarningDialogFragment extends BaseSupportDialogFragment implements
+		DialogInterface.OnClickListener {
 
 	@Override
 	public void onClick(final DialogInterface dialog, final int which) {

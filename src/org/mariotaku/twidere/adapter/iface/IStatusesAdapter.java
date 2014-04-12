@@ -23,7 +23,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 
 public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
-	public int findPositionByStatusId(final long status_id);
+	public int findPositionByStatusId(final long statusId);
 
 	public long getAccountId(final int position);
 
@@ -53,8 +53,8 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
 	public void setGapDisallowed(boolean disallowed);
 
-	public void setIgnoredFilterFields(boolean user, boolean text_plain, boolean text_html, boolean source,
-			final boolean retweeted_by_id);
+	public void setIgnoredFilterFields(final boolean user, final boolean textPlain, final boolean textHtml,
+			final boolean source, final boolean retweetedById);
 
 	public void setImagePreviewScaleType(String scaleType);
 

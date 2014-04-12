@@ -102,6 +102,7 @@ public class SharedPreferencesWrapper {
 	public static SharedPreferencesWrapper getInstance(final Context context, final String name, final int mode,
 			final Class<?> keysClass) {
 		final SharedPreferences prefs = context.getSharedPreferences(name, mode);
+		if (prefs == null) return null;
 		return new SharedPreferencesWrapper(prefs, keysClass);
 	}
 

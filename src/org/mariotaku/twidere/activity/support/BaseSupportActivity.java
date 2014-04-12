@@ -37,7 +37,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 
 	private boolean mInstanceStateSaved, mIsVisible, mIsOnTop;
 	private SharedPreferences mPreferences;
-	private boolean mCompactCards;
+	private boolean mCompactCards, mPlainListStyle;
 
 	public MessagesManager getMessagesManager() {
 		return getTwidereApplication() != null ? getTwidereApplication().getMessagesManager() : null;
@@ -103,6 +103,7 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 		super.onCreate(savedInstanceState);
 		mPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
 		mCompactCards = mPreferences.getBoolean(KEY_COMPACT_CARDS, false);
+		mPlainListStyle = mPreferences.getBoolean(KEY_PLAIN_LIST_STYLE, false);
 	}
 
 	@Override
@@ -148,7 +149,8 @@ public class BaseSupportActivity extends BaseSupportThemedActivity implements Co
 	}
 
 	private boolean isCompactCardsModeChanged() {
-		return mCompactCards != mPreferences.getBoolean(KEY_COMPACT_CARDS, false);
+		return mCompactCards != mPreferences.getBoolean(KEY_COMPACT_CARDS, false)
+				|| mPlainListStyle != mPreferences.getBoolean(KEY_PLAIN_LIST_STYLE, false);
 	}
 
 }

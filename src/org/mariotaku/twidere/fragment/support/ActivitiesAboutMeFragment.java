@@ -42,16 +42,16 @@ import java.util.List;
 public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 
 	@Override
-	public BaseParcelableActivitiesAdapter createListAdapter(final Context context) {
-		return new ParcelableActivitiesAboutMeAdapter(context);
+	public BaseParcelableActivitiesAdapter createListAdapter(final Context context, final boolean compactCards,
+			final boolean plainListStyle) {
+		return new ParcelableActivitiesAboutMeAdapter(context, compactCards, plainListStyle);
 	}
 
 	@Override
 	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-		return new ActivitiesAboutMeLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(),
-				getTabPosition());
+		return new ActivitiesAboutMeLoader(getActivity(), getAccountIds(), getData(), getSavedActivitiesFileArgs(),
+				true);
 	}
 
 	@Override
@@ -109,9 +109,11 @@ public class ActivitiesAboutMeFragment extends BaseActivitiesListFragment {
 	@Override
 	protected String[] getSavedActivitiesFileArgs() {
 		final Bundle args = getArguments();
-		if (args == null) return null;
-		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
-		return new String[] { AUTHORITY_ACTIVITIES_ABOUT_ME, "account" + account_id };
+		if (args != null && args.containsKey(EXTRA_ACCOUNT_ID)) {
+			final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			return new String[] { AUTHORITY_ACTIVITIES_ABOUT_ME, "account" + account_id };
+		}
+		return new String[] { AUTHORITY_ACTIVITIES_ABOUT_ME };
 	}
 
 }

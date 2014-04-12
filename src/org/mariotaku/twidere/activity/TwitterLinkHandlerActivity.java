@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import org.mariotaku.twidere.Constants;
+import org.mariotaku.twidere.activity.support.ComposeActivity;
+import org.mariotaku.twidere.util.Utils;
 
 import java.util.List;
 
@@ -28,16 +30,18 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 	private static final int URI_CODE_TWITTER_USER_FOLLOWING = 11;
 	private static final int URI_CODE_TWITTER_USER_FOLLOWERS = 12;
 	private static final int URI_CODE_TWITTER_USER_FAVORITES = 13;
-	private static final int URI_CODE_TWITTER_REDIRECT = 101;
+	private static final int URI_CODE_TWITTER_SHARE = 102;
+	private static final int URI_CODE_TWITTER_REDIRECT = 201;
 
 	static {
+		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/share", URI_CODE_TWITTER_SHARE);
+		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/i/redirect", URI_CODE_TWITTER_REDIRECT);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/status/#", URI_CODE_TWITTER_STATUS);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/status/#/photo/#", URI_CODE_TWITTER_STATUS);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*", URI_CODE_TWITTER_USER);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/following", URI_CODE_TWITTER_USER_FOLLOWING);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/followers", URI_CODE_TWITTER_USER_FOLLOWERS);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/favorites", URI_CODE_TWITTER_USER_FAVORITES);
-		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/i/redirect", URI_CODE_TWITTER_REDIRECT);
 	}
 
 	private SharedPreferences mPreferences;
@@ -136,6 +140,13 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 				builder.authority(AUTHORITY_USER_FAVORITES);
 				builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, pathSegments.get(0));
 				handledIntent = new Intent(Intent.ACTION_VIEW, builder.build());
+				break;
+			}
+			case URI_CODE_TWITTER_SHARE: {
+				handledIntent = new Intent(this, ComposeActivity.class);
+				handledIntent.setAction(Intent.ACTION_SEND);
+				final String url = uri.getQueryParameter("url");
+				handledIntent.putExtra(Intent.EXTRA_TEXT, Utils.getShareStatus(this, null, url));
 				break;
 			}
 			default: {

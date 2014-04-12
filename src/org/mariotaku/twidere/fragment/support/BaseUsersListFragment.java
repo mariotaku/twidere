@@ -108,13 +108,15 @@ abstract class BaseUsersListFragment extends BasePullToRefreshListFragment imple
 		mListView = getListView();
 		mListView.setFastScrollEnabled(mPreferences.getBoolean(KEY_FAST_SCROLL_THUMB, false));
 		final Bundle args = getArguments() != null ? getArguments() : new Bundle();
-		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
-		if (mAccountId != account_id) {
+		final long accountId = args.getLong(EXTRA_ACCOUNT_ID, -1);
+		if (mAccountId != accountId) {
 			mAdapter.clear();
 			mData.clear();
 		}
-		mAccountId = account_id;
-		mListView.setDivider(null);
+		mAccountId = accountId;
+		if (!mPreferences.getBoolean(KEY_PLAIN_LIST_STYLE, false)) {
+			mListView.setDivider(null);
+		}
 		mListView.setSelector(android.R.color.transparent);
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);

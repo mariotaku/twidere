@@ -194,8 +194,8 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	protected CursorStatusesAdapter newAdapterInstance() {
-		return new CursorStatusesAdapter(getActivity());
+	protected CursorStatusesAdapter newAdapterInstance(boolean compact, boolean plain) {
+		return new CursorStatusesAdapter(getActivity(), compact, plain);
 	}
 
 	@Override

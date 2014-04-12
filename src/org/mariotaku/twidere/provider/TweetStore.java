@@ -423,13 +423,11 @@ public interface TweetStore {
 		 */
 		public static final String ACCOUNT_IDS = "account_ids";
 
-		public static final String MEDIA_URI = "media_uri";
-
 		public static final String LOCATION = "location";
 
 		public static final String IN_REPLY_TO_STATUS_ID = "in_reply_to_status_id";
 
-		public static final String MEDIA_TYPE = "media_type";
+		public static final String MEDIAS = "medias";
 
 		public static final String IS_POSSIBLY_SENSITIVE = "is_possibly_sensitive";
 
@@ -439,11 +437,11 @@ public interface TweetStore {
 
 		public static final String ACTION_EXTRAS = "action_extras";
 
-		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, LOCATION, MEDIA_URI,
-				IN_REPLY_TO_STATUS_ID, MEDIA_TYPE, IS_POSSIBLY_SENSITIVE, TIMESTAMP, ACTION_TYPE, ACTION_EXTRAS };
+		public static final String[] COLUMNS = new String[] { _ID, TEXT, ACCOUNT_IDS, LOCATION, MEDIAS,
+				IN_REPLY_TO_STATUS_ID, IS_POSSIBLY_SENSITIVE, TIMESTAMP, ACTION_TYPE, ACTION_EXTRAS };
 
 		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT, TYPE_TEXT, TYPE_TEXT,
-				TYPE_TEXT, TYPE_INT, TYPE_INT, TYPE_BOOLEAN, TYPE_INT, TYPE_INT, TYPE_TEXT };
+				TYPE_INT, TYPE_INT, TYPE_BOOLEAN, TYPE_INT, TYPE_INT, TYPE_TEXT };
 
 	}
 

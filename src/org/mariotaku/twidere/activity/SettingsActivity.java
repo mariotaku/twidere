@@ -21,8 +21,10 @@ package org.mariotaku.twidere.activity;
 
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.DataExportActivity;
@@ -45,7 +48,11 @@ import java.util.List;
 
 public class SettingsActivity extends BasePreferenceActivity {
 
+	private static long HEADER_ID_RESTORE_ICON = 1001;
+
 	private HeaderAdapter mAdapter;
+
+	private PackageManager mPackageManager;
 
 	public HeaderAdapter getHeaderAdapter() {
 		if (mAdapter != null) return mAdapter;
@@ -58,6 +65,15 @@ public class SettingsActivity extends BasePreferenceActivity {
 		final HeaderAdapter adapter = getHeaderAdapter();
 		adapter.clear();
 		adapter.addAll(target);
+		final ComponentName main = new ComponentName(this, MainActivity.class);
+		if (mPackageManager.getComponentEnabledSetting(main) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
+			final Header restoreIconHeader = new Header();
+			restoreIconHeader.titleRes = R.string.want_old_icon_back;
+			restoreIconHeader.title = getString(restoreIconHeader.titleRes);
+			restoreIconHeader.id = HEADER_ID_RESTORE_ICON;
+			restoreIconHeader.intent = getIntent();
+			adapter.add(restoreIconHeader);
+		}
 	}
 
 	@Override
@@ -65,6 +81,22 @@ public class SettingsActivity extends BasePreferenceActivity {
 		if (getIntent().getStringExtra(EXTRA_SHOW_FRAGMENT) != null) return false;
 		getMenuInflater().inflate(R.menu.menu_settings, menu);
 		return true;
+	}
+
+	@Override
+	public void onHeaderClick(final Header header, final int position) {
+		if (header.id == HEADER_ID_RESTORE_ICON) {
+			final ComponentName main = new ComponentName(this, MainActivity.class);
+			final ComponentName main2 = new ComponentName(this, MainHondaJOJOActivity.class);
+			mPackageManager.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+					PackageManager.DONT_KILL_APP);
+			mPackageManager.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+					PackageManager.DONT_KILL_APP);
+			Toast.makeText(this, R.string.icon_restored_message, Toast.LENGTH_SHORT).show();
+			finish();
+			return;
+		}
+		super.onHeaderClick(header, position);
 	}
 
 	@Override
@@ -122,6 +154,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
+		mPackageManager = getPackageManager();
 		super.onCreate(savedInstanceState);
 		setIntent(getIntent().addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
 		final ActionBar actionBar = getActionBar();

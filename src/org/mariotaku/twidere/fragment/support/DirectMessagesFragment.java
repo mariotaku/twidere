@@ -112,7 +112,9 @@ public class DirectMessagesFragment extends BasePullToRefreshListFragment implem
 		mAdapter = new DirectMessageConversationEntriesAdapter(getActivity());
 		setListAdapter(mAdapter);
 		mListView = getListView();
-		mListView.setDivider(null);
+		if (!mPreferences.getBoolean(KEY_PLAIN_LIST_STYLE, false)) {
+			mListView.setDivider(null);
+		}
 		mListView.setSelector(android.R.color.transparent);
 		getLoaderManager().initLoader(0, null, this);
 		setListShown(false);

@@ -575,6 +575,7 @@ public final class Utils implements Constants {
 		adapter.setLinkHighlightColor(ThemeUtils.getUserLinkTextColor(context));
 		adapter.setNicknameOnly(pref.getBoolean(KEY_NICKNAME_ONLY, false));
 		adapter.setTextSize(pref.getInt(KEY_TEXT_SIZE, getDefaultTextSize(context)));
+		adapter.notifyDataSetChanged();
 	}
 
 	public static void configBaseCardAdapter(final Context context, final IBaseCardAdapter adapter) {
@@ -582,6 +583,7 @@ public final class Utils implements Constants {
 		configBaseAdapter(context, adapter);
 		final SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		adapter.setAnimationEnabled(pref.getBoolean(KEY_CARD_ANIMATION, true));
+		adapter.notifyDataSetChanged();
 	}
 
 	public static void copyStream(final InputStream is, final OutputStream os) throws IOException {
@@ -1637,28 +1639,26 @@ public final class Utils implements Constants {
 	public static String getImagePathFromUri(final Context context, final Uri uri) {
 		if (context == null || uri == null) return null;
 
-		final String media_uri_start = ParseUtils.parseString(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		final String mediaUriStart = ParseUtils.parseString(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-		if (ParseUtils.parseString(uri).startsWith(media_uri_start)) {
+		if (ParseUtils.parseString(uri).startsWith(mediaUriStart)) {
 
 			final String[] proj = { MediaStore.Images.Media.DATA };
 			final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), uri, proj, null, null, null);
 
 			if (cur == null) return null;
 
-			final int column_index = cur.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			final int idxData = cur.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 
 			cur.moveToFirst();
 			try {
-				return cur.getString(column_index);
+				return cur.getString(idxData);
 			} finally {
 				cur.close();
 			}
 		} else {
 			final String path = uri.getPath();
-			if (path != null) {
-				if (new File(path).exists()) return path;
-			}
+			if (path != null && new File(path).exists()) return path;
 		}
 		return null;
 	}
@@ -2494,6 +2494,11 @@ public final class Utils implements Constants {
 		final NetworkInfo networkInfo = conn.getActiveNetworkInfo();
 		return networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI
 				&& networkInfo.isConnected();
+	}
+
+	public static boolean isPlainListStyle(final Context context) {
+		final SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		return prefs != null && prefs.getBoolean(KEY_PLAIN_LIST_STYLE, false);
 	}
 
 	public static boolean isRedirected(final int code) {

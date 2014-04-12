@@ -288,6 +288,10 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_FALLBACK_TWITTER_LINK_HANDLER = "fallback_twitter_link_handler";
 	@Preference(type = STRING, hasDefault = true, defaultString = "CENTER_CROP")
 	public static final String KEY_IMAGE_PREVIEW_SCALE_TYPE = "image_preview_scale_type";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
+	public static final String KEY_PLAIN_LIST_STYLE = "plain_list_style";
+
+	public static final  String KEY_QUICK_MENU_EXPANDED  = "quick_menu_expanded";
 
 	@Preference(type = STRING)
 	public static final String KEY_TRANSLATION_DESTINATION = "translation_destination";

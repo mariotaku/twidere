@@ -37,10 +37,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
+import android.widget.Toast;
 
 import com.twitter.Extractor;
 
@@ -53,6 +55,7 @@ import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.MediaUploadResult;
 import org.mariotaku.twidere.model.ParcelableDirectMessage;
 import org.mariotaku.twidere.model.ParcelableLocation;
+import org.mariotaku.twidere.model.ParcelableMediaUpdate;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.model.SingleResponse;
@@ -296,10 +299,12 @@ public class BackgroundOperationService extends IntentService implements Constan
 				}
 			} else {
 				showOkMessage(R.string.status_updated, false);
-				if (item.media_uri != null) {
-					final String path = getImagePathFromUri(this, item.media_uri);
-					if (path != null) {
-						new File(path).delete();
+				if (item.medias != null) {
+					for (final ParcelableMediaUpdate media : item.medias) {
+						final String path = getImagePathFromUri(this, Uri.parse(media.uri));
+						if (path != null) {
+							new File(path).delete();
+						}
 					}
 				}
 			}
@@ -334,6 +339,10 @@ public class BackgroundOperationService extends IntentService implements Constan
 		}
 	}
 
+	private void showToast(final int resId, final int duration) {
+		mHandler.post(new ToastRunnable(this, resId, duration));
+	}
+
 	private List<SingleResponse<ParcelableStatus>> updateStatus(final Builder builder,
 			final ParcelableStatusUpdate statusUpdate) {
 		final ArrayList<ContentValues> hashtag_values = new ArrayList<ContentValues>();
@@ -347,7 +356,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		final boolean hasEasterEggRestoreText = statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART1)
 				&& statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART2)
 				&& statusUpdate.text.contains(EASTER_EGG_RESTORE_TEXT_PART3);
-		boolean mentionedHondaJOJO = false;
+		boolean mentionedHondaJOJO = false, notReplyToOther = false;
 		mResolver.bulkInsert(CachedHashtags.CONTENT_URI,
 				hashtag_values.toArray(new ContentValues[hashtag_values.size()]));
 
@@ -359,11 +368,12 @@ public class BackgroundOperationService extends IntentService implements Constan
 			if (mUseUploader && mUploader == null) throw new UploaderNotFoundException(this);
 			if (mUseShortener && mShortener == null) throw new ShortenerNotFoundException(this);
 
-			final String imagePath = getImagePathFromUri(this, statusUpdate.media_uri);
+			final boolean hasMedia = statusUpdate.medias != null && statusUpdate.medias.length > 0;
+			final String imagePath = hasMedia ? getImagePathFromUri(this, Uri.parse(statusUpdate.medias[0].uri)) : null;
 			final File imageFile = imagePath != null ? new File(imagePath) : null;
 
 			final String overrideStatusText;
-			if (mUseUploader && statusUpdate.media_uri != null) {
+			if (mUseUploader && hasMedia) {
 				final MediaUploadResult uploadResult;
 				try {
 					if (mUploader != null) {
@@ -430,14 +440,16 @@ public class BackgroundOperationService extends IntentService implements Constan
 					final Status resultStatus = twitter.updateStatus(status);
 					if (!mentionedHondaJOJO) {
 						final UserMentionEntity[] entities = resultStatus.getUserMentionEntities();
-						if (entities != null) {
-							for (final UserMentionEntity entity : entities) {
-								if (entity.getId() == HONDAJOJO_ID) {
-									mentionedHondaJOJO = true;
-								}
-							}
-						} else {
+						if (entities == null || entities.length == 0) {
 							mentionedHondaJOJO = statusUpdate.text.contains(HONDAJOJO_SCREEN_NAME);
+						} else if (entities.length == 1 && entities[0].getId() == HONDAJOJO_ID) {
+							mentionedHondaJOJO = true;
+						}
+					}
+					if (!notReplyToOther) {
+						final long inReplyToUserId = resultStatus.getInReplyToUserId();
+						if (inReplyToUserId <= 0 || inReplyToUserId == HONDAJOJO_ID) {
+							notReplyToOther = true;
 						}
 					}
 					final ParcelableStatus result = new ParcelableStatus(resultStatus, account.account_id, false);
@@ -456,15 +468,19 @@ public class BackgroundOperationService extends IntentService implements Constan
 			final ComponentName main = new ComponentName(this, MainActivity.class);
 			final ComponentName main2 = new ComponentName(this, MainHondaJOJOActivity.class);
 			if (hasEasterEggTriggerText) {
-				pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-						PackageManager.DONT_KILL_APP);
-				pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-						PackageManager.DONT_KILL_APP);
+				if (notReplyToOther) {
+					pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+							PackageManager.DONT_KILL_APP);
+					pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+							PackageManager.DONT_KILL_APP);
+					showToast(R.string.easter_egg_triggered_message, Toast.LENGTH_SHORT);
+				}
 			} else if (hasEasterEggRestoreText) {
 				pm.setComponentEnabledSetting(main, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
 						PackageManager.DONT_KILL_APP);
 				pm.setComponentEnabledSetting(main2, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
 						PackageManager.DONT_KILL_APP);
+				showToast(R.string.icon_restored_message, Toast.LENGTH_SHORT);
 			}
 		}
 		return results;
@@ -480,6 +496,25 @@ public class BackgroundOperationService extends IntentService implements Constan
 		builder.setProgress(100, progress, progress >= 100 || progress <= 0);
 		builder.setOngoing(true);
 		return builder.build();
+	}
+
+	private static class ToastRunnable implements Runnable {
+		private final Context context;
+		private final int resId;
+		private final int duration;
+
+		public ToastRunnable(final Context context, final int resId, final int duration) {
+			this.context = context;
+			this.resId = resId;
+			this.duration = duration;
+		}
+
+		@Override
+		public void run() {
+			Toast.makeText(context, resId, duration).show();
+
+		}
+
 	}
 
 	static class ShortenerNotFoundException extends UpdateStatusException {

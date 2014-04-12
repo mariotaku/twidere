@@ -3,7 +3,6 @@ package org.mariotaku.twidere.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class HalfWidthSpace extends View {
@@ -28,9 +27,6 @@ public class HalfWidthSpace extends View {
 	 */
 	public HalfWidthSpace(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		if (getVisibility() == VISIBLE) {
-			setVisibility(INVISIBLE);
-		}
 	}
 
 	/**
@@ -49,9 +45,4 @@ public class HalfWidthSpace extends View {
 		super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
 	}
 
-	@Override
-	protected void onScrollChanged(final int l, final int t, final int oldl, final int oldt) {
-		super.onScrollChanged(l, t, oldl, oldt);
-		Log.d("Twidere", String.format("l:%d, t: %d", l, t));
-	}
 }

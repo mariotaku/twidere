@@ -623,5 +623,8 @@
 	<string name="my_following_only">My following only</string>
 	<string name="my_following_only_summary">Display notifications from users you follow only.</string>
 	<string name="new_direct_message">New direct message</string>
+	<string name="plain_list_style">Plain list style</string>
+	<string name="want_old_icon_back">Want old icon back?</string>
+	<string name="icon_restored_message">Icon restored!</string>
 
 </resources>

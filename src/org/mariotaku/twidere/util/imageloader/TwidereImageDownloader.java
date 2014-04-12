@@ -35,7 +35,7 @@ import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.R;
-import org.mariotaku.twidere.model.PreviewMedia;
+import org.mariotaku.twidere.model.ParcelableMedia;
 import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.util.io.ContentLengthInputStream;
@@ -106,10 +106,10 @@ public class TwidereImageDownloader implements ImageDownloader, Constants {
 		final String scheme = uri.getScheme();
 		if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme) || ContentResolver.SCHEME_CONTENT.equals(scheme)
 				|| ContentResolver.SCHEME_FILE.equals(scheme)) return mResolver.openInputStream(uri);
-		final PreviewMedia media = MediaPreviewUtils.getAllAvailableImage(uriString, mFullImage, mFullImage
+		final ParcelableMedia media = MediaPreviewUtils.getAllAvailableImage(uriString, mFullImage, mFullImage
 				|| !mFastImageLoading ? mClient : null);
 		try {
-			final String mediaUrl = media != null ? media.url : uriString;
+			final String mediaUrl = media != null ? media.media_url : uriString;
 			if (PATTERN_TWITTER_PROFILE_IMAGES.matcher(uriString).matches())
 				return getStream(replaceLast(mediaUrl, "_" + TWITTER_PROFILE_IMAGES_AVAILABLE_SIZES,
 						mTwitterProfileImageSize));

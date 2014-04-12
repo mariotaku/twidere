@@ -36,7 +36,7 @@ import static org.mariotaku.twidere.util.Utils.getTwitterInstance;
 import static org.mariotaku.twidere.util.Utils.getUserTypeIconRes;
 import static org.mariotaku.twidere.util.Utils.isMyRetweet;
 import static org.mariotaku.twidere.util.Utils.isSameAccount;
-import static org.mariotaku.twidere.util.Utils.openImage;
+import static org.mariotaku.twidere.util.Utils.openImageDirectly;
 import static org.mariotaku.twidere.util.Utils.openMap;
 import static org.mariotaku.twidere.util.Utils.openStatus;
 import static org.mariotaku.twidere.util.Utils.openStatusReplies;
@@ -49,9 +49,12 @@ import static org.mariotaku.twidere.util.Utils.showOkMessage;
 import static org.mariotaku.twidere.util.Utils.startStatusShareChooser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -61,6 +64,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
@@ -103,7 +107,6 @@ import org.mariotaku.twidere.model.Panes;
 import org.mariotaku.twidere.model.ParcelableLocation;
 import org.mariotaku.twidere.model.ParcelableMedia;
 import org.mariotaku.twidere.model.ParcelableStatus;
-import org.mariotaku.twidere.model.PreviewMedia;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.text.method.StatusContentMovementMethod;
@@ -389,8 +392,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final ParcelableLocation location = status.location;
 		final boolean is_valid_location = ParcelableLocation.isValidLocation(location);
 		mLocationContainer.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
-		// mMapView.setVisibility(View.VISIBLE);
-		// mLocationView.setVisibility(View.VISIBLE);
 		if (display_image_preview) {
 			mMapView.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
 			mLocationBackgroundView.setVisibility(is_valid_location ? View.VISIBLE : View.GONE);
@@ -483,13 +484,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	public void onClick(final View view) {
 		if (mStatus == null) return;
+		final ParcelableStatus status = mStatus;
 		switch (view.getId()) {
 			case R.id.profile: {
-				openUserProfile(getActivity(), mStatus.account_id, mStatus.user_id, null);
+				openUserProfile(getActivity(), status.account_id, status.user_id, null);
 				break;
 			}
 			case R.id.follow: {
-				mTwitterWrapper.createFriendshipAsync(mStatus.account_id, mStatus.user_id);
+				mTwitterWrapper.createFriendshipAsync(status.account_id, status.user_id);
 				break;
 			}
 			case R.id.in_reply_to: {
@@ -497,40 +499,31 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 				break;
 			}
 			case R.id.replies_view: {
-				openStatusReplies(getActivity(), mStatus.account_id, mStatus.id, mStatus.user_screen_name);
+				openStatusReplies(getActivity(), status.account_id, status.id, status.user_screen_name);
 				break;
 			}
 			case R.id.location_container: {
-				final ParcelableLocation location = mStatus.location;
+				final ParcelableLocation location = status.location;
 				if (!ParcelableLocation.isValidLocation(location)) return;
 				openMap(getActivity(), location.latitude, location.longitude);
 				break;
 			}
 			case R.id.load_images: {
-				loadPreviewImages();
+				if (status.is_possibly_sensitive) {
+					final LoadSensitiveImageConfirmDialogFragment f = new LoadSensitiveImageConfirmDialogFragment();
+					f.show(getChildFragmentManager(), "load_sensitive_image_confirmation");
+				} else {
+					loadPreviewImages();
+				}
 				// UCD
-				ProfilingUtil.profile(getActivity(), mStatus.account_id, "Thumbnail click, " + mStatus.id);
+				ProfilingUtil.profile(getActivity(), status.account_id, "Thumbnail click, " + status.id);
 				break;
 			}
 			case R.id.retweet_view: {
-				openStatusRetweeters(getActivity(), mStatus.account_id, mStatus.retweet_id > 0 ? mStatus.retweet_id
-						: mStatus.id);
+				openStatusRetweeters(getActivity(), status.account_id, status.retweet_id > 0 ? status.retweet_id
+						: status.id);
 				break;
 			}
-			// case R.id.prev_image: {
-			// final int count = mImagePreviewAdapter.getCount(), pos =
-			// mImagePreviewGallery.getSelectedItemPosition();
-			// if (count == 0 || pos == 0) return;
-			// mImagePreviewGallery.setSelection(pos - 1, true);
-			// break;
-			// }
-			// case R.id.next_image: {
-			// final int count = mImagePreviewAdapter.getCount(), pos =
-			// mImagePreviewGallery.getSelectedItemPosition();
-			// if (count == 0 || pos == count - 1) return;
-			// mImagePreviewGallery.setSelection(pos + 1, true);
-			// break;
-			// }
 		}
 
 	}
@@ -603,7 +596,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		if (status == null) return;
 		// UCD
 		ProfilingUtil.profile(getActivity(), mStatus.account_id, "Large image click, " + mStatus.id + ", " + media.url);
-		openImage(getActivity(), media.url, mStatus.is_possibly_sensitive);
+		openImageDirectly(getActivity(), media.url);
 	}
 
 	@Override
@@ -787,6 +780,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	}
 
+	@Override
+	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
+	}
+
 	// @Override
 	// protected void setItemSelected(final ParcelableStatus status, final int
 	// position, final boolean selected) {
@@ -805,10 +802,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	// }
 	// super.setItemSelected(status, position, selected);
 	// }
-
-	@Override
-	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
-	}
 
 	@Override
 	protected void setListHeaderFooters(final ListView list) {
@@ -938,6 +931,35 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mProfileView.drawStart(getUserColor(getActivity(), mStatus.user_id, true));
 	}
 
+	public static final class LoadSensitiveImageConfirmDialogFragment extends BaseSupportDialogFragment implements
+			DialogInterface.OnClickListener {
+
+		@Override
+		public void onClick(final DialogInterface dialog, final int which) {
+			switch (which) {
+				case DialogInterface.BUTTON_POSITIVE: {
+					final Fragment f = getParentFragment();
+					if (f instanceof StatusFragment) {
+						((StatusFragment) f).loadPreviewImages();
+					}
+					break;
+				}
+			}
+
+		}
+
+		@Override
+		public Dialog onCreateDialog(final Bundle savedInstanceState) {
+			final Context wrapped = ThemeUtils.getDialogThemedContext(getActivity());
+			final AlertDialog.Builder builder = new AlertDialog.Builder(wrapped);
+			builder.setTitle(android.R.string.dialog_alert_title);
+			builder.setMessage(R.string.sensitive_content_warning);
+			builder.setPositiveButton(android.R.string.ok, this);
+			builder.setNegativeButton(android.R.string.cancel, null);
+			return builder.create();
+		}
+	}
+
 	private static class DisplayMapRunnable implements Runnable {
 		private final ParcelableLocation mLocation;
 		private final ImageLoaderWrapper mLoader;
@@ -996,7 +1018,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	static class ImagesAdapter extends BaseAdapter {
 
-		private final List<PreviewMedia> mImages = new ArrayList<PreviewMedia>();
+		private final List<ParcelableMedia> mImages = new ArrayList<ParcelableMedia>();
 		private final ImageLoaderWrapper mImageLoader;
 		private final LayoutInflater mInflater;
 
@@ -1005,7 +1027,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			mInflater = LayoutInflater.from(context);
 		}
 
-		public boolean addAll(final Collection<? extends PreviewMedia> images) {
+		public boolean addAll(final Collection<? extends ParcelableMedia> images) {
 			final boolean ret = images != null && mImages.addAll(images);
 			notifyDataSetChanged();
 			return ret;
@@ -1022,13 +1044,13 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		}
 
 		@Override
-		public PreviewMedia getItem(final int position) {
+		public ParcelableMedia getItem(final int position) {
 			return mImages.get(position);
 		}
 
 		@Override
 		public long getItemId(final int position) {
-			final PreviewMedia spec = getItem(position);
+			final ParcelableMedia spec = getItem(position);
 			return spec != null ? spec.hashCode() : 0;
 		}
 
@@ -1037,8 +1059,8 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 			final View view = convertView != null ? convertView : mInflater.inflate(
 					R.layout.gallery_item_image_preview, null);
 			final ImageView image = (ImageView) view.findViewById(R.id.image);
-			final PreviewMedia spec = getItem(position);
-			mImageLoader.displayPreviewImage(image, spec != null ? spec.url : null);
+			final ParcelableMedia spec = getItem(position);
+			mImageLoader.displayPreviewImage(image, spec != null ? spec.media_url : null);
 			return view;
 		}
 

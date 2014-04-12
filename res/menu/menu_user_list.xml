@@ -9,15 +9,19 @@
 		android:visible="false"/>
 	<item
 		android:id="@id/follow"
-		android:icon="@drawable/ic_iconic_action_add"
+		android:enabled="false"
+		android:icon="@android:color/transparent"
 		android:showAsAction="always"
-		android:title="@string/subscribe"
-		android:visible="false"/>
+		android:title="@string/subscribe"/>
 	<item
-		android:id="@id/unfollow"
-		android:icon="@drawable/ic_iconic_action_cancel"
-		android:showAsAction="always"
-		android:title="@string/unsubscribe"
-		android:visible="false"/>
+		android:id="@id/add"
+		android:icon="@drawable/ic_iconic_action_add"
+		android:showAsAction="ifRoom"
+		android:title="@string/add_member"/>
+	<item
+		android:id="@id/delete"
+		android:icon="@drawable/ic_iconic_action_delete"
+		android:showAsAction="ifRoom"
+		android:title="@string/delete"/>
 
 </menu>

@@ -50,19 +50,21 @@ public class ParcelableUsersAdapter extends BaseArrayAdapter<ParcelableUser> imp
 	private final ImageLoaderWrapper mProfileImageLoader;
 	private final MultiSelectManager mMultiSelectManager;
 	private final Context mContext;
+	private MenuButtonClickListener mListener;
+
 	private final Locale mLocale;
+	private final boolean mPlainList;
 
 	private boolean mAnimationEnabled;
 	private int mMaxAnimationPosition;
 
-	private MenuButtonClickListener mListener;
-
 	public ParcelableUsersAdapter(final Context context) {
-		this(context, Utils.isCompactCards(context));
+		this(context, Utils.isCompactCards(context), Utils.isPlainListStyle(context));
 	}
 
-	public ParcelableUsersAdapter(final Context context, final boolean compactCards) {
+	public ParcelableUsersAdapter(final Context context, final boolean compactCards, final boolean plainList) {
 		super(context, getItemResource(compactCards));
+		mPlainList = plainList;
 		mContext = context;
 		mLocale = context.getResources().getConfiguration().locale;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
@@ -86,6 +88,10 @@ public class ParcelableUsersAdapter extends BaseArrayAdapter<ParcelableUser> imp
 		} else {
 			holder = new UserViewHolder(view);
 			holder.content.setOnOverflowIconClickListener(this);
+			if (mPlainList) {
+				((View) holder.content).setPadding(0, 0, 0, 0);
+				holder.content.setItemBackground(null);
+			}
 			view.setTag(holder);
 		}
 

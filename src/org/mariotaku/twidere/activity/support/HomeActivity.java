@@ -70,6 +70,7 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove;
 import com.jeremyfeinstein.slidingmenu.lib.CustomViewBehind;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.CanvasTransformer;
@@ -725,7 +726,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		mSlidingMenu.setShadowWidthRes(R.dimen.default_sliding_menu_shadow_width);
 		mSlidingMenu.setShadowDrawable(R.drawable.shadow_left);
 		mSlidingMenu.setSecondaryShadowDrawable(R.drawable.shadow_right);
-		mSlidingMenu.setBehindWidthRes(R.dimen.left_drawer_width);
+		mSlidingMenu.setBehindWidthRes(R.dimen.drawer_width_home);
 		mSlidingMenu.setTouchmodeMarginThreshold(marginThreshold);
 		mSlidingMenu.setFadeDegree(0.5f);
 		mSlidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
@@ -897,6 +898,11 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		}
 
 		@Override
+		protected CustomViewAbove newCustomViewAbove(final Context context) {
+			return new MyCustomViewAbove(context, this);
+		}
+
+		@Override
 		protected CustomViewBehind newCustomViewBehind(final Context context) {
 			return new MyCustomViewBehind(context, this);
 		}
@@ -916,6 +922,18 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 			else if (mode == SlidingMenu.LEFT_RIGHT)
 				return x >= left && x <= marginThreshold + left || x <= right && x >= right - marginThreshold;
 			return false;
+		}
+
+		private static class MyCustomViewAbove extends CustomViewAbove {
+
+			private final HomeSlidingMenu mSlidingMenu;
+
+			public MyCustomViewAbove(final Context context, final HomeSlidingMenu slidingMenu) {
+				super(context);
+				mSlidingMenu = slidingMenu;
+
+			}
+
 		}
 
 		private static class MyCustomViewBehind extends CustomViewBehind {

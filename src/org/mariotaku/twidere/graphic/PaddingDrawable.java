@@ -79,8 +79,8 @@ public class PaddingDrawable extends Drawable {
 	public void setBounds(final Rect bounds) {
 		final int left = bounds.left + mPaddingLeft;
 		final int top = bounds.top + mPaddingTop;
-		final int right = bounds.right + mPaddingRight;
-		final int bottom = bounds.bottom + mPaddingBottom;
+		final int right = bounds.right - mPaddingRight;
+		final int bottom = bounds.bottom - mPaddingBottom;
 		mDrawable.setBounds(left, top, right, bottom);
 	}
 

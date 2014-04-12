@@ -90,5 +90,10 @@
 		android:order="32"
 		android:summary="@string/compact_cards_summary"
 		android:title="@string/compact_cards"/>
+	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
+		android:defaultValue="false"
+		android:key="plain_list_style"
+		android:order="33"
+		android:title="@string/plain_list_style"/>
 
 </PreferenceScreen>

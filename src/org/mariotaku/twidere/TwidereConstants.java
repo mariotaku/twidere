@@ -207,10 +207,6 @@ public interface TwidereConstants extends SharedPreferenceConstants, IntentConst
 	public static final int PERMISSION_ACCOUNTS = 11;
 	public static final int PERMISSION_PREFERENCES = 13;
 
-	public static final int ATTACHED_IMAGE_TYPE_NONE = 0;
-	public static final int ATTACHED_IMAGE_TYPE_PHOTO = 1;
-	public static final int ATTACHED_IMAGE_TYPE_IMAGE = 2;
-
 	public static final String TAB_TYPE_HOME_TIMELINE = "home_timeline";
 	public static final String TAB_TYPE_MENTIONS_TIMELINE = "mentions_timeline";
 	public static final String TAB_TYPE_TRENDS_SUGGESTIONS = "trends_suggestions";

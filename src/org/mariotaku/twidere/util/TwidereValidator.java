@@ -16,7 +16,12 @@ public class TwidereValidator implements Constants {
 		final SharedPreferencesWrapper prefs = SharedPreferencesWrapper.getInstance(context, SHARED_PREFERENCES_NAME,
 				Context.MODE_PRIVATE);
 		mValidator = new Validator();
-		mMaxTweetLength = ParseUtils.parseInt(prefs.getString(KEY_STATUS_TEXT_LIMIT, null), Validator.MAX_TWEET_LENGTH);
+		if (prefs != null) {
+			final String textLimit = prefs.getString(KEY_STATUS_TEXT_LIMIT, null);
+			mMaxTweetLength = ParseUtils.parseInt(textLimit, Validator.MAX_TWEET_LENGTH);
+		} else {
+			mMaxTweetLength = Validator.MAX_TWEET_LENGTH;
+		}
 	}
 
 	public int getMaxTweetLength() {

@@ -146,6 +146,12 @@ public class Account implements Parcelable {
 		return ids;
 	}
 
+	public static Account[] getAccounts(final Context context, final boolean activatedOnly,
+			final boolean officialKeyOnly) {
+		final List<Account> list = getAccountsList(context, activatedOnly, officialKeyOnly);
+		return list.toArray(new Account[list.size()]);
+	}
+
 	public static Account[] getAccounts(final Context context, final long[] accountIds) {
 		if (context == null) return new Account[0];
 		final String where = accountIds != null ? Where.in(new Column(Accounts.ACCOUNT_ID),

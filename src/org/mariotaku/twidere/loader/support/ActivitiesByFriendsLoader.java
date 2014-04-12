@@ -32,9 +32,9 @@ import java.util.List;
 
 public class ActivitiesByFriendsLoader extends Twitter4JActivitiesLoader {
 
-	public ActivitiesByFriendsLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
-			final String[] save_file_args, final int tab_position) {
-		super(context, account_id, data, save_file_args, tab_position);
+	public ActivitiesByFriendsLoader(final Context context, final long[] accountIds,
+			final List<ParcelableActivity> data, final String[] saveFileArgs, final boolean useCache) {
+		super(context, accountIds, data, saveFileArgs, useCache);
 	}
 
 	@Override

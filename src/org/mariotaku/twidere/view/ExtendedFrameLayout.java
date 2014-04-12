@@ -24,9 +24,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
-import org.mariotaku.twidere.view.iface.IExtendedViewGroup;
+import org.mariotaku.twidere.view.iface.IExtendedView;
 
-public class ExtendedFrameLayout extends FrameLayout implements IExtendedViewGroup {
+public class ExtendedFrameLayout extends FrameLayout implements IExtendedView {
 
 	private TouchInterceptor mTouchInterceptor;
 	private OnSizeChangedListener mOnSizeChangedListener;

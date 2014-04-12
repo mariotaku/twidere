@@ -50,7 +50,6 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
@@ -67,7 +66,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.mariotaku.menucomponent.widget.PopupMenu;
+import org.mariotaku.menucomponent.widget.MenuBar;
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.activity.support.UserListSelectorActivity;
 import org.mariotaku.twidere.adapter.ListActionAdapter;
@@ -101,14 +100,13 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	private TextView mListNameView, mCreatedByView, mDescriptionView, mErrorMessageView;
 	private View mListContainer, mErrorRetryContainer;
 	private ColorLabelRelativeLayout mProfileContainer;
-	private View mDescriptionContainer, mMoreOptionsButton;
+	private View mDescriptionContainer;
 	private Button mRetryButton;
 	private ListView mListView;
 	private View mHeaderView;
+	private MenuBar mMenuBar;
 
 	private ListActionAdapter mAdapter;
-
-	private PopupMenu mPopupMenu;
 
 	private ParcelableUserList mUserList;
 	private Locale mLocale;
@@ -135,26 +133,28 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		}
 	};
 
-	public void displayUserList(final ParcelableUserList user_list) {
-		if (user_list == null || getActivity() == null) return;
+	public void displayUserList(final ParcelableUserList userList) {
+		if (userList == null || getActivity() == null) return;
 		getLoaderManager().destroyLoader(0);
-		final boolean is_myself = user_list.account_id == user_list.user_id;
+		final boolean is_myself = userList.account_id == userList.user_id;
 		mErrorRetryContainer.setVisibility(View.GONE);
-		mUserList = user_list;
-		mProfileContainer.drawEnd(getAccountColor(getActivity(), user_list.account_id));
-		mListNameView.setText(user_list.name);
-		final String display_name = getDisplayName(getActivity(), user_list.user_id, user_list.user_name,
-				user_list.user_screen_name, false);
+		mUserList = userList;
+		mProfileContainer.drawEnd(getAccountColor(getActivity(), userList.account_id));
+		mListNameView.setText(userList.name);
+		final String display_name = getDisplayName(getActivity(), userList.user_id, userList.user_name,
+				userList.user_screen_name, false);
 		mCreatedByView.setText(getString(R.string.created_by, display_name));
-		final String description = user_list.description;
+		final String description = userList.description;
 		mDescriptionContainer.setVisibility(is_myself || !isEmpty(description) ? View.VISIBLE : View.GONE);
 		mDescriptionView.setText(description);
 		final TwidereLinkify linkify = new TwidereLinkify(
 				new OnLinkClickHandler(getActivity(), getMultiSelectManager()));
-		linkify.applyAllLinks(mDescriptionView, user_list.account_id, false);
+		linkify.applyAllLinks(mDescriptionView, userList.account_id, false);
 		mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
-		mProfileImageLoader.displayProfileImage(mProfileImageView, user_list.user_profile_image_url);
+		mProfileImageLoader.displayProfileImage(mProfileImageView, userList.user_profile_image_url);
 		mAdapter.notifyDataSetChanged();
+		setMenu(mMenuBar.getMenu());
+		mMenuBar.show();
 		invalidateOptionsMenu();
 	}
 
@@ -184,7 +184,6 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mAdapter.add(new ListSubscribersAction(3));
 		mProfileImageView.setOnClickListener(this);
 		mProfileContainer.setOnClickListener(this);
-		mMoreOptionsButton.setOnClickListener(this);
 		mRetryButton.setOnClickListener(this);
 		setListAdapter(null);
 		mListView = getListView();
@@ -193,6 +192,12 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mListView.setOnItemLongClickListener(this);
 		setListAdapter(mAdapter);
 		getUserListInfo(false);
+
+		mMenuBar.inflate(R.menu.menu_user_list);
+		mMenuBar.setIsBottomBar(true);
+		mMenuBar.setOnMenuItemClickListener(this);
+		setMenu(mMenuBar.getMenu());
+		mMenuBar.show();
 	}
 
 	@Override
@@ -212,19 +217,6 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	@Override
 	public void onClick(final View view) {
 		switch (view.getId()) {
-			case R.id.more_options: {
-				if (mUserList == null) return;
-				mPopupMenu = PopupMenu.getInstance(getActivity(), view);
-				mPopupMenu.inflate(R.menu.action_user_list);
-				final Menu menu = mPopupMenu.getMenu();
-				final Intent extensionsIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
-				extensionsIntent.setExtrasClassLoader(getActivity().getClassLoader());
-				extensionsIntent.putExtra(EXTRA_USER_LIST, mUserList);
-				addIntentToMenu(getActivity(), menu, extensionsIntent);
-				mPopupMenu.setOnMenuItemClickListener(this);
-				mPopupMenu.show();
-				break;
-			}
 			case R.id.retry: {
 				getUserListInfo(true);
 				break;
@@ -257,11 +249,6 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	}
 
 	@Override
-	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_user_list, menu);
-	}
-
-	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		mHeaderView = inflater.inflate(R.layout.user_list_details_header, null);
 		mProfileContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile);
@@ -270,13 +257,13 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		mDescriptionView = (TextView) mHeaderView.findViewById(R.id.description);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mDescriptionContainer = mHeaderView.findViewById(R.id.description_container);
-		mMoreOptionsButton = mHeaderView.findViewById(R.id.more_options);
 		mListContainer = super.onCreateView(inflater, container, savedInstanceState);
 		final View containerView = inflater.inflate(R.layout.fragment_details_page, null);
 		((FrameLayout) containerView.findViewById(R.id.details_container)).addView(mListContainer);
 		mErrorRetryContainer = containerView.findViewById(R.id.error_retry_container);
 		mRetryButton = (Button) containerView.findViewById(R.id.retry);
 		mErrorMessageView = (TextView) containerView.findViewById(R.id.error_message);
+		mMenuBar = (MenuBar) containerView.findViewById(R.id.menu_bar);
 		final View cardView = mHeaderView.findViewById(R.id.card);
 		ThemeUtils.applyThemeAlphaToDrawable(cardView.getContext(), cardView.getBackground());
 		return containerView;
@@ -332,19 +319,43 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 
 	@Override
 	public boolean onMenuItemClick(final MenuItem item) {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		final ParcelableUserList userList = mUserList;
+		if (userList == null) return false;
 		switch (item.getItemId()) {
 			case MENU_ADD: {
-				if (mUserList == null || mUserList.user_id != mUserList.account_id) return false;
+				if (userList.user_id != userList.account_id) return false;
 				final Intent intent = new Intent(INTENT_ACTION_SELECT_USER);
 				intent.setClass(getActivity(), UserListSelectorActivity.class);
-				intent.putExtra(EXTRA_ACCOUNT_ID, mUserList.account_id);
+				intent.putExtra(EXTRA_ACCOUNT_ID, userList.account_id);
 				startActivityForResult(intent, REQUEST_SELECT_USER);
 				break;
 			}
 			case MENU_DELETE: {
-				if (mUserList.user_id != mUserList.account_id) return false;
-				DestroyUserListDialogFragment.show(getFragmentManager(), mUserList);
+				if (userList.user_id != userList.account_id) return false;
+				DestroyUserListDialogFragment.show(getFragmentManager(), userList);
 				break;
+			}
+			case MENU_EDIT: {
+				final Bundle args = new Bundle();
+				args.putLong(EXTRA_ACCOUNT_ID, userList.account_id);
+				args.putString(EXTRA_LIST_NAME, userList.name);
+				args.putString(EXTRA_DESCRIPTION, userList.description);
+				args.putBoolean(EXTRA_IS_PUBLIC, userList.is_public);
+				args.putInt(EXTRA_LIST_ID, userList.id);
+				final DialogFragment f = new EditUserListDialogFragment();
+				f.setArguments(args);
+				f.show(getFragmentManager(), "edit_user_list_details");
+				return true;
+			}
+			case MENU_FOLLOW: {
+				if (userList.is_following) {
+
+					DestroyUserListSubscriptionDialogFragment.show(getFragmentManager(), userList);
+				} else {
+					mTwitterWrapper.createUserListSubscriptionAsync(userList.account_id, userList.id);
+				}
+				return true;
 			}
 			default: {
 				if (item.getIntent() != null) {
@@ -362,46 +373,6 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-			case MENU_EDIT: {
-				if (mUserList == null) return false;
-				final Bundle args = new Bundle();
-				args.putLong(EXTRA_ACCOUNT_ID, mUserList.account_id);
-				args.putString(EXTRA_LIST_NAME, mUserList.name);
-				args.putString(EXTRA_DESCRIPTION, mUserList.description);
-				args.putBoolean(EXTRA_IS_PUBLIC, mUserList.is_public);
-				args.putInt(EXTRA_LIST_ID, mUserList.id);
-				final DialogFragment f = new EditUserListDialogFragment();
-				f.setArguments(args);
-				f.show(getFragmentManager(), "edit_user_list_details");
-				return true;
-			}
-			case MENU_FOLLOW: {
-				if (mUserList == null) return false;
-				mTwitterWrapper.createUserListSubscriptionAsync(mUserList.account_id, mUserList.id);
-				return true;
-			}
-			case MENU_UNFOLLOW: {
-				if (mUserList == null) return false;
-				DestroyUserListSubscriptionDialogFragment.show(getFragmentManager(), mUserList);
-				return true;
-			}
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(final Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		final boolean isMyself = mUserList != null && mUserList.user_id == mUserList.account_id;
-		final boolean isFollowing = mUserList != null && mUserList.is_following;
-		setMenuItemAvailability(menu, MENU_EDIT, isMyself);
-		setMenuItemAvailability(menu, MENU_FOLLOW, mUserList != null && !isMyself && !isFollowing);
-		setMenuItemAvailability(menu, MENU_UNFOLLOW, mUserList != null && !isMyself && isFollowing);
-	}
-
-	@Override
 	public void onStart() {
 		super.onStart();
 		final IntentFilter filter = new IntentFilter(BROADCAST_USER_LIST_DETAILS_UPDATED);
@@ -414,6 +385,44 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public void onStop() {
 		unregisterReceiver(mStatusReceiver);
 		super.onStop();
+	}
+
+	@Override
+	public void onViewCreated(final View view, final Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+	}
+
+	private void setMenu(final Menu menu) {
+		final AsyncTwitterWrapper twitter = getTwitterWrapper();
+		final ParcelableUserList userList = mUserList;
+		final MenuItem followItem = menu.findItem(MENU_FOLLOW);
+		if (followItem != null) {
+			followItem.setEnabled(userList != null);
+			if (userList == null) {
+				followItem.setIcon(null);
+			}
+		}
+		if (twitter == null || userList == null) return;
+		final boolean isMyList = userList.user_id == userList.account_id;
+		setMenuItemAvailability(menu, MENU_EDIT, isMyList);
+		setMenuItemAvailability(menu, MENU_ADD, isMyList);
+		setMenuItemAvailability(menu, MENU_DELETE, isMyList);
+		final boolean isFollowing = userList.is_following;
+		if (followItem != null) {
+			followItem.setVisible(!isMyList);
+			if (isFollowing) {
+				followItem.setIcon(R.drawable.ic_iconic_action_cancel);
+				followItem.setTitle(R.string.unsubscribe);
+			} else {
+				followItem.setIcon(R.drawable.ic_iconic_action_add);
+				followItem.setTitle(R.string.subscribe);
+			}
+		}
+		menu.removeGroup(MENU_GROUP_USER_LIST_EXTENSION);
+		final Intent extensionsIntent = new Intent(INTENT_ACTION_EXTENSION_OPEN_USER_LIST);
+		extensionsIntent.setExtrasClassLoader(getActivity().getClassLoader());
+		extensionsIntent.putExtra(EXTRA_USER_LIST, mUserList);
+		addIntentToMenu(getActivity(), menu, extensionsIntent, MENU_GROUP_USER_LIST_EXTENSION);
 	}
 
 	public static class EditUserListDialogFragment extends BaseSupportDialogFragment implements

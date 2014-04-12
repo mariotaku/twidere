@@ -63,7 +63,10 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 	private final MultiSelectManager mMultiSelectManager;
 	private final SQLiteDatabase mDatabase;
 	private final ImageLoadingHandler mImageLoadingHandler;
+
 	private MenuButtonClickListener mListener;
+
+	private final boolean mPlainList;
 
 	private boolean mDisplayImagePreview, mGapDisallowed, mMentionsHighlightDisabled, mFavoritesHighlightDisabled,
 			mDisplaySensitiveContents, mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled,
@@ -74,11 +77,12 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 	private ScaleType mImagePreviewScaleType;
 
 	public ParcelableStatusesAdapter(final Context context) {
-		this(context, Utils.isCompactCards(context));
+		this(context, Utils.isCompactCards(context), Utils.isPlainListStyle(context));
 	}
 
-	public ParcelableStatusesAdapter(final Context context, final boolean compactCards) {
+	public ParcelableStatusesAdapter(final Context context, final boolean compactCards, final boolean plainList) {
 		super(context, getItemResource(compactCards));
+		mPlainList = plainList;
 		mContext = context;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
@@ -162,6 +166,10 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			holder.my_profile_image.setOnClickListener(this);
 			holder.image_preview.setOnClickListener(this);
 			holder.content.setOnOverflowIconClickListener(this);
+			if (mPlainList) {
+				((View) holder.content).setPadding(0, 0, 0, 0);
+				holder.content.setItemBackground(null);
+			}
 			view.setTag(holder);
 		}
 
@@ -313,16 +321,12 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 	@Override
 	public void setAnimationEnabled(final boolean anim) {
-		if (mAnimationEnabled == anim) return;
 		mAnimationEnabled = anim;
 	}
 
 	@Override
 	public void setCardHighlightOption(final String option) {
-		final int option_int = getCardHighlightOptionInt(option);
-		if (option_int == mCardHighlightOption) return;
-		mCardHighlightOption = option_int;
-		notifyDataSetChanged();
+		mCardHighlightOption = getCardHighlightOptionInt(option);
 	}
 
 	@Override
@@ -336,23 +340,17 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 	@Override
 	public void setDisplayImagePreview(final boolean display) {
-		if (display == mDisplayImagePreview) return;
 		mDisplayImagePreview = display;
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setDisplaySensitiveContents(final boolean display) {
-		if (display == mDisplaySensitiveContents) return;
 		mDisplaySensitiveContents = display;
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setFavoritesHightlightDisabled(final boolean disable) {
-		if (disable == mFavoritesHighlightDisabled) return;
 		mFavoritesHighlightDisabled = disable;
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -364,36 +362,29 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 	@Override
 	public void setGapDisallowed(final boolean disallowed) {
-		if (mGapDisallowed == disallowed) return;
 		mGapDisallowed = disallowed;
-		notifyDataSetChanged();
 	}
 
 	@Override
-	public void setIgnoredFilterFields(final boolean user, final boolean text_plain, final boolean text_html,
-			final boolean source, final boolean retweeted_by_id) {
-		mFilterIgnoreTextPlain = text_plain;
-		mFilterIgnoreTextHtml = text_html;
+	public void setIgnoredFilterFields(final boolean user, final boolean textPlain, final boolean textHtml,
+			final boolean source, final boolean retweetedById) {
+		mFilterIgnoreTextPlain = textPlain;
+		mFilterIgnoreTextHtml = textHtml;
 		mFilterIgnoreUser = user;
 		mFilterIgnoreSource = source;
-		mFilterRetweetedById = retweeted_by_id;
+		mFilterRetweetedById = retweetedById;
 		rebuildFilterInfo();
 	}
 
 	@Override
 	public void setImagePreviewScaleType(final String scaleTypeString) {
 		final ScaleType scaleType = ScaleType.valueOf(scaleTypeString.toUpperCase(Locale.US));
-		if (!scaleType.equals(mImagePreviewScaleType)) {
-			mImagePreviewScaleType = scaleType;
-			notifyDataSetChanged();
-		}
+		mImagePreviewScaleType = scaleType;
 	}
 
 	@Override
 	public void setIndicateMyStatusDisabled(final boolean disable) {
-		if (mIndicateMyStatusDisabled == disable) return;
 		mIndicateMyStatusDisabled = disable;
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -403,9 +394,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 
 	@Override
 	public void setMentionsHightlightDisabled(final boolean disable) {
-		if (disable == mMentionsHighlightDisabled) return;
 		mMentionsHighlightDisabled = disable;
-		notifyDataSetChanged();
 	}
 
 	@Override

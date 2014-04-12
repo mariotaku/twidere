@@ -18,7 +18,7 @@
 	<dimen name="default_sliding_menu_margin_threshold">16dp</dimen>
 	<dimen name="button_bar_height">52dp</dimen>
 	<dimen name="minimum_element_size">48dp</dimen>
-	<dimen name="left_drawer_width">240dp</dimen>
+	<dimen name="drawer_width_home">240dp</dimen>
 	<dimen name="accounts_drawer_name_size">16sp</dimen>
 	<dimen name="accounts_drawer_screen_name_size">14sp</dimen>
 	<dimen name="accounts_drawer_default_indicator_size">12sp</dimen>
@@ -57,5 +57,8 @@
 
 	<!-- Dimensions for alert dialog -->
 	<dimen name="icon_size_alert_dialog">32dp</dimen>
+
+	<!-- Dimensions for quick menu -->
+	<dimen name="header_height_quick_menu">@dimen/element_size_default</dimen>
 
 </resources>

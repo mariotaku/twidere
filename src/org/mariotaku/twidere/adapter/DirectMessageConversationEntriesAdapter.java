@@ -58,14 +58,15 @@ public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter i
 	private boolean mAnimationEnabled;
 	private int mMaxAnimationPosition;
 
-	private MenuButtonClickListener mListener;
+	private boolean mPlainList;
 
 	public DirectMessageConversationEntriesAdapter(final Context context) {
-		this(context, Utils.isCompactCards(context));
+		this(context, Utils.isCompactCards(context), Utils.isPlainListStyle(context));
 	}
 
-	public DirectMessageConversationEntriesAdapter(final Context context, final boolean compactCards) {
+	public DirectMessageConversationEntriesAdapter(final Context context, final boolean compactCards, final boolean plainList) {
 		super(context, getItemResource(compactCards), null, new String[0], new int[0], 0);
+		mPlainList = plainList;
 		final TwidereApplication app = TwidereApplication.getInstance(context);
 		mMultiSelectManager = app.getMultiSelectManager();
 		mLazyImageLoader = app.getImageLoaderWrapper();
@@ -146,8 +147,12 @@ public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter i
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageEntryViewHolder)) {
 			final DirectMessageEntryViewHolder holder = new DirectMessageEntryViewHolder(view);
-			view.setTag(holder);
 			holder.profile_image.setOnClickListener(this);
+			if (mPlainList) {
+				((View) holder.content).setPadding(0, 0, 0, 0);
+				holder.content.setItemBackground(null);
+			}
+			view.setTag(holder);
 		}
 		return view;
 	}
@@ -189,7 +194,6 @@ public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter i
 
 	@Override
 	public void setMenuButtonClickListener(final MenuButtonClickListener listener) {
-		mListener = listener;
 	}
 
 	private static int getItemResource(final boolean compactCards) {

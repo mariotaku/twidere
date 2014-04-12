@@ -32,7 +32,7 @@ import android.widget.ListView;
 
 import org.mariotaku.twidere.adapter.BaseParcelableActivitiesAdapter;
 import org.mariotaku.twidere.adapter.ParcelableActivitiesByFriendsAdapter;
-import org.mariotaku.twidere.loader.support.ActivitiesByFriendsLoader;
+import org.mariotaku.twidere.loader.support.ActivitiesAboutMeLoader;
 import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
@@ -43,22 +43,22 @@ import java.util.List;
 public class ActivitiesByFriendsFragment extends BaseActivitiesListFragment {
 
 	@Override
-	public BaseParcelableActivitiesAdapter createListAdapter(final Context context) {
-		return new ParcelableActivitiesByFriendsAdapter(context);
+	public BaseParcelableActivitiesAdapter createListAdapter(final Context context, final boolean compactCards,
+			final boolean plainListStyle) {
+		return new ParcelableActivitiesByFriendsAdapter(context, compactCards, plainListStyle);
 	}
 
 	@Override
 	public Loader<List<ParcelableActivity>> onCreateLoader(final int id, final Bundle args) {
 		setProgressBarIndeterminateVisibility(true);
-		final long account_id = args != null ? args.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-		return new ActivitiesByFriendsLoader(getActivity(), account_id, getData(), getSavedActivitiesFileArgs(),
-				getTabPosition());
+		return new ActivitiesAboutMeLoader(getActivity(), getAccountIds(), getData(), getSavedActivitiesFileArgs(),
+				getTabPosition() >= 0);
 	}
 
 	@Override
 	public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-		final int adapter_pos = position - l.getHeaderViewsCount();
-		final ParcelableActivity item = getListAdapter().getItem(adapter_pos);
+		final int adapterPos = position - l.getHeaderViewsCount();
+		final ParcelableActivity item = getListAdapter().getItem(adapterPos);
 		if (item == null) return;
 		final ParcelableUser[] sources = item.sources;
 		if (sources == null || sources.length == 0) return;
@@ -114,9 +114,11 @@ public class ActivitiesByFriendsFragment extends BaseActivitiesListFragment {
 	@Override
 	protected String[] getSavedActivitiesFileArgs() {
 		final Bundle args = getArguments();
-		if (args == null) return null;
-		final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
-		return new String[] { AUTHORITY_ACTIVITIES_BY_FRIENDS, "account" + account_id };
+		if (args != null && args.containsKey(EXTRA_ACCOUNT_ID)) {
+			final long account_id = args.getLong(EXTRA_ACCOUNT_ID, -1);
+			return new String[] { AUTHORITY_ACTIVITIES_BY_FRIENDS, "account" + account_id };
+		}
+		return new String[] { AUTHORITY_ACTIVITIES_BY_FRIENDS };
 	}
 
 }

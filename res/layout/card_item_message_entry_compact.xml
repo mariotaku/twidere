@@ -13,10 +13,7 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingBottom="@dimen/element_spacing_normal"
-		android:paddingLeft="@dimen/element_spacing_normal"
-		android:paddingRight="@dimen/item_menu_card_padding_compact"
-		android:paddingTop="@dimen/element_spacing_normal">
+		android:padding="@dimen/element_spacing_normal">
 
 		<org.mariotaku.twidere.view.ForegroundImageView
 			android:id="@+id/profile_image"

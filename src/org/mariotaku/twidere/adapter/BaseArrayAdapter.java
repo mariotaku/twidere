@@ -110,55 +110,42 @@ public class BaseArrayAdapter<T> extends ArrayAdapter<T> implements IBaseAdapter
 	}
 
 	@Override
-	public final void setDisplayNameFirst(final boolean name_first) {
-		if (mDisplayNameFirst == name_first) return;
-		mDisplayNameFirst = name_first;
-		notifyDataSetChanged();
+	public final void setDisplayNameFirst(final boolean nameFirst) {
+		mDisplayNameFirst = nameFirst;
 	}
 
 	@Override
 	public final void setDisplayProfileImage(final boolean display) {
-		if (display == mDisplayProfileImage) return;
 		mDisplayProfileImage = display;
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public final void setLinkHighlightColor(final int color) {
 		mLinkify.setLinkTextColor(color);
-		if (color == mLinkHighlightColor) return;
 		mLinkHighlightColor = color;
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public final void setLinkHighlightOption(final String option) {
-		final int option_int = getLinkHighlightOptionInt(option);
-		mLinkify.setHighlightOption(option_int);
-		if (option_int == mLinkHighlightOption) return;
-		mLinkHighlightOption = option_int;
-		notifyDataSetChanged();
+		final int optionInt = getLinkHighlightOptionInt(option);
+		mLinkify.setHighlightOption(optionInt);
+		if (optionInt == mLinkHighlightOption) return;
+		mLinkHighlightOption = optionInt;
 	}
 
 	@Override
 	public final void setNicknameOnly(final boolean nickname_only) {
-		if (mNicknameOnly == nickname_only) return;
 		mNicknameOnly = nickname_only;
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public final void setShowAccountColor(final boolean show) {
-		if (show == mShowAccountColor) return;
 		mShowAccountColor = show;
-		notifyDataSetChanged();
 	}
 
 	@Override
-	public final void setTextSize(final float text_size) {
-		if (text_size == mTextSize) return;
-		mTextSize = text_size;
-		notifyDataSetChanged();
+	public final void setTextSize(final float textSize) {
+		mTextSize = textSize;
 	}
 
 }

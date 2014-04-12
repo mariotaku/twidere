@@ -130,11 +130,11 @@ public class DirectMessagesConversationAdapter extends BaseCursorAdapter impleme
 		final Object tag = view.getTag();
 		if (!(tag instanceof DirectMessageConversationViewHolder)) {
 			final DirectMessageConversationViewHolder holder = new DirectMessageConversationViewHolder(view);
-			view.setTag(holder);
 			holder.incoming_profile_image.setOnClickListener(this);
 			holder.outgoing_profile_image.setOnClickListener(this);
 			holder.incoming_item_menu.setOnClickListener(this);
 			holder.outgoing_item_menu.setOnClickListener(this);
+			view.setTag(holder);
 		}
 		return view;
 	}

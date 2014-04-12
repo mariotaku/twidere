@@ -295,9 +295,8 @@ public final class ContentValuesCreator implements TwidereConstants {
 		values.put(Drafts.LOCATION, ParcelableLocation.toString(status.location));
 		values.put(Drafts.IS_POSSIBLY_SENSITIVE, status.is_possibly_sensitive);
 		values.put(Drafts.TIMESTAMP, System.currentTimeMillis());
-		if (status.media_uri != null) {
-			values.put(Drafts.MEDIA_TYPE, status.media_type);
-			values.put(Drafts.MEDIA_URI, ParseUtils.parseString(status.media_uri));
+		if (status.medias != null) {
+			values.put(Drafts.MEDIAS, JSONSerializer.toJSONArrayString(status.medias));
 		}
 		return values;
 	}

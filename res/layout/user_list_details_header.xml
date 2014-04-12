@@ -91,13 +91,4 @@
 		</LinearLayout>
 	</org.mariotaku.twidere.view.CardItemLinearLayout>
 
-	<org.mariotaku.twidere.view.ListMenuOverflowButton
-		android:id="@+id/more_options"
-		android:layout_width="48dp"
-		android:layout_height="56dp"
-		android:layout_gravity="right|top"
-		android:clickable="true"
-		android:padding="14dp"
-		android:src="@drawable/ic_list_menu_moreoverflow_normal_holo"/>
-
 </FrameLayout>

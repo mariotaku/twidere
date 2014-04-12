@@ -45,30 +45,35 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<ParcelableActivity>> implements Constants {
 	private final Context mContext;
 
-	private final long mAccountId;
+	private final long[] mAccountIds;
 	private final List<ParcelableActivity> mData = new NoDuplicatesArrayList<ParcelableActivity>();
 	private final boolean mIsFirstLoad;
-	private final int mTabPosition;
+	private final boolean mUseCache;
 
 	private final Object[] mSavedActivitiesFileArgs;
 
-	public Twitter4JActivitiesLoader(final Context context, final long account_id, final List<ParcelableActivity> data,
-			final String[] save_file_args, final int tabPosition) {
+	public Twitter4JActivitiesLoader(final Context context, final long[] accountIds,
+			final List<ParcelableActivity> data, final String[] saveFileArgs, final boolean useCache) {
 		super(context);
 		mContext = context;
-		mAccountId = account_id;
+		mAccountIds = accountIds;
 		mIsFirstLoad = data == null;
 		if (data != null) {
 			mData.addAll(data);
 		}
-		mTabPosition = tabPosition;
-		mSavedActivitiesFileArgs = save_file_args;
+		mUseCache = useCache;
+		mSavedActivitiesFileArgs = saveFileArgs;
+	}
+
+	public final long[] getAccountIds() {
+		return mAccountIds;
 	}
 
 	@Override
 	public final List<ParcelableActivity> loadInBackground() {
+		if (mAccountIds == null) return Collections.emptyList();
 		final File serializationFile = getSerializationFile();
-		if (mIsFirstLoad && mTabPosition >= 0 && serializationFile != null) {
+		if (mIsFirstLoad && mUseCache && serializationFile != null) {
 			final List<ParcelableActivity> cached = getCachedData(serializationFile);
 			if (cached != null) {
 				Collections.sort(cached);
@@ -77,35 +82,33 @@ public abstract class Twitter4JActivitiesLoader extends AsyncTaskLoader<List<Par
 		}
 		final SharedPreferences prefs = mContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		final int loadItemLimit = prefs.getInt(KEY_LOAD_ITEM_LIMIT, DEFAULT_LOAD_ITEM_LIMIT);
-		final List<Activity> activities;
-		try {
-			final Paging paging = new Paging();
-			paging.setCount(Math.min(100, loadItemLimit));
-			activities = getActivities(getTwitter(), paging);
-		} catch (final TwitterException e) {
-			e.printStackTrace();
-			final List<ParcelableActivity> cached = getCachedData(serializationFile);
-			if (cached == null) return Collections.emptyList();
-			return new CopyOnWriteArrayList<ParcelableActivity>(cached);
-		}
-		if (activities == null) return new CopyOnWriteArrayList<ParcelableActivity>(mData);
 		final List<ParcelableActivity> result = new ArrayList<ParcelableActivity>();
-		for (final Activity activity : activities) {
-			result.add(new ParcelableActivity(activity, mAccountId));
+		for (final long accountId : mAccountIds) {
+			final List<Activity> activities;
+			try {
+				final Paging paging = new Paging();
+				paging.setCount(Math.min(100, loadItemLimit));
+				activities = getActivities(getTwitter(accountId), paging);
+			} catch (final TwitterException e) {
+				e.printStackTrace();
+				final List<ParcelableActivity> cached = getCachedData(serializationFile);
+				if (cached == null) return Collections.emptyList();
+				return new CopyOnWriteArrayList<ParcelableActivity>(cached);
+			}
+			if (activities == null) return new CopyOnWriteArrayList<ParcelableActivity>(mData);
+			for (final Activity activity : activities) {
+				result.add(new ParcelableActivity(activity, accountId));
+			}
 		}
 		Collections.sort(result);
 		saveCachedData(serializationFile, result);
 		return new CopyOnWriteArrayList<ParcelableActivity>(result);
 	}
 
-	protected final long getAccountId() {
-		return mAccountId;
-	}
-
 	protected abstract List<Activity> getActivities(Twitter twitter, Paging paging) throws TwitterException;
 
-	protected final Twitter getTwitter() {
-		return getTwitterInstance(mContext, mAccountId, true);
+	protected final Twitter getTwitter(final long accountId) {
+		return getTwitterInstance(mContext, accountId, true);
 	}
 
 	@Override

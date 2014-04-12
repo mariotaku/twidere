@@ -70,6 +70,8 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	private MenuButtonClickListener mListener;
 
+	private final boolean mPlainList;
+
 	private boolean mDisplayImagePreview, mGapDisallowed, mMentionsHighlightDisabled, mFavoritesHighlightDisabled,
 			mDisplaySensitiveContents, mIndicateMyStatusDisabled, mIsLastItemFiltered, mFiltersEnabled,
 			mAnimationEnabled;
@@ -82,11 +84,12 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	private ScaleType mImagePreviewScaleType;
 
 	public CursorStatusesAdapter(final Context context) {
-		this(context, Utils.isCompactCards(context));
+		this(context, Utils.isCompactCards(context), Utils.isPlainListStyle(context));
 	}
 
-	public CursorStatusesAdapter(final Context context, final boolean compactCards) {
+	public CursorStatusesAdapter(final Context context, final boolean compactCards, final boolean plainList) {
 		super(context, getItemResource(compactCards), null, new String[0], new int[0], 0);
+		mPlainList = plainList;
 		mContext = context;
 		final TwidereApplication application = TwidereApplication.getInstance(context);
 		mMultiSelectManager = application.getMultiSelectManager();
@@ -311,6 +314,10 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			holder.my_profile_image.setOnClickListener(this);
 			holder.image_preview.setOnClickListener(this);
 			holder.content.setOnOverflowIconClickListener(this);
+			if (mPlainList) {
+				((View) holder.content).setPadding(0, 0, 0, 0);
+				holder.content.setItemBackground(null);
+			}
 			view.setTag(holder);
 		}
 		return view;
@@ -355,16 +362,12 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	@Override
 	public void setAnimationEnabled(final boolean anim) {
-		if (mAnimationEnabled == anim) return;
 		mAnimationEnabled = anim;
 	}
 
 	@Override
 	public void setCardHighlightOption(final String option) {
-		final int option_int = getCardHighlightOptionInt(option);
-		if (option_int == mCardHighlightOption) return;
-		mCardHighlightOption = option_int;
-		notifyDataSetChanged();
+		mCardHighlightOption = getCardHighlightOptionInt(option);
 	}
 
 	@Override
@@ -374,23 +377,17 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	@Override
 	public void setDisplayImagePreview(final boolean display) {
-		if (display == mDisplayImagePreview) return;
 		mDisplayImagePreview = display;
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setDisplaySensitiveContents(final boolean display) {
-		if (display == mDisplaySensitiveContents) return;
 		mDisplaySensitiveContents = display;
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setFavoritesHightlightDisabled(final boolean disable) {
-		if (disable == mFavoritesHighlightDisabled) return;
 		mFavoritesHighlightDisabled = disable;
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -398,41 +395,33 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 		if (mFiltersEnabled == enabled) return;
 		mFiltersEnabled = enabled;
 		rebuildFilterInfo(getCursor(), mIndices);
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setGapDisallowed(final boolean disallowed) {
-		if (mGapDisallowed == disallowed) return;
 		mGapDisallowed = disallowed;
-		notifyDataSetChanged();
 	}
 
 	@Override
-	public void setIgnoredFilterFields(final boolean user, final boolean text_plain, final boolean text_html,
-			final boolean source, final boolean retweeted_by_id) {
-		mFilterIgnoreTextPlain = text_plain;
-		mFilterIgnoreTextHtml = text_html;
+	public void setIgnoredFilterFields(final boolean user, final boolean textPlain, final boolean textHtml,
+			final boolean source, final boolean retweetedById) {
+		mFilterIgnoreTextPlain = textPlain;
+		mFilterIgnoreTextHtml = textHtml;
 		mFilterIgnoreUser = user;
 		mFilterIgnoreSource = source;
+		mFilterRetweetedById = retweetedById;
 		rebuildFilterInfo(getCursor(), mIndices);
-		notifyDataSetChanged();
 	}
 
 	@Override
 	public void setImagePreviewScaleType(final String scaleTypeString) {
 		final ScaleType scaleType = ScaleType.valueOf(scaleTypeString.toUpperCase(Locale.US));
-		if (!scaleType.equals(mImagePreviewScaleType)) {
-			mImagePreviewScaleType = scaleType;
-			notifyDataSetChanged();
-		}
+		mImagePreviewScaleType = scaleType;
 	}
 
 	@Override
 	public void setIndicateMyStatusDisabled(final boolean disable) {
-		if (mIndicateMyStatusDisabled == disable) return;
 		mIndicateMyStatusDisabled = disable;
-		notifyDataSetChanged();
 	}
 
 	@Override
@@ -442,9 +431,7 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 
 	@Override
 	public void setMentionsHightlightDisabled(final boolean disable) {
-		if (disable == mMentionsHighlightDisabled) return;
 		mMentionsHighlightDisabled = disable;
-		notifyDataSetChanged();
 	}
 
 	@Override

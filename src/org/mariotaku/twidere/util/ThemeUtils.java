@@ -322,6 +322,15 @@ public class ThemeUtils implements Constants {
 		return d;
 	}
 
+	public static Drawable getCardItemMenuOverflowButtonDrawable(final Context context) {
+		final Resources res = getResources(context);
+		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.cardOverflowIcon });
+		final Drawable d = a.getDrawable(0);
+		a.recycle();
+		if (d == null) return res.getDrawable(R.drawable.ic_menu_moreoverflow_card_light);
+		return d;
+	}
+	
 	public static Drawable getListMenuOverflowButtonDrawable(final Context context) {
 		final Resources res = getResources(context);
 		final TypedArray a = context.obtainStyledAttributes(new int[] { R.attr.listMenuOverflowButton });
