@@ -1,22 +1,64 @@
 package org.mariotaku.twidere.fragment.support;
 
+import static org.mariotaku.twidere.util.Utils.getTableNameByUri;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.commonsware.cwac.merge.MergeAdapter;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
+import org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment.TrendsAdapter;
+import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.ThemeUtils;
 
 public class QuickMenuFragment extends BaseSupportFragment {
 
-	private SlidingUpPanelLayout mSlidingUpPanel;
 	private SharedPreferences mPreferences;
+	private Context mThemedContext;
+	private ListView mListView;
+	private SlidingUpPanelLayout mSlidingUpPanel;
+	
+	private MergeAdapter mAdapter;
+	private TrendsAdapter mTrendsAdapter;
+	
+	private static final int LOADER_ID_TRENDS = 1;
+	
+	private final LoaderCallbacks<Cursor> mTrendsCallback = new LoaderCallbacks<Cursor>() {
+
+		@Override
+		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+			final Uri uri = CachedTrends.Local.CONTENT_URI;
+			final String table = getTableNameByUri(uri);
+			final String where = table != null ? CachedTrends.TIMESTAMP + " = " + "(SELECT " + CachedTrends.TIMESTAMP
+					+ " FROM " + table + " ORDER BY " + CachedTrends.TIMESTAMP + " DESC LIMIT 1)" : null;
+			return new CursorLoader(getActivity(), uri, CachedTrends.COLUMNS, where, null, null);
+		}
+
+		@Override
+		public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+			mTrendsAdapter.swapCursor(data);
+		}
+
+		@Override
+		public void onLoaderReset(Loader<Cursor> loader) {
+			mTrendsAdapter.swapCursor(null);
+		}
+		
+		
+	};
 
 	@Override
 	public void onActivityCreated(final Bundle savedInstanceState) {
@@ -25,15 +67,24 @@ public class QuickMenuFragment extends BaseSupportFragment {
 		if (mPreferences.getBoolean(KEY_QUICK_MENU_EXPANDED, false)) {
 		} else {
 		}
+		mAdapter = new MergeAdapter();
+		mTrendsAdapter = new TrendsAdapter(getThemedContext());
+		mAdapter.addAdapter(mTrendsAdapter);
+		mListView.setAdapter(mAdapter);
+		getLoaderManager().initLoader(LOADER_ID_TRENDS, null, mTrendsCallback);
+	}
+	
+	private Context getThemedContext() {
+		if (mThemedContext != null) return mThemedContext;
+		final Context context = getActivity();
+		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
+		final int accentColor = ThemeUtils.getUserThemeColor(context);
+		return mThemedContext = new TwidereContextThemeWrapper(context, themeResource, accentColor);
 	}
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final Context context = getActivity();
-		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
-		final int accentColor = ThemeUtils.getUserThemeColor(context);
-		final Context theme = new TwidereContextThemeWrapper(context, themeResource, accentColor);
-		return LayoutInflater.from(theme).inflate(R.layout.fragment_quick_menu, container, false);
+		return LayoutInflater.from(getThemedContext()).inflate(R.layout.fragment_quick_menu, container, false);
 	}
 
 	@Override
@@ -47,6 +98,7 @@ public class QuickMenuFragment extends BaseSupportFragment {
 	@Override
 	public void onViewCreated(final View view, final Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mListView = (ListView) view.findViewById(android.R.id.list);
 		mSlidingUpPanel = (SlidingUpPanelLayout) view.findViewById(R.id.activities_drawer);
 	}
 

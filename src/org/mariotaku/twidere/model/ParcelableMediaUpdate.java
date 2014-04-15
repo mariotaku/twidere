@@ -60,6 +60,11 @@ public class ParcelableMediaUpdate implements Parcelable, JSONParcelable {
 	}
 
 	@Override
+	public String toString() {
+		return "ParcelableMediaUpdate{uri=" + uri + ", type=" + type + "}";
+	}
+
+	@Override
 	public void writeToParcel(final JSONParcel out) {
 		out.writeString("uri", uri);
 		out.writeInt("type", type);
@@ -71,7 +76,7 @@ public class ParcelableMediaUpdate implements Parcelable, JSONParcelable {
 		dest.writeInt(flags);
 	}
 
-	public static ParcelableMediaUpdate[] fromJSONString(String json) {
+	public static ParcelableMediaUpdate[] fromJSONString(final String json) {
 		if (TextUtils.isEmpty(json)) return null;
 		try {
 			return JSONSerializer.createArray(JSON_CREATOR, new JSONArray(json));

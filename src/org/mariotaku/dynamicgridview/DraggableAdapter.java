@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.listviewdragginganimation;
+package org.mariotaku.dynamicgridview;
 
 public interface DraggableAdapter {
     void reorderElements(int position, int newPosition);

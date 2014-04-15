@@ -22,9 +22,10 @@
 			android:id="@+id/accounts_color"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			android:layout_weight="1">
+			android:layout_weight="1"
+			android:animateLayoutChanges="true">
 
-			<GridView
+			<org.mariotaku.dynamicgridview.DynamicGridView
 				android:id="@+id/medias_thumbnail_preview"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
@@ -49,10 +50,7 @@
 					android:gravity="top"
 					android:hint="@string/status_hint"
 					android:imeOptions="actionDone"
-					android:minLines="10">
-
-					<requestFocus/>
-				</org.mariotaku.twidere.view.StatusComposeEditText>
+					android:minLines="10"/>
 			</FrameLayout>
 		</org.mariotaku.twidere.view.ColorLabelRelativeLayout>
 

@@ -39,7 +39,7 @@ import org.mariotaku.twidere.fragment.support.ActivitiesByFriendsFragment;
 import org.mariotaku.twidere.fragment.support.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.support.HomeTimelineFragment;
 import org.mariotaku.twidere.fragment.support.InvalidTabFragment;
-import org.mariotaku.twidere.fragment.support.MentionsFragment;
+import org.mariotaku.twidere.fragment.support.MentionsTimelineFragment;
 import org.mariotaku.twidere.fragment.support.SearchStatusesFragment;
 import org.mariotaku.twidere.fragment.support.StaggeredHomeTimelineFragment;
 import org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment;
@@ -66,7 +66,7 @@ public class CustomTabUtils implements Constants {
 				HomeTimelineFragment.class, R.string.home, R.drawable.ic_iconic_action_home,
 				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 0, false));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_MENTIONS_TIMELINE, new CustomTabConfiguration(
-				MentionsFragment.class, R.string.mentions, R.drawable.ic_iconic_action_mention,
+				MentionsTimelineFragment.class, R.string.mentions, R.drawable.ic_iconic_action_mention,
 				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 1, false));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_DIRECT_MESSAGES, new CustomTabConfiguration(
 				DirectMessagesFragment.class, R.string.direct_messages, R.drawable.ic_iconic_action_message,

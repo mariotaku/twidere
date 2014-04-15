@@ -434,6 +434,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 				Utils.clearListViewChoices(mListView);
 			}
 		}
+		updateRefreshState();
 	}
 
 	@Override

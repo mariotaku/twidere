@@ -29,7 +29,7 @@
 			android:layout_marginRight="@dimen/element_spacing_normal"
 			android:layout_weight="0"
 			android:contentDescription="@string/profile_image"
-			android:scaleType="fitCenter"/>
+			android:scaleType="centerCrop"/>
 
 		<LinearLayout
 			android:layout_width="match_parent"

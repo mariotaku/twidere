@@ -626,5 +626,8 @@
 	<string name="plain_list_style">Plain list style</string>
 	<string name="want_old_icon_back">Want old icon back?</string>
 	<string name="icon_restored_message">Icon restored!</string>
+	<string name="add">Add</string>
+	<string name="N_medias_quantity_one"><xliff:g id="items">%d</xliff:g> media</string>
+	<string name="N_medias_quantity_other"><xliff:g id="items">%d</xliff:g> medias</string>
 
 </resources>

@@ -38,7 +38,7 @@
 			android:layout_width="@dimen/icon_size_user_profile"
 			android:layout_height="@dimen/icon_size_user_profile"
 			android:contentDescription="@string/profile_image"
-			android:scaleType="fitCenter"
+			android:scaleType="centerCrop"
 			android:src="@drawable/ic_profile_image_default"/>
 	</FrameLayout>
 

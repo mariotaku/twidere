@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.example.android.listviewdragginganimation;
+package org.mariotaku.dynamicgridview;
 
 import android.content.Context;
 
 import org.mariotaku.twidere.adapter.ArrayAdapter;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,9 +37,25 @@ public class DraggableArrayAdapter<T> extends ArrayAdapter<T> implements Draggab
 
 	public DraggableArrayAdapter(final Context context, final int layoutRes, final Collection<? extends T> collection) {
 		super(context, layoutRes, collection);
-		for (int i = 0, j = mData.size(); i < j; ++i) {
-			mIdMap.put(mData.get(i), i);
-		}
+		rebuildIdMap();
+	}
+
+	@Override
+	public void add(final T item) {
+		super.add(item);
+		rebuildIdMap();
+	}
+
+	@Override
+	public void addAll(final Collection<? extends T> collection) {
+		super.addAll(collection);
+		rebuildIdMap();
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		rebuildIdMap();
 	}
 
 	@Override
@@ -51,6 +68,19 @@ public class DraggableArrayAdapter<T> extends ArrayAdapter<T> implements Draggab
 	@Override
 	public boolean hasStableIds() {
 		return true;
+	}
+
+	@Override
+	public boolean remove(final int position) {
+		final boolean result = super.remove(position);
+		rebuildIdMap();
+		return result;
+	}
+
+	@Override
+	public void removeAll(final List<T> collection) {
+		super.removeAll(collection);
+		rebuildIdMap();
 	}
 
 	@Override
@@ -69,11 +99,24 @@ public class DraggableArrayAdapter<T> extends ArrayAdapter<T> implements Draggab
 	}
 
 	@Override
+	public void sort(final Comparator<? super T> comparator) {
+		super.sort(comparator);
+		rebuildIdMap();
+	}
+
+	@Override
 	public void swapElements(final int position, final int newPosition) {
 		final List<T> objects = mData;
 		final T temp = objects.get(position);
 		objects.set(position, objects.get(newPosition));
 		objects.set(newPosition, temp);
 		notifyDataSetChanged();
+	}
+
+	private void rebuildIdMap() {
+		mIdMap.clear();
+		for (int i = 0, j = mData.size(); i < j; ++i) {
+			mIdMap.put(mData.get(i), i);
+		}
 	}
 }

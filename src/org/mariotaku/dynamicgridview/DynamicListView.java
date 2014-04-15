@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2013 The Android Open Source Project
- * Copyright (C) 2013 Jacek Marchwicki <jacek.marchwicki@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.example.android.listviewdragginganimation;
+package org.mariotaku.dynamicgridview;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
@@ -37,13 +35,11 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ListAdapter;
-
-import java.util.HashMap;
+import android.widget.ListView;
 
 /**
- * The dynamic gridview is an extension of gridview that supports cell dragging
+ * The dynamic listview is an extension of listview that supports cell dragging
  * and swapping.
  * 
  * This layout is in charge of positioning the hover cell in the correct
@@ -52,39 +48,39 @@ import java.util.HashMap;
  * should be swapped, all the corresponding data set and layout changes are
  * handled here.
  * 
- * If no cell is selected, all the touch events are passed down to the gridview
- * and behave normally. If one of the items in the gridview experiences a long
+ * If no cell is selected, all the touch events are passed down to the listview
+ * and behave normally. If one of the items in the listview experiences a long
  * press event, the contents of its current visible state are captured as a
  * bitmap and its visibility is set to INVISIBLE. A hover cell is then created
- * and added to this layout as an overlaying BitmapDrawable above the gridview.
+ * and added to this layout as an overlaying BitmapDrawable above the listview.
  * Once the hover cell is translated some distance to signify an item swap, a
  * data set change accompanied by animation takes place. When the user releases
- * the hover cell, it animates into its corresponding position in the gridview.
+ * the hover cell, it animates into its corresponding position in the listview.
  * 
- * When the hover cell is either above or below the bounds of the gridview, this
- * gridview also scrolls on its own so as to reveal additional content.
+ * When the hover cell is either above or below the bounds of the listview, this
+ * listview also scrolls on its own so as to reveal additional content.
  */
-public class DynamicGridView extends GridView {
+public class DynamicListView extends ListView {
 
 	private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 15;
 	private final int MOVE_DURATION = 150;
 	private final int LINE_THICKNESS = 15;
 
-	private int mLastEventX = -1;
 	private int mLastEventY = -1;
 
 	private int mDownY = -1;
 	private int mDownX = -1;
 
-	private final int mTotalOffsetX = 0;
-	private int mTotalOffsetY = 0;
+	private int mTotalOffset = 0;
 
 	private boolean mCellIsMobile = false;
 	private boolean mIsMobileScrolling = false;
 	private int mSmoothScrollAmountAtEdge = 0;
 
 	private final int INVALID_ID = -1;
+	private long mAboveItemId = INVALID_ID;
 	private long mMobileItemId = INVALID_ID;
+	private long mBelowItemId = INVALID_ID;
 
 	private BitmapDrawable mHoverCell;
 	private Rect mHoverCellCurrentBounds;
@@ -100,10 +96,10 @@ public class DynamicGridView extends GridView {
 	 * Listens for long clicks on any items in the listview. When a cell has
 	 * been selected, the hover cell is created and set up.
 	 */
-	private final OnItemLongClickListener mOnItemLongClickListener = new OnItemLongClickListener() {
+	private final AdapterView.OnItemLongClickListener mOnItemLongClickListener = new AdapterView.OnItemLongClickListener() {
 		@Override
 		public boolean onItemLongClick(final AdapterView<?> arg0, final View arg1, final int pos, final long id) {
-			mTotalOffsetY = 0;
+			mTotalOffset = 0;
 
 			final int position = pointToPosition(mDownX, mDownY);
 			final int itemNum = position - getFirstVisiblePosition();
@@ -115,13 +111,11 @@ public class DynamicGridView extends GridView {
 
 			mCellIsMobile = true;
 
+			updateNeighborViewsForID(mMobileItemId);
+
 			return true;
 		}
 	};
-
-	private final HashMap<Long, Integer> mItemIdTops = new HashMap<Long, Integer>();
-
-	private final HashMap<Long, Integer> mItemIdLefts = new HashMap<Long, Integer>();
 
 	/**
 	 * This TypeEvaluator is used to animate the BitmapDrawable back to its
@@ -142,14 +136,14 @@ public class DynamicGridView extends GridView {
 	};
 
 	/**
-	 * This scroll listener is added to the gridview in order to handle cell
+	 * This scroll listener is added to the listview in order to handle cell
 	 * swapping when the cell is either at the top or bottom edge of the
-	 * gridview. If the hover cell is at either edge of the gridview, the
-	 * gridview will begin scrolling. As scrolling takes place, the gridview
+	 * listview. If the hover cell is at either edge of the listview, the
+	 * listview will begin scrolling. As scrolling takes place, the listview
 	 * continuously checks if new cells became visible and determines whether
 	 * they are potential candidates for a cell swap.
 	 */
-	private final OnScrollListener mScrollListener = new OnScrollListener() {
+	private final AbsListView.OnScrollListener mScrollListener = new AbsListView.OnScrollListener() {
 
 		private int mPreviousFirstVisibleItem = -1;
 		private int mPreviousVisibleItemCount = -1;
@@ -158,20 +152,21 @@ public class DynamicGridView extends GridView {
 		private int mCurrentScrollState;
 
 		/**
-		 * Determines if the gridview scrolled up enough to reveal a new cell at
+		 * Determines if the listview scrolled up enough to reveal a new cell at
 		 * the top of the list. If so, then the appropriate parameters are
 		 * updated.
 		 */
 		public void checkAndHandleFirstVisibleCellChange() {
 			if (mCurrentFirstVisibleItem != mPreviousFirstVisibleItem) {
 				if (mCellIsMobile && mMobileItemId != INVALID_ID) {
+					updateNeighborViewsForID(mMobileItemId);
 					handleCellSwitch();
 				}
 			}
 		}
 
 		/**
-		 * Determines if the gridview scrolled down enough to reveal a new cell
+		 * Determines if the listview scrolled down enough to reveal a new cell
 		 * at the bottom of the list. If so, then the appropriate parameters are
 		 * updated.
 		 */
@@ -180,6 +175,7 @@ public class DynamicGridView extends GridView {
 			final int previousLastVisibleItem = mPreviousFirstVisibleItem + mPreviousVisibleItemCount;
 			if (currentLastVisibleItem != previousLastVisibleItem) {
 				if (mCellIsMobile && mMobileItemId != INVALID_ID) {
+					updateNeighborViewsForID(mMobileItemId);
 					handleCellSwitch();
 				}
 			}
@@ -212,11 +208,11 @@ public class DynamicGridView extends GridView {
 
 		/**
 		 * This method is in charge of invoking 1 of 2 actions. Firstly, if the
-		 * gridview is in a state of scrolling invoked by the hover cell being
-		 * outside the bounds of the gridview, then this scrolling event is
+		 * listview is in a state of scrolling invoked by the hover cell being
+		 * outside the bounds of the listview, then this scrolling event is
 		 * continued. Secondly, if the hover cell has already been released,
 		 * this invokes the animation for the hover cell to return to its
-		 * correct position after the gridview has entered an idle scroll state.
+		 * correct position after the listview has entered an idle scroll state.
 		 */
 		private void isScrollCompleted() {
 			if (mCurrentVisibleItemCount > 0 && mCurrentScrollState == SCROLL_STATE_IDLE) {
@@ -229,17 +225,17 @@ public class DynamicGridView extends GridView {
 		}
 	};
 
-	public DynamicGridView(final Context context) {
+	public DynamicListView(final Context context) {
 		super(context);
 		init(context);
 	}
 
-	public DynamicGridView(final Context context, final AttributeSet attrs) {
+	public DynamicListView(final Context context, final AttributeSet attrs) {
 		super(context, attrs);
 		init(context);
 	}
 
-	public DynamicGridView(final Context context, final AttributeSet attrs, final int defStyle) {
+	public DynamicListView(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
 		init(context);
 	}
@@ -264,20 +260,11 @@ public class DynamicGridView extends GridView {
 			if (id == itemID) return v;
 		}
 		return null;
-	};
-
-	public View getViewForPosition(final int position) {
-		if (position < 0) return null;
-		if (position >= getCount()) return null;
-		final ListAdapter adapter = getAdapter();
-		final long itemId = adapter.getItemId(position);
-
-		return getViewForID(itemId);
 	}
 
 	/**
 	 * This method is in charge of determining if the hover cell is above or
-	 * below the bounds of the gridview. If so, the gridview does an appropriate
+	 * below the bounds of the listview. If so, the listview does an appropriate
 	 * upward or downward smooth scroll so as to reveal new items.
 	 */
 	public boolean handleMobileCellScroll(final Rect r) {
@@ -324,14 +311,12 @@ public class DynamicGridView extends GridView {
 
 				int pointerIndex = event.findPointerIndex(mActivePointerId);
 
-				mLastEventX = (int) event.getX(pointerIndex);
 				mLastEventY = (int) event.getY(pointerIndex);
-				final int deltaX = mLastEventX - mDownX;
 				final int deltaY = mLastEventY - mDownY;
 
 				if (mCellIsMobile) {
-					mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left + deltaX + mTotalOffsetX,
-							mHoverCellOriginalBounds.top + deltaY + mTotalOffsetY);
+					mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left, mHoverCellOriginalBounds.top
+							+ deltaY + mTotalOffset);
 					mHoverCell.setBounds(mHoverCellCurrentBounds);
 					invalidate();
 
@@ -354,7 +339,7 @@ public class DynamicGridView extends GridView {
 				 * If a multitouch event took place and the original touch
 				 * dictating the movement of the hover cell has ended, then the
 				 * dragging event ends and the hover cell is animated to its
-				 * corresponding position in the gridview.
+				 * corresponding position in the listview.
 				 */
 				pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
 				final int pointerId = event.getPointerId(pointerIndex);
@@ -379,7 +364,7 @@ public class DynamicGridView extends GridView {
 	/**
 	 * dispatchDraw gets invoked when all the child views are about to be drawn.
 	 * By overriding this method, the hover cell (BitmapDrawable) can be drawn
-	 * over the gridview's items whenever the gridview is redrawn.
+	 * over the listview's items whenever the listview is redrawn.
 	 */
 	@Override
 	protected void dispatchDraw(final Canvas canvas) {
@@ -450,126 +435,66 @@ public class DynamicGridView extends GridView {
 	 */
 	private void handleCellSwitch() {
 		final int deltaY = mLastEventY - mDownY;
-		final int deltaX = mLastEventX - mDownX;
-		final int deltaYTotal = mHoverCellOriginalBounds.top + mTotalOffsetY + deltaY;
-		final int deltaXTotal = mHoverCellOriginalBounds.left + mTotalOffsetX + deltaX;
+		final int deltaYTotal = mHoverCellOriginalBounds.top + mTotalOffset + deltaY;
 
-		final int numColumns = getNumColumns();
-		final int position = getPositionForID(mMobileItemId);
-
-		final int abovePosition = position - numColumns;
-		final int belowPosition = position + numColumns;
-		final int toLeftPosition = position - 1;
-		final int toRightPosition = position + 1;
-
-		final View aboveView = getViewForPosition(abovePosition);
-		final View belowView = getViewForPosition(belowPosition);
-		View toLeftView = getViewForPosition(toLeftPosition);
-		View toRightView = getViewForPosition(toRightPosition);
+		final View belowView = getViewForID(mBelowItemId);
 		final View mobileView = getViewForID(mMobileItemId);
-
-		if (toRightView != null && mobileView.getLeft() > toRightView.getLeft()) {
-			// mobile view is far right
-			toRightView = null;
-		}
-		if (toLeftView != null && mobileView.getLeft() < toLeftView.getLeft()) {
-			// mobile view is far left
-			toLeftView = null;
-		}
+		final View aboveView = getViewForID(mAboveItemId);
 
 		final boolean isBelow = belowView != null && deltaYTotal > belowView.getTop();
 		final boolean isAbove = aboveView != null && deltaYTotal < aboveView.getTop();
-		final boolean isToRight = toRightView != null && deltaXTotal > toRightView.getLeft();
-		final boolean isToLeft = toLeftView != null && deltaXTotal < toLeftView.getLeft();
-		int newPosition;
-		if (isBelow) {
-			newPosition = belowPosition;
-		} else if (isAbove) {
-			newPosition = abovePosition;
-		} else if (isToLeft) {
-			newPosition = toLeftPosition;
-		} else if (isToRight) {
-			newPosition = toRightPosition;
-		} else {
-			newPosition = position;
-		}
 
-		if (newPosition == position) return;
+		if (isBelow || isAbove) {
 
-		final ListAdapter adapter = getAdapter();
-		final int fromPosition = Math.min(newPosition, position);
-		final int toPosition = Math.max(newPosition, position);
+			final long switchItemID = isBelow ? mBelowItemId : mAboveItemId;
+			final View switchView = isBelow ? belowView : aboveView;
+			final int originalItem = getPositionForView(mobileView);
 
-		for (int cellPosition = fromPosition; cellPosition <= toPosition; cellPosition++) {
-			getViewForPosition(cellPosition).setVisibility(View.VISIBLE);
-		}
-		mItemIdLefts.clear();
-		mItemIdTops.clear();
-
-		final int firstVisiblePosition = getFirstVisiblePosition();
-		final int childCount = getChildCount();
-		for (int childAt = 0; childAt < childCount; childAt++) {
-			final View child = getChildAt(childAt);
-			assert child != null;
-			final int pos = firstVisiblePosition + childAt;
-			final long itemId = adapter.getItemId(pos);
-			mItemIdLefts.put(itemId, child.getLeft());
-			mItemIdTops.put(itemId, child.getTop());
-		}
-
-		final ViewTreeObserver observer = getViewTreeObserver();
-		assert observer != null;
-		observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-			@Override
-			public boolean onPreDraw() {
-				observer.removeOnPreDrawListener(this);
-				final int firstVisiblePosition = getFirstVisiblePosition();
-				final int childCount = getChildCount();
-				for (int childAt = 0; childAt < childCount; childAt++) {
-					final View child = getChildAt(childAt);
-					assert child != null;
-					final int pos = firstVisiblePosition + childAt;
-					final long itemId = adapter.getItemId(pos);
-					if (itemId == mMobileItemId) {
-						child.setVisibility(View.GONE);
-						continue;
-					}
-					final Integer oldLeft = mItemIdLefts.get(itemId);
-					final Integer oldTop = mItemIdTops.get(itemId);
-					if (oldLeft == null) {
-						continue;
-					}
-					mItemIdLefts.put(itemId, child.getLeft());
-					mItemIdTops.put(itemId, child.getTop());
-
-					final int newLeft = child.getLeft();
-					final int newTop = child.getTop();
-
-					final int deltaX = oldLeft - newLeft;
-					final int deltaY = oldTop - newTop;
-
-					if (deltaX == 0 && deltaY == 0) {
-						continue;
-					}
-
-					child.setTranslationX(deltaX);
-					child.setTranslationY(deltaY);
-
-					final AnimatorSet animator = new AnimatorSet();
-					animator.playTogether(ObjectAnimator.ofFloat(child, View.TRANSLATION_X, 0),
-							ObjectAnimator.ofFloat(child, View.TRANSLATION_Y, 0));
-					animator.setDuration(MOVE_DURATION).start();
-				}
-				return true;
+			if (switchView == null) {
+				updateNeighborViewsForID(mMobileItemId);
+				return;
 			}
-		});
 
-		((DraggableAdapter) adapter).reorderElements(position, newPosition);
+			final int newItemPosition = getPositionForID(switchItemID);
+			((DraggableAdapter) getAdapter()).swapElements(originalItem, newItemPosition);
+
+			mDownY = mLastEventY;
+
+			final int switchViewStartTop = switchView.getTop();
+
+			mobileView.setVisibility(View.VISIBLE);
+			switchView.setVisibility(View.INVISIBLE);
+
+			updateNeighborViewsForID(mMobileItemId);
+
+			final ViewTreeObserver observer = getViewTreeObserver();
+			observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+				@Override
+				public boolean onPreDraw() {
+					observer.removeOnPreDrawListener(this);
+
+					final View switchView = getViewForID(switchItemID);
+
+					mTotalOffset += deltaY;
+
+					final int switchViewNewTop = switchView.getTop();
+					final int delta = switchViewStartTop - switchViewNewTop;
+
+					switchView.setTranslationY(delta);
+
+					final ObjectAnimator animator = ObjectAnimator.ofFloat(switchView, View.TRANSLATION_Y, 0);
+					animator.setDuration(MOVE_DURATION);
+					animator.start();
+
+					return true;
+				}
+			});
+		}
 	}
 
 	/**
-	 * Determines whether this gridview is in a scrolling state invoked by the
-	 * fact that the hover cell is out of the bounds of the gridview;
+	 * Determines whether this listview is in a scrolling state invoked by the
+	 * fact that the hover cell is out of the bounds of the listview;
 	 */
 	private void handleMobileCellScroll() {
 		mIsMobileScrolling = handleMobileCellScroll(mHoverCellCurrentBounds);
@@ -581,7 +506,9 @@ public class DynamicGridView extends GridView {
 	private void touchEventsCancelled() {
 		final View mobileView = getViewForID(mMobileItemId);
 		if (mCellIsMobile) {
+			mAboveItemId = INVALID_ID;
 			mMobileItemId = INVALID_ID;
+			mBelowItemId = INVALID_ID;
 			mobileView.setVisibility(VISIBLE);
 			mHoverCell = null;
 			invalidate();
@@ -613,7 +540,7 @@ public class DynamicGridView extends GridView {
 				return;
 			}
 
-			mHoverCellCurrentBounds.offsetTo(mobileView.getLeft(), mobileView.getTop());
+			mHoverCellCurrentBounds.offsetTo(mHoverCellOriginalBounds.left, mobileView.getTop());
 
 			final ObjectAnimator hoverViewAnimator = ObjectAnimator.ofObject(mHoverCell, "bounds", sBoundEvaluator,
 					mHoverCellCurrentBounds);
@@ -626,7 +553,9 @@ public class DynamicGridView extends GridView {
 			hoverViewAnimator.addListener(new AnimatorListenerAdapter() {
 				@Override
 				public void onAnimationEnd(final Animator animation) {
+					mAboveItemId = INVALID_ID;
 					mMobileItemId = INVALID_ID;
+					mBelowItemId = INVALID_ID;
 					mobileView.setVisibility(VISIBLE);
 					mHoverCell = null;
 					setEnabled(true);
@@ -642,5 +571,18 @@ public class DynamicGridView extends GridView {
 		} else {
 			touchEventsCancelled();
 		}
+	}
+
+	/**
+	 * Stores a reference to the views above and below the item currently
+	 * corresponding to the hover cell. It is important to note that if this
+	 * item is either at the top or bottom of the list, mAboveItemId or
+	 * mBelowItemId may be invalid.
+	 */
+	private void updateNeighborViewsForID(final long itemID) {
+		final int position = getPositionForID(itemID);
+		final ListAdapter adapter = getAdapter();
+		mAboveItemId = adapter.getItemId(position - 1);
+		mBelowItemId = adapter.getItemId(position + 1);
 	}
 }

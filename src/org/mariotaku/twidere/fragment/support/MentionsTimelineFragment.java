@@ -30,7 +30,7 @@ import android.os.Bundle;
 import org.mariotaku.twidere.provider.TweetStore.Mentions;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 
-public class MentionsFragment extends CursorStatusesListFragment {
+public class MentionsTimelineFragment extends CursorStatusesListFragment {
 
 	private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
 

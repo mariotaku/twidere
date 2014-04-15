@@ -13,11 +13,11 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<fragment
-			android:id="@+id/quick_menu_trends"
+		<ListView
+			android:id="@android:id/list"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			class="org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment"/>
+			android:layout_height="match_parent">
+		</ListView>
 	</FrameLayout>
 
 	<LinearLayout
@@ -59,12 +59,6 @@
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1">
-
-			<fragment
-				android:id="@+id/activities_list"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				class="org.mariotaku.twidere.fragment.support.ActivitiesAboutMeFragment"/>
 		</FrameLayout>
 	</LinearLayout>
 

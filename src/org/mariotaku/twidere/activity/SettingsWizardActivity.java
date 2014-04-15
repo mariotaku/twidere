@@ -54,7 +54,7 @@ import org.mariotaku.twidere.fragment.BasePreferenceFragment;
 import org.mariotaku.twidere.fragment.ProgressDialogFragment;
 import org.mariotaku.twidere.fragment.support.DirectMessagesFragment;
 import org.mariotaku.twidere.fragment.support.HomeTimelineFragment;
-import org.mariotaku.twidere.fragment.support.MentionsFragment;
+import org.mariotaku.twidere.fragment.support.MentionsTimelineFragment;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
 import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.preference.WizardPageHeaderPreference;
@@ -562,7 +562,7 @@ public class SettingsWizardActivity extends Activity implements Constants {
 
 		private boolean wasConfigured(final List<SupportTabSpec> tabs) {
 			for (final SupportTabSpec spec : tabs) {
-				if (classEquals(spec.cls, HomeTimelineFragment.class) || classEquals(spec.cls, MentionsFragment.class)
+				if (classEquals(spec.cls, HomeTimelineFragment.class) || classEquals(spec.cls, MentionsTimelineFragment.class)
 						|| classEquals(spec.cls, DirectMessagesFragment.class)) return true;
 			}
 			return false;
