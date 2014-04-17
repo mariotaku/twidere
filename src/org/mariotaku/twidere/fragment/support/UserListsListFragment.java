@@ -112,11 +112,11 @@ public class UserListsListFragment extends BaseUserListsListFragment {
 		super.onStop();
 	}
 
-	private void removeUserList(final int id) {
+	private void removeUserList(final long id) {
 		final ParcelableUserListsAdapter adapter = getListAdapter();
-		final int lists_idx = adapter.findItemPosition(id);
-		if (lists_idx >= 0) {
-			adapter.remove(lists_idx);
+		final int listsIdx = adapter.findItemPosition(id);
+		if (listsIdx >= 0) {
+			adapter.remove(listsIdx);
 		}
 	}
 

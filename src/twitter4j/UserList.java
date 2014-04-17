@@ -44,7 +44,7 @@ public interface UserList extends Comparable<UserList>, TwitterResponse, Seriali
 	 * 
 	 * @return the id of the list
 	 */
-	int getId();
+	long getId();
 
 	/**
 	 * Returns the member count of the list

@@ -322,7 +322,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			args.putString(EXTRA_NAME, user.name);
 		} else if (value instanceof ParcelableUserList) {
 			final ParcelableUserList user_list = (ParcelableUserList) value;
-			args.putInt(EXTRA_LIST_ID, user_list.id);
+			args.putLong(EXTRA_LIST_ID, user_list.id);
 			args.putString(EXTRA_LIST_NAME, user_list.name);
 			args.putLong(EXTRA_USER_ID, user_list.user_id);
 			args.putString(EXTRA_SCREEN_NAME, user_list.user_screen_name);

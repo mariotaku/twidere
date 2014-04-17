@@ -85,11 +85,11 @@ public class AddUserListMemberDialogFragment extends BaseSupportDialogFragment i
 		super.onSaveInstanceState(outState);
 	}
 
-	public static AddUserListMemberDialogFragment show(final FragmentManager fm, final long account_id,
-			final int list_id) {
+	public static AddUserListMemberDialogFragment show(final FragmentManager fm, final long accountId,
+			final long listId) {
 		final Bundle args = new Bundle();
-		args.putLong(EXTRA_ACCOUNT_ID, account_id);
-		args.putInt(EXTRA_LIST_ID, list_id);
+		args.putLong(EXTRA_ACCOUNT_ID, accountId);
+		args.putLong(EXTRA_LIST_ID, listId);
 		final AddUserListMemberDialogFragment f = new AddUserListMemberDialogFragment();
 		f.setArguments(args);
 		f.show(fm, FRAGMENT_TAG);

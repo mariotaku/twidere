@@ -74,7 +74,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList addUserListMember(final int listId, final long userId) throws TwitterException {
+	public UserList addUserListMember(final long listId, final long userId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE, new HttpParameter("list_id", listId),
@@ -82,7 +82,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList addUserListMember(final int listId, final String screenName) throws TwitterException {
+	public UserList addUserListMember(final long listId, final String screenName) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE, new HttpParameter("list_id", listId),
@@ -90,7 +90,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList addUserListMembers(final int listId, final long[] userIds) throws TwitterException {
+	public UserList addUserListMembers(final long listId, final long[] userIds) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE_ALL,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE_ALL, new HttpParameter("list_id", listId),
@@ -98,7 +98,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList addUserListMembers(final int listId, final String[] screenNames) throws TwitterException {
+	public UserList addUserListMembers(final long listId, final String[] screenNames) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE_ALL,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_CREATE_ALL, new HttpParameter("list_id", listId),
@@ -194,7 +194,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList createUserListSubscription(final int listId) throws TwitterException {
+	public UserList createUserListSubscription(final long listId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory
 				.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_SUBSCRIBERS_CREATE,
@@ -203,7 +203,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList deleteUserListMember(final int listId, final long userId) throws TwitterException {
+	public UserList deleteUserListMember(final long listId, final long userId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY, new HttpParameter("list_id", listId),
@@ -211,7 +211,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList deleteUserListMember(final int listId, final String screenName) throws TwitterException {
+	public UserList deleteUserListMember(final long listId, final String screenName) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY, new HttpParameter("list_id", listId),
@@ -219,7 +219,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList deleteUserListMembers(final int listId, final long[] userIds) throws TwitterException {
+	public UserList deleteUserListMembers(final long listId, final long[] userIds) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY_ALL,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY_ALL,
@@ -227,7 +227,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList deleteUserListMembers(final int listId, final String[] screenNames) throws TwitterException {
+	public UserList deleteUserListMembers(final long listId, final String[] screenNames) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY_ALL,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_MEMBERS_DESTROY_ALL,
@@ -309,14 +309,14 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList destroyUserList(final int listId) throws TwitterException {
+	public UserList destroyUserList(final long listId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_DESTROY,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_DESTROY, new HttpParameter("list_id", listId)));
 	}
 
 	@Override
-	public UserList destroyUserListSubscription(final int listId) throws TwitterException {
+	public UserList destroyUserListSubscription(final long listId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory
 				.createAUserList(post(conf.getRestBaseURL() + ENDPOINT_LISTS_SUBSCRIBERS_DESTROY,
@@ -865,7 +865,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public PagableResponseList<User> getUserListMembers(final int listId, final CursorPaging paging)
+	public PagableResponseList<User> getUserListMembers(final long listId, final CursorPaging paging)
 			throws TwitterException {
 		return factory
 				.createPagableUserList(get(
@@ -980,7 +980,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public ResponseList<Status> getUserListStatuses(final int listId, final Paging paging) throws TwitterException {
+	public ResponseList<Status> getUserListStatuses(final long listId, final Paging paging) throws TwitterException {
 		return factory.createStatusList(get(
 				conf.getRestBaseURL() + ENDPOINT_LISTS_STATUSES,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_STATUSES,
@@ -1010,7 +1010,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public PagableResponseList<User> getUserListSubscribers(final int listId, final CursorPaging paging)
+	public PagableResponseList<User> getUserListSubscribers(final long listId, final CursorPaging paging)
 			throws TwitterException {
 		return factory
 				.createPagableUserList(get(
@@ -1312,7 +1312,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList showUserList(final int listId) throws TwitterException {
+	public UserList showUserList(final long listId) throws TwitterException {
 		return factory.createAUserList(get(conf.getRestBaseURL() + ENDPOINT_LISTS_SHOW, conf.getSigningRestBaseURL()
 				+ ENDPOINT_LISTS_SHOW, new HttpParameter("list_id", listId)));
 	}
@@ -1331,7 +1331,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public User showUserListMembership(final int listId, final long userId) throws TwitterException {
+	public User showUserListMembership(final long listId, final long userId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createUser(get(conf.getRestBaseURL() + ENDPOINT_LISTS_MEMBERS_SHOW, conf.getSigningRestBaseURL()
 				+ ENDPOINT_LISTS_MEMBERS_SHOW, new HttpParameter("list_id", listId), new HttpParameter("user_id",
@@ -1339,7 +1339,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public User showUserListSubscription(final int listId, final long userId) throws TwitterException {
+	public User showUserListSubscription(final long listId, final long userId) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createUser(get(conf.getRestBaseURL() + ENDPOINT_LISTS_SUBSCRIBERS_SHOW,
 				conf.getSigningRestBaseURL() + ENDPOINT_LISTS_SUBSCRIBERS_SHOW, new HttpParameter("list_id", listId),
@@ -1520,7 +1520,7 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
-	public UserList updateUserList(final int listId, final String newListName, final boolean isPublicList,
+	public UserList updateUserList(final long listId, final String newListName, final boolean isPublicList,
 			final String newDescription) throws TwitterException {
 		ensureAuthorizationEnabled();
 		final List<HttpParameter> httpParams = new ArrayList<HttpParameter>();

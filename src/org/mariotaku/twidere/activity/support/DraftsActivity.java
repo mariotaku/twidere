@@ -113,7 +113,8 @@ public class DraftsActivity extends BaseSupportActivity implements LoaderCallbac
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 		final Uri uri = Drafts.CONTENT_URI;
 		final String[] cols = Drafts.COLUMNS;
-		return new CursorLoader(this, uri, cols, null, null, null);
+		final String orderBy = Drafts.TIMESTAMP + " DESC";
+		return new CursorLoader(this, uri, cols, null, null, orderBy);
 	}
 
 	@Override

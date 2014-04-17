@@ -16,7 +16,6 @@
 
 		<!-- Accent Colors -->
 		<item name="accentColor">#ff0099cc</item>
-		<item name="accentColorTranslucent">#660099cc</item>
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_dark</item>
@@ -50,7 +49,6 @@
 
 		<!-- Accent Colors -->
 		<item name="accentColor">#ff0099cc</item>
-		<item name="accentColorTranslucent">#660099cc</item>
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
@@ -84,7 +82,6 @@
 
 		<!-- Accent Colors -->
 		<item name="accentColor">#ff0099cc</item>
-		<item name="accentColorTranslucent">#660099cc</item>
 
 		<!-- Colors -->
 		<item name="android:colorBackgroundCacheHint">@color/bg_color_light</item>
@@ -226,13 +223,11 @@
 
 	<style name="Theme.Twidere.ActionBar.Colored.Light" parent="Theme.Twidere.Light">
 		<item name="accentColor">@color/accent_white</item>
-		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
 		<item name="android:actionBarItemBackground">@drawable/list_selector_light_white</item>
 	</style>
 
 	<style name="Theme.Twidere.ActionBar.Colored.Dark" parent="Theme.Twidere.Dark">
 		<item name="accentColor">@color/accent_white</item>
-		<item name="accentColorTranslucent">@color/accent_white_translucent</item>
 		<item name="android:actionBarItemBackground">@drawable/list_selector_white</item>
 	</style>
 

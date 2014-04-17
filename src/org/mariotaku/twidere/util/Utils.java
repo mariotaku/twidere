@@ -2846,7 +2846,7 @@ public final class Utils implements Constants {
 	public static void openUserListDetails(final Activity activity, final ParcelableUserList userList) {
 		if (activity == null || userList == null) return;
 		final long accountId = userList.account_id, userId = userList.user_id;
-		final int listId = userList.id;
+		final long listId = userList.id;
 		final Bundle extras = new Bundle();
 		extras.putParcelable(EXTRA_USER_LIST, userList);
 		final Uri.Builder builder = new Uri.Builder();
@@ -2861,24 +2861,24 @@ public final class Utils implements Constants {
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 	}
 
-	public static void openUserListMembers(final Activity activity, final long account_id, final int list_id,
-			final long user_id, final String screen_name, final String list_name) {
+	public static void openUserListMembers(final Activity activity, final long accountId, final long listId,
+			final long userId, final String screenName, final String listName) {
 		if (activity == null) return;
 		final Uri.Builder builder = new Uri.Builder();
 		builder.scheme(SCHEME_TWIDERE);
 		builder.authority(AUTHORITY_USER_LIST_MEMBERS);
-		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-		if (list_id > 0) {
-			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
+		if (listId > 0) {
+			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(listId));
 		}
-		if (user_id > 0) {
-			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+		if (userId > 0) {
+			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(userId));
 		}
-		if (screen_name != null) {
-			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+		if (screenName != null) {
+			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screenName);
 		}
-		if (list_name != null) {
-			builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
+		if (listName != null) {
+			builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, listName);
 		}
 		final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);
@@ -2923,24 +2923,24 @@ public final class Utils implements Constants {
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);
 	}
 
-	public static void openUserListSubscribers(final Activity activity, final long account_id, final int list_id,
-			final long user_id, final String screen_name, final String list_name) {
+	public static void openUserListSubscribers(final Activity activity, final long accountId, final long listId,
+			final long userId, final String screenName, final String listName) {
 		if (activity == null) return;
 		final Uri.Builder builder = new Uri.Builder();
 		builder.scheme(SCHEME_TWIDERE);
 		builder.authority(AUTHORITY_USER_LISTS);
-		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-		if (list_id > 0) {
-			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
+		if (listId > 0) {
+			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(listId));
 		}
-		if (user_id > 0) {
-			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+		if (userId > 0) {
+			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(userId));
 		}
-		if (screen_name != null) {
-			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+		if (screenName != null) {
+			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screenName);
 		}
-		if (list_name != null) {
-			builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
+		if (listName != null) {
+			builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, listName);
 		}
 		final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);
@@ -2951,24 +2951,24 @@ public final class Utils implements Constants {
 		openUserListSubscribers(activity, list.account_id, list.id, list.user_id, list.user_screen_name, list.name);
 	}
 
-	public static void openUserListTimeline(final Activity activity, final long account_id, final int list_id,
-			final long user_id, final String screen_name, final String list_name) {
+	public static void openUserListTimeline(final Activity activity, final long accountId, final long listId,
+			final long userId, final String screenName, final String listName) {
 		if (activity == null) return;
 		final Uri.Builder builder = new Uri.Builder();
 		builder.scheme(SCHEME_TWIDERE);
 		builder.authority(AUTHORITY_USER_LIST_TIMELINE);
-		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(account_id));
-		if (list_id > 0) {
-			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(list_id));
+		builder.appendQueryParameter(QUERY_PARAM_ACCOUNT_ID, String.valueOf(accountId));
+		if (listId > 0) {
+			builder.appendQueryParameter(QUERY_PARAM_LIST_ID, String.valueOf(listId));
 		}
-		if (user_id > 0) {
-			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(user_id));
+		if (userId > 0) {
+			builder.appendQueryParameter(QUERY_PARAM_USER_ID, String.valueOf(userId));
 		}
-		if (screen_name != null) {
-			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screen_name);
+		if (screenName != null) {
+			builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, screenName);
 		}
-		if (list_name != null) {
-			builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, list_name);
+		if (listName != null) {
+			builder.appendQueryParameter(QUERY_PARAM_LIST_NAME, listName);
 		}
 		final Intent intent = new Intent(Intent.ACTION_VIEW, builder.build());
 		SwipebackActivityUtils.startSwipebackActivity(activity, intent);

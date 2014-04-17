@@ -43,9 +43,9 @@ public interface ListsResources {
 	 *      lists/members/create | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
-	UserList addUserListMember(int listId, long userId) throws TwitterException;
+	UserList addUserListMember(long listId, long userId) throws TwitterException;
 
-	UserList addUserListMember(int listId, String userScreenName) throws TwitterException;
+	UserList addUserListMember(long listId, String userScreenName) throws TwitterException;
 
 	/**
 	 * Adds multiple members to a list, by specifying a comma-separated list of
@@ -64,7 +64,7 @@ public interface ListsResources {
 	 *      lists/members/create_all | Twitter Developers</a>
 	 * @since Twitter4J 2.1.7
 	 */
-	UserList addUserListMembers(int listId, long[] userIds) throws TwitterException;
+	UserList addUserListMembers(long listId, long[] userIds) throws TwitterException;
 
 	/**
 	 * Adds multiple members to a list, by specifying a comma-separated list of
@@ -83,7 +83,7 @@ public interface ListsResources {
 	 *      lists/members/create_all | Twitter Developers</a>
 	 * @since Twitter4J 2.1.7
 	 */
-	UserList addUserListMembers(int listId, String[] screenNames) throws TwitterException;
+	UserList addUserListMembers(long listId, String[] screenNames) throws TwitterException;
 
 	/**
 	 * Creates a new list for the authenticated user. Accounts are limited to 20
@@ -117,7 +117,7 @@ public interface ListsResources {
 	 *      lists/subscribers/create | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	UserList createUserListSubscription(int listId) throws TwitterException;
+	UserList createUserListSubscription(long listId) throws TwitterException;
 
 	/**
 	 * Removes the specified member from the list. The authenticated user must
@@ -134,13 +134,13 @@ public interface ListsResources {
 	 *      lists/members/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
-	UserList deleteUserListMember(int listId, long userId) throws TwitterException;
+	UserList deleteUserListMember(long listId, long userId) throws TwitterException;
 
-	UserList deleteUserListMember(int listId, String screenName) throws TwitterException;
+	UserList deleteUserListMember(long listId, String screenName) throws TwitterException;
 
-	UserList deleteUserListMembers(int listId, long[] userIds) throws TwitterException;
+	UserList deleteUserListMembers(long listId, long[] userIds) throws TwitterException;
 
-	UserList deleteUserListMembers(int listId, String[] screenNames) throws TwitterException;
+	UserList deleteUserListMembers(long listId, String[] screenNames) throws TwitterException;
 
 	/**
 	 * Deletes the specified list. Must be owned by the authenticated user. <br>
@@ -154,7 +154,7 @@ public interface ListsResources {
 	 *      lists/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
-	UserList destroyUserList(int listId) throws TwitterException;
+	UserList destroyUserList(long listId) throws TwitterException;
 
 	/**
 	 * Unsubscribes the authenticated user form the specified list. <br>
@@ -168,7 +168,7 @@ public interface ListsResources {
 	 *      lists/subscribers/destroy | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	UserList destroyUserListSubscription(int listId) throws TwitterException;
+	UserList destroyUserListSubscription(long listId) throws TwitterException;
 
 	/**
 	 * Returns the members of the specified list. <br>
@@ -185,7 +185,7 @@ public interface ListsResources {
 	 *      lists/members | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	PagableResponseList<User> getUserListMembers(int listId, CursorPaging paging) throws TwitterException;
+	PagableResponseList<User> getUserListMembers(long listId, CursorPaging paging) throws TwitterException;
 
 	PagableResponseList<User> getUserListMembers(String slug, long ownerId, CursorPaging paging)
 			throws TwitterException;
@@ -347,7 +347,7 @@ public interface ListsResources {
 	 *      lists/statuses | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	ResponseList<Status> getUserListStatuses(int listId, Paging paging) throws TwitterException;
+	ResponseList<Status> getUserListStatuses(long listId, Paging paging) throws TwitterException;
 
 	ResponseList<Status> getUserListStatuses(String slug, long ownerId, Paging paging) throws TwitterException;
 
@@ -371,7 +371,7 @@ public interface ListsResources {
 	 *      lists/subscribers | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	PagableResponseList<User> getUserListSubscribers(int listId, CursorPaging paging) throws TwitterException;
+	PagableResponseList<User> getUserListSubscribers(long listId, CursorPaging paging) throws TwitterException;
 
 	PagableResponseList<User> getUserListSubscribers(String slug, long ownerId, CursorPaging paging)
 			throws TwitterException;
@@ -410,7 +410,7 @@ public interface ListsResources {
 	 *      href="https://dev.twitter.com/docs/api/1.1/get/lists/show">https://dev.twitter.com/docs/api/1.1/get/lists/show | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	UserList showUserList(int listId) throws TwitterException;
+	UserList showUserList(long listId) throws TwitterException;
 
 	UserList showUserList(String slug, long ownerId) throws TwitterException;
 
@@ -434,7 +434,7 @@ public interface ListsResources {
 	 *      lists/members/show | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	User showUserListMembership(int listId, long userId) throws TwitterException;
+	User showUserListMembership(long listId, long userId) throws TwitterException;
 
 	/**
 	 * Check if the specified user is a subscriber of the specified list. <br>
@@ -453,7 +453,7 @@ public interface ListsResources {
 	 *      lists/subscribers/show | Twitter Developers</a>
 	 * @since Twitter4J 2.2.3
 	 */
-	User showUserListSubscription(int listId, long userId) throws TwitterException;
+	User showUserListSubscription(long listId, long userId) throws TwitterException;
 
 	/**
 	 * Updates the specified list. <br>
@@ -472,6 +472,6 @@ public interface ListsResources {
 	 *      lists/update | Twitter Developers</a>
 	 * @since Twitter4J 2.1.0
 	 */
-	UserList updateUserList(int listId, String newListName, boolean isPublicList, String newDescription)
+	UserList updateUserList(long listId, String newListName, boolean isPublicList, String newDescription)
 			throws TwitterException;
 }

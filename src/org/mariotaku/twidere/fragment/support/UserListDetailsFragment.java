@@ -342,7 +342,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 				args.putString(EXTRA_LIST_NAME, userList.name);
 				args.putString(EXTRA_DESCRIPTION, userList.description);
 				args.putBoolean(EXTRA_IS_PUBLIC, userList.is_public);
-				args.putInt(EXTRA_LIST_ID, userList.id);
+				args.putLong(EXTRA_LIST_ID, userList.id);
 				final DialogFragment f = new EditUserListDialogFragment();
 				f.setArguments(args);
 				f.show(getFragmentManager(), "edit_user_list_details");
