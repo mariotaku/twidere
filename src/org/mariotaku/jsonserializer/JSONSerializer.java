@@ -67,11 +67,6 @@ public class JSONSerializer {
 		return jsonString.getBytes(Charset.defaultCharset());
 	}
 
-	
-
-	public static <T extends JSONParcelable> String toJSONArrayString(final T[] array) {
-		return jsonToString(toJSONArray(array));
-	}
 	public static <T extends JSONParcelable> JSONArray toJSONArray(final T[] array) {
 		if (array == null) return null;
 		final JSONArray json = new JSONArray();
@@ -79,6 +74,10 @@ public class JSONSerializer {
 			json.put(toJSONObject(parcelable));
 		}
 		return json;
+	}
+
+	public static <T extends JSONParcelable> String toJSONArrayString(final T[] array) {
+		return jsonToString(toJSONArray(array));
 	}
 
 	public static <T extends JSONParcelable> JSONObject toJSONObject(final T parcelable) {

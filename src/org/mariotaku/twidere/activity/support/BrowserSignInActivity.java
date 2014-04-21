@@ -47,7 +47,8 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator;
 import org.mariotaku.twidere.util.ParseUtils;
-import org.mariotaku.twidere.util.net.HttpClientImpl;
+import org.mariotaku.twidere.util.net.ApacheHttpClientFactory;
+import org.mariotaku.twidere.util.net.TwidereHostResolverFactory;
 import org.xmlpull.v1.XmlPullParserException;
 
 import twitter4j.Twitter;
@@ -230,8 +231,8 @@ public class BrowserSignInActivity extends BaseSupportDialogActivity implements 
 			final String consumer_key = getNonEmptyString(mPreferences, KEY_CONSUMER_KEY, TWITTER_CONSUMER_KEY_2);
 			final String consumer_secret = getNonEmptyString(mPreferences, KEY_CONSUMER_SECRET,
 					TWITTER_CONSUMER_SECRET_2);
-			cb.setHostAddressResolver(mApplication.getHostAddressResolver());
-			cb.setHttpClientImplementation(HttpClientImpl.class);
+			cb.setHostAddressResolverFactory(new TwidereHostResolverFactory(mApplication));
+			cb.setHttpClientFactory(new ApacheHttpClientFactory());
 			setUserAgent(mActivity, cb);
 			cb.setRestBaseURL(DEFAULT_REST_BASE_URL);
 			cb.setOAuthBaseURL(DEFAULT_OAUTH_BASE_URL);

@@ -426,7 +426,8 @@
 			android:name=".activity.support.CustomTabEditorActivity"
 			android:exported="false"
 			android:label="@string/add_tab"
-			android:theme="@style/Theme.Blank.Dialog">
+			android:theme="@style/Theme.Blank.Dialog"
+			android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="org.mariotaku.twidere.ADD_TAB"/>
 				<action android:name="org.mariotaku.twidere.EDIT_TAB"/>

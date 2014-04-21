@@ -69,7 +69,8 @@ import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.AuthenticityTokenEx
 import org.mariotaku.twidere.util.OAuthPasswordAuthenticator.WrongUserPassException;
 import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
-import org.mariotaku.twidere.util.net.HttpClientImpl;
+import org.mariotaku.twidere.util.net.ApacheHttpClientFactory;
+import org.mariotaku.twidere.util.net.TwidereHostResolverFactory;
 import org.mariotaku.twidere.view.ColorPickerView;
 
 import twitter4j.Twitter;
@@ -393,8 +394,8 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		final boolean enable_gzip_compressing = mPreferences.getBoolean(KEY_GZIP_COMPRESSING, false);
 		final boolean ignore_ssl_error = mPreferences.getBoolean(KEY_IGNORE_SSL_ERROR, false);
 		final boolean enable_proxy = mPreferences.getBoolean(KEY_ENABLE_PROXY, false);
-		cb.setHostAddressResolver(mApplication.getHostAddressResolver());
-		cb.setHttpClientImplementation(HttpClientImpl.class);
+		cb.setHostAddressResolverFactory(new TwidereHostResolverFactory(mApplication));
+		cb.setHttpClientFactory(new ApacheHttpClientFactory());
 		setUserAgent(this, cb);
 		if (!isEmpty(mRestBaseURL)) {
 			cb.setRestBaseURL(mRestBaseURL);

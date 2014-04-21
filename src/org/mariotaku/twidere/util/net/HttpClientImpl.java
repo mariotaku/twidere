@@ -47,6 +47,7 @@ import org.apache.http.params.HttpParams;
 
 import twitter4j.TwitterException;
 import twitter4j.auth.Authorization;
+import twitter4j.http.FactoryUtils;
 import twitter4j.http.HostAddressResolver;
 import twitter4j.http.HttpClientConfiguration;
 import twitter4j.http.HttpParameter;
@@ -123,7 +124,7 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 		try {
 			HttpRequestBase commonsRequest;
 
-			final HostAddressResolver resolver = conf.getHostAddressResolver();
+			final HostAddressResolver resolver = FactoryUtils.getHostAddressResolver(conf);
 			final String urlString = req.getURL();
 			final URI urlOrig;
 			try {

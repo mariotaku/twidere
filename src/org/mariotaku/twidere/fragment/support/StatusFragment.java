@@ -65,14 +65,18 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -81,6 +85,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -120,8 +125,10 @@ import org.mariotaku.twidere.util.ParseUtils;
 import org.mariotaku.twidere.util.SmartBarUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
+import org.mariotaku.twidere.util.Utils;
 import org.mariotaku.twidere.view.ColorLabelRelativeLayout;
 import org.mariotaku.twidere.view.ExtendedFrameLayout;
+import org.mariotaku.twidere.view.StatusTextView;
 
 import twitter4j.Relationship;
 import twitter4j.Twitter;
@@ -133,7 +140,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class StatusFragment extends ParcelableStatusesListFragment implements OnClickListener, Panes.Right,
-		OnMediaClickListener, OnSharedPreferenceChangeListener {
+		OnMediaClickListener, OnSharedPreferenceChangeListener, ActionMode.Callback {
 
 	private static final int LOADER_ID_STATUS = 1;
 	private static final int LOADER_ID_FOLLOW = 2;
@@ -150,8 +157,9 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	private AsyncTwitterWrapper mTwitterWrapper;
 	private ImageLoaderWrapper mImageLoader;
 	private Handler mHandler;
-	private TextView mNameView, mScreenNameView, mTextView, mTimeSourceView, mInReplyToView, mLocationView,
-			mRetweetView, mRepliesView;
+	private TextView mNameView, mScreenNameView, mTimeSourceView, mInReplyToView, mLocationView, mRetweetView,
+			mRepliesView;
+	private StatusTextView mTextView;
 
 	private ImageView mProfileImageView, mMapView;
 	private Button mFollowButton;
@@ -347,13 +355,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		linkify.setLinkTextColor(ThemeUtils.getUserLinkTextColor(getActivity()));
 		linkify.applyAllLinks(mTextView, status.account_id, status.is_possibly_sensitive);
 		mTextView.setMovementMethod(StatusContentMovementMethod.getInstance());
+		mTextView.setCustomSelectionActionModeCallback(this);
 		final String timeString = formatToLongTimeString(getActivity(), status.timestamp);
-		final String source_html = status.source;
-		if (!isEmpty(timeString) && !isEmpty(source_html)) {
-			mTimeSourceView.setText(Html.fromHtml(getString(R.string.time_source, timeString, source_html)));
-		} else if (isEmpty(timeString) && !isEmpty(source_html)) {
-			mTimeSourceView.setText(Html.fromHtml(getString(R.string.source, source_html)));
-		} else if (!isEmpty(timeString) && isEmpty(source_html)) {
+		final String sourceHtml = status.source;
+		if (!isEmpty(timeString) && !isEmpty(sourceHtml)) {
+			mTimeSourceView.setText(Html.fromHtml(getString(R.string.time_source, timeString, sourceHtml)));
+		} else if (isEmpty(timeString) && !isEmpty(sourceHtml)) {
+			mTimeSourceView.setText(Html.fromHtml(getString(R.string.source, sourceHtml)));
+		} else if (!isEmpty(timeString) && isEmpty(sourceHtml)) {
 			mTimeSourceView.setText(timeString);
 		}
 		mTimeSourceView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -421,6 +430,22 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	public Loader<List<ParcelableStatus>> newLoaderInstance(final Context context, final Bundle args) {
 		return null;
+	}
+
+	@Override
+	public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.copyUrl: {
+				final int start = mTextView.getSelectionStart(), end = mTextView.getSelectionEnd();
+				final SpannableString string = SpannableString.valueOf(mTextView.getText());
+				final URLSpan[] spans = string.getSpans(start, end, URLSpan.class);
+				if (spans == null || spans.length != 1) return true;
+				ClipboardUtils.setText(getActivity(), spans[0].getURL());
+				mode.finish();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -529,6 +554,14 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	}
 
 	@Override
+	public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
+		final FragmentActivity a = getActivity();
+		if (a == null) return false;
+		a.getMenuInflater().inflate(R.menu.action_status_text_selection, menu);
+		return true;
+	}
+
+	@Override
 	public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
 		if (!shouldUseNativeMenu()) return;
 		inflater.inflate(R.menu.menu_status, menu);
@@ -551,7 +584,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		mRetweetView = (TextView) mHeaderView.findViewById(R.id.retweet_view);
 		mNameView = (TextView) mHeaderView.findViewById(R.id.name);
 		mScreenNameView = (TextView) mHeaderView.findViewById(R.id.screen_name);
-		mTextView = (TextView) mHeaderView.findViewById(R.id.text);
+		mTextView = (StatusTextView) mHeaderView.findViewById(R.id.text);
 		mProfileImageView = (ImageView) mHeaderView.findViewById(R.id.profile_image);
 		mTimeSourceView = (TextView) mHeaderView.findViewById(R.id.time_source);
 		mInReplyToView = (TextView) mHeaderView.findViewById(R.id.in_reply_to);
@@ -566,6 +599,10 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		final View cardView = mHeaderView.findViewById(R.id.card);
 		ThemeUtils.applyThemeAlphaToDrawable(cardView.getContext(), cardView.getBackground());
 		return view;
+	}
+
+	@Override
+	public void onDestroyActionMode(final ActionMode mode) {
 	}
 
 	@Override
@@ -603,6 +640,16 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		if (!shouldUseNativeMenu() || mStatus == null) return false;
 		return handleMenuItemClick(item);
+	}
+
+	@Override
+	public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
+		final int start = mTextView.getSelectionStart(), end = mTextView.getSelectionEnd();
+		final SpannableString string = SpannableString.valueOf(mTextView.getText());
+		final URLSpan[] spans = string.getSpans(start, end, URLSpan.class);
+		final boolean avail = spans != null && spans.length == 1 && URLUtil.isValidUrl(spans[0].getURL());
+		Utils.setMenuItemAvailability(menu, android.R.id.copyUrl, avail);
+		return false;
 	}
 
 	@Override
@@ -661,6 +708,25 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 		scrollListToPosition(mListView, adapter.getCount() + mListView.getFooterViewsCount() - 1, 0);
 		return true;
 	}
+
+	// @Override
+	// protected void setItemSelected(final ParcelableStatus status, final int
+	// position, final boolean selected) {
+	// final MultiSelectManager manager = getMultiSelectManager();
+	// final Object only_item = manager.getCount() == 1 ?
+	// manager.getSelectedItems().get(0) : null;
+	// final boolean only_item_selected = only_item != null &&
+	// !only_item.equals(mStatus);
+	// mListView.setItemChecked(0, only_item_selected);
+	// if (mStatus != null) {
+	// if (only_item_selected) {
+	// manager.selectItem(mStatus);
+	// } else {
+	// manager.unselectItem(mStatus);
+	// }
+	// }
+	// super.setItemSelected(status, position, selected);
+	// }
 
 	@Override
 	protected String[] getSavedStatusesFileArgs() {
@@ -783,25 +849,6 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 	@Override
 	protected void setItemSelected(final ParcelableStatus status, final int position, final boolean selected) {
 	}
-
-	// @Override
-	// protected void setItemSelected(final ParcelableStatus status, final int
-	// position, final boolean selected) {
-	// final MultiSelectManager manager = getMultiSelectManager();
-	// final Object only_item = manager.getCount() == 1 ?
-	// manager.getSelectedItems().get(0) : null;
-	// final boolean only_item_selected = only_item != null &&
-	// !only_item.equals(mStatus);
-	// mListView.setItemChecked(0, only_item_selected);
-	// if (mStatus != null) {
-	// if (only_item_selected) {
-	// manager.selectItem(mStatus);
-	// } else {
-	// manager.unselectItem(mStatus);
-	// }
-	// }
-	// super.setItemSelected(status, position, selected);
-	// }
 
 	@Override
 	protected void setListHeaderFooters(final ListView list) {

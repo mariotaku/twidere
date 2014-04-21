@@ -28,11 +28,13 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.mariotaku.twidere.R;
+import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.PermissionsManager;
 
 public class RequestPermissionsActivity extends BaseSupportDialogActivity implements OnClickListener {
@@ -43,7 +45,7 @@ public class RequestPermissionsActivity extends BaseSupportDialogActivity implem
 	private TextView mNameView, mDescriptionView, mMessageView;
 	private Button mAcceptButton, mDenyButton;
 
-	private int mPermissions;
+	private String[] mPermissions;
 	private String mCallingPackage;
 
 	@Override
@@ -76,8 +78,9 @@ public class RequestPermissionsActivity extends BaseSupportDialogActivity implem
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		mPermissionsManager = new PermissionsManager(this);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
+		mPermissionsManager = new PermissionsManager(this);
 		setContentView(R.layout.request_permissions);
 		mAcceptButton.setOnClickListener(this);
 		mDenyButton.setOnClickListener(this);
@@ -88,6 +91,14 @@ public class RequestPermissionsActivity extends BaseSupportDialogActivity implem
 			return;
 		}
 		loadInfo(caller);
+	}
+
+	private void appendPermission(final StringBuilder sb, final String name, final boolean danger) {
+		if (danger) {
+			sb.append(String.format("<br/><b><font color='#ff8000'>%s</font></b>", HtmlEscapeHelper.escape(name)));
+		} else {
+			sb.append(String.format("<br/>%s", HtmlEscapeHelper.escape(name)));
+		}
 	}
 
 	private void loadInfo(final String pname) {
@@ -105,34 +116,32 @@ public class RequestPermissionsActivity extends BaseSupportDialogActivity implem
 			final CharSequence desc = info.loadDescription(pm);
 			mDescriptionView.setText(desc);
 			mDescriptionView.setVisibility(isEmpty(desc) ? View.GONE : View.VISIBLE);
-			final int permissions = mPermissions = meta.getInt(METADATA_KEY_PERMISSIONS);
+			final String[] permissions = PermissionsManager.parsePermissions(meta.getString(METADATA_KEY_PERMISSIONS));
+			mPermissions = permissions;
 			mCallingPackage = pname;
 			final StringBuilder builder = new StringBuilder();
-			builder.append(getString(R.string.permissions_request_message) + "<br/>");
-			if (permissions == 0) {
-				builder.append("<br/>" + getString(R.string.permission_description_none));
+			builder.append(HtmlEscapeHelper.escape(getString(R.string.permissions_request_message)) + "<br/>");
+			if (PermissionsManager.isPermissionValid(permissions)) {
+				if (PermissionsManager.hasPermissions(permissions, PERMISSION_PREFERENCES)) {
+					appendPermission(builder, getString(R.string.permission_description_preferences), true);
+				}
+				if (PermissionsManager.hasPermissions(permissions, PERMISSION_ACCOUNTS)) {
+					appendPermission(builder, getString(R.string.permission_description_accounts), true);
+				}
+				if (PermissionsManager.hasPermissions(permissions, PERMISSION_DIRECT_MESSAGES)) {
+					appendPermission(builder, getString(R.string.permission_description_direct_messages), true);
+				}
+				if (PermissionsManager.hasPermissions(permissions, PERMISSION_WRITE)) {
+					appendPermission(builder, getString(R.string.permission_description_write), false);
+				}
+				if (PermissionsManager.hasPermissions(permissions, PERMISSION_READ)) {
+					appendPermission(builder, getString(R.string.permission_description_read), false);
+				}
+				if (PermissionsManager.hasPermissions(permissions, PERMISSION_REFRESH)) {
+					appendPermission(builder, getString(R.string.permission_description_refresh), false);
+				}
 			} else {
-				if (permissions % PERMISSION_PREFERENCES == 0) {
-					builder.append("<br/>" + "<b><font color='#FF8000'>"
-							+ getString(R.string.permission_description_preferences) + "</font></b>");
-				}
-				if (permissions % PERMISSION_ACCOUNTS == 0) {
-					builder.append("<br/>" + "<b><font color='#FF8000'>"
-							+ getString(R.string.permission_description_accounts) + "</font></b>");
-				}
-				if (permissions % PERMISSION_DIRECT_MESSAGES == 0) {
-					builder.append("<br/>" + "<b><font color='#FF8000'>"
-							+ getString(R.string.permission_description_direct_messages) + "</font></b>");
-				}
-				if (permissions % PERMISSION_WRITE == 0) {
-					builder.append("<br/>" + "<b>" + getString(R.string.permission_description_write) + "</b>");
-				}
-				if (permissions % PERMISSION_READ == 0) {
-					builder.append("<br/>" + getString(R.string.permission_description_read));
-				}
-				if (permissions % PERMISSION_REFRESH == 0) {
-					builder.append("<br/>" + getString(R.string.permission_description_refresh));
-				}
+				appendPermission(builder, getString(R.string.permission_description_none), false);
 			}
 			mMessageView.setText(Html.fromHtml(builder.toString()));
 		} catch (final NameNotFoundException e) {

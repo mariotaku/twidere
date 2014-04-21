@@ -44,6 +44,15 @@ public class ExtendedImageView extends ImageView implements IExtendedView {
 	}
 
 	@Override
+	public final boolean dispatchTouchEvent(final MotionEvent event) {
+		if (mTouchInterceptor != null) {
+			final boolean ret = mTouchInterceptor.dispatchTouchEvent(this, event);
+			if (ret) return true;
+		}
+		return super.dispatchTouchEvent(event);
+	}
+
+	@Override
 	public final boolean onTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
 			final boolean ret = mTouchInterceptor.onTouchEvent(this, event);

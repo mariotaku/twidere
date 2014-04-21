@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Process;
+import android.text.TextUtils;
 
 import org.mariotaku.twidere.Constants;
 
@@ -34,47 +35,44 @@ import java.util.Map;
 
 public class PermissionsManager implements Constants {
 
-	private final SharedPreferences mPreferences;
+	private static final String[] PERMISSIONS_DENIED = { PERMISSION_DENIED };
+
+	private final SharedPreferencesWrapper mPreferences;
 	private final PackageManager mPackageManager;
 	private final Context mContext;
 
 	public PermissionsManager(final Context context) {
 		mContext = context;
-		mPreferences = context.getSharedPreferences(PERMISSION_PREFERENCES_NAME, Context.MODE_PRIVATE);
+		mPreferences = SharedPreferencesWrapper.getInstance(context, PERMISSION_PREFERENCES_NAME, Context.MODE_PRIVATE);
 		mPackageManager = context.getPackageManager();
 	}
 
-	public boolean accept(final String package_name, final int permissions) {
-		if (package_name == null || permissions < PERMISSION_NONE) return false;
+	public boolean accept(final String package_name, final String[] permissions) {
+		if (package_name == null || permissions == null) return false;
 		final SharedPreferences.Editor editor = mPreferences.edit();
-		editor.putInt(package_name, permissions);
+		editor.putString(package_name, ArrayUtils.toString(permissions, '|', false));
 		return editor.commit();
 	}
 
-	public boolean checkCallingPermission(final int level) {
-		return checkPermission(Binder.getCallingUid(), level);
+	public boolean checkCallingPermission(final String... requiredPermissions) {
+		return checkPermission(Binder.getCallingUid(), requiredPermissions);
 	}
 
-	public boolean checkPermission(final int uid, final int required_permissions) {
-		if (required_permissions < PERMISSION_NONE)
-			throw new IllegalArgumentException("invalid permissions " + required_permissions);
-		if (required_permissions == PERMISSION_NONE) return true;
+	public boolean checkPermission(final int uid, final String... requiredPermissions) {
+		if (requiredPermissions == null || requiredPermissions.length == 0) return true;
 		if (Process.myUid() == uid) return true;
 		if (checkSignature(uid)) return true;
 		final String pname = getPackageNameByUid(uid);
-		final int permissions = getPermissions(pname);
-		return permissions > PERMISSION_NONE && permissions % required_permissions == 0;
+		final String[] permissions = getPermissions(pname);
+		return ArrayUtils.contains(permissions, requiredPermissions);
 	}
 
-	public boolean checkPermission(final String pname, final int required_permissions) {
-		if (pname == null) throw new NullPointerException();
-		if (required_permissions < PERMISSION_NONE)
-			throw new IllegalArgumentException("invalid permissions " + required_permissions);
-		if (required_permissions == PERMISSION_NONE) return true;
+	public boolean checkPermission(final String pname, final String... requiredPermissions) {
+		if (requiredPermissions == null || requiredPermissions.length == 0) return true;
 		if (mContext.getPackageName().equals(pname)) return true;
-		// if (checkSignature(pname)) return true;
-		final int permissions = getPermissions(pname);
-		return permissions > PERMISSION_NONE && permissions % required_permissions == 0;
+		if (checkSignature(pname)) return true;
+		final String[] permissions = getPermissions(pname);
+		return ArrayUtils.contains(permissions, requiredPermissions);
 	}
 
 	public boolean checkSignature(final int uid) {
@@ -83,22 +81,23 @@ public class PermissionsManager implements Constants {
 	}
 
 	public boolean checkSignature(final String pname) {
+		if (Utils.isDebugBuild()) return false;
 		return mPackageManager.checkSignatures(pname, mContext.getPackageName()) == PackageManager.SIGNATURE_MATCH;
 	}
 
 	public boolean deny(final String package_name) {
 		if (package_name == null) return false;
 		final SharedPreferences.Editor editor = mPreferences.edit();
-		editor.putInt(package_name, PERMISSION_DENIED);
+		editor.putString(package_name, PERMISSION_DENIED);
 		return editor.commit();
 
 	}
 
-	public Map<String, Integer> getAll() {
-		final Map<String, Integer> map = new HashMap<String, Integer>();
+	public Map<String, String> getAll() {
+		final Map<String, String> map = new HashMap<String, String>();
 		for (final Map.Entry<String, ?> entry : mPreferences.getAll().entrySet()) {
-			if (entry.getValue() instanceof Integer) {
-				map.put(entry.getKey(), (Integer) entry.getValue());
+			if (entry.getValue() instanceof String) {
+				map.put(entry.getKey(), (String) entry.getValue());
 			}
 		}
 		return map;
@@ -110,19 +109,39 @@ public class PermissionsManager implements Constants {
 		return null;
 	}
 
-	public int getPermissions(final int uid) {
+	public String[] getPermissions(final int uid) {
 		return getPermissions(getPackageNameByUid(uid));
 	}
 
-	public int getPermissions(final String package_name) {
-		if (isEmpty(package_name)) return PERMISSION_INVALID;
-		return mPreferences.getInt(package_name, PERMISSION_NONE);
+	public String[] getPermissions(final String packageName) {
+		if (isEmpty(packageName)) return new String[0];
+		final String permissionsString = mPreferences.getString(packageName, null);
+		if (isEmpty(permissionsString)) return new String[0];
+		if (permissionsString.contains(PERMISSION_DENIED)) return PERMISSIONS_DENIED;
+		return permissionsString.split("\\|");
 	}
 
-	public boolean revoke(final String package_name) {
-		if (package_name == null) return false;
+	public boolean revoke(final String packageName) {
+		if (packageName == null) return false;
 		final SharedPreferences.Editor editor = mPreferences.edit();
-		editor.remove(package_name);
+		editor.remove(packageName);
 		return editor.commit();
+	}
+
+	public static boolean hasPermissions(final String[] permissions, final String... requiredPermissions) {
+		return ArrayUtils.contains(permissions, requiredPermissions);
+	}
+
+	public static boolean isPermissionValid(final String permissionsString) {
+		return TextUtils.isEmpty(permissionsString);
+	}
+
+	public static boolean isPermissionValid(final String... permissions) {
+		return permissions != null && permissions.length != 0;
+	}
+
+	public static String[] parsePermissions(final String permissionsString) {
+		if (isEmpty(permissionsString)) return new String[0];
+		return permissionsString.split(SEPARATOR_PERMISSION_REGEX);
 	}
 }

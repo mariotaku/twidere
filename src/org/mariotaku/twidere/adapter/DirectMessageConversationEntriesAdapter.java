@@ -58,13 +58,14 @@ public class DirectMessageConversationEntriesAdapter extends BaseCursorAdapter i
 	private boolean mAnimationEnabled;
 	private int mMaxAnimationPosition;
 
-	private boolean mPlainList;
+	private final boolean mPlainList;
 
 	public DirectMessageConversationEntriesAdapter(final Context context) {
 		this(context, Utils.isCompactCards(context), Utils.isPlainListStyle(context));
 	}
 
-	public DirectMessageConversationEntriesAdapter(final Context context, final boolean compactCards, final boolean plainList) {
+	public DirectMessageConversationEntriesAdapter(final Context context, final boolean compactCards,
+			final boolean plainList) {
 		super(context, getItemResource(compactCards), null, new String[0], new int[0], 0);
 		mPlainList = plainList;
 		final TwidereApplication app = TwidereApplication.getInstance(context);

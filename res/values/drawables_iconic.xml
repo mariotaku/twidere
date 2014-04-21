@@ -26,6 +26,7 @@
 	<item name="ic_iconic_action_retweet" type="drawable"/>
 	<item name="ic_iconic_action_reply" type="drawable"/>
 	<item name="ic_iconic_action_copy" type="drawable"/>
+	<item name="ic_iconic_action_select_all" type="drawable"/>
 	<item name="ic_iconic_action_translate" type="drawable"/>
 	<item name="ic_iconic_action_user" type="drawable"/>
 	<item name="ic_iconic_action_accounts" type="drawable"/>

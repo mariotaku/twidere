@@ -29,23 +29,23 @@ import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
 public class TwidereURLSpan extends URLSpan implements Constants {
 
 	private final int type, highlightStyle, highlightColor;
-	private final long account_id;
+	private final long accountId;
 	private final String url, orig;
 	private final boolean sensitive;
 	private final OnLinkClickListener listener;
 
-	public TwidereURLSpan(final String url, final long account_id, final int type, final boolean sensitive,
+	public TwidereURLSpan(final String url, final long accountId, final int type, final boolean sensitive,
 			final OnLinkClickListener listener, final int highlightStyle, final int highlightColor) {
-		this(url, null, account_id, type, sensitive, listener, highlightStyle, highlightColor);
+		this(url, null, accountId, type, sensitive, listener, highlightStyle, highlightColor);
 	}
 
-	public TwidereURLSpan(final String url, final String orig, final long account_id, final int type,
+	public TwidereURLSpan(final String url, final String orig, final long accountId, final int type,
 			final boolean sensitive, final OnLinkClickListener listener, final int highlightStyle,
 			final int highlightColor) {
 		super(url);
 		this.url = url;
 		this.orig = orig;
-		this.account_id = account_id;
+		this.accountId = accountId;
 		this.type = type;
 		this.sensitive = sensitive;
 		this.listener = listener;
@@ -56,7 +56,7 @@ public class TwidereURLSpan extends URLSpan implements Constants {
 	@Override
 	public void onClick(final View widget) {
 		if (listener != null) {
-			listener.onLinkClick(url, orig, account_id, type, sensitive);
+			listener.onLinkClick(url, orig, accountId, type, sensitive);
 		}
 	}
 

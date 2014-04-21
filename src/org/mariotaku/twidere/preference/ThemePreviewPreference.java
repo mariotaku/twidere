@@ -144,8 +144,8 @@ public class ThemePreviewPreference extends Preference implements Constants, OnS
 	private static class DummyTouchInterceptor implements TouchInterceptor {
 
 		@Override
-		public void dispatchTouchEvent(final View view, final MotionEvent event) {
-
+		public boolean dispatchTouchEvent(final View view, final MotionEvent event) {
+			return false;
 		}
 
 		@Override

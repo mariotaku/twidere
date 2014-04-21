@@ -1408,8 +1408,8 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 		public DestroyUserListSubscriptionTask(final long accountId, final long listId) {
 			super(mContext, mAsyncTaskManager);
-			this.mAccountId = accountId;
-			this.mListId = listId;
+			mAccountId = accountId;
+			mListId = listId;
 		}
 
 		@Override

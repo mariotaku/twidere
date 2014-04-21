@@ -43,13 +43,13 @@ public class UserTimelineLoader extends Twitter4JStatusesLoader {
 	private final boolean mIsMyTimeline;
 	private int mTotalItemsCount;
 
-	public UserTimelineLoader(final Context context, final long account_id, final long user_id,
-			final String screen_name, final long max_id, final long since_id, final List<ParcelableStatus> data,
-			final String[] saved_statuses_args, final int tab_position) {
-		super(context, account_id, max_id, since_id, data, saved_statuses_args, tab_position);
-		mUserId = user_id;
-		mUserScreenName = screen_name;
-		mIsMyTimeline = user_id > 0 ? account_id == user_id : account_id == getAccountId(context, screen_name);
+	public UserTimelineLoader(final Context context, final long accountId, final long userId, final String screenName,
+			final long maxId, final long sinceId, final List<ParcelableStatus> data, final String[] savedStatusesArgs,
+			final int tabPosition) {
+		super(context, accountId, maxId, sinceId, data, savedStatusesArgs, tabPosition);
+		mUserId = userId;
+		mUserScreenName = screenName;
+		mIsMyTimeline = userId > 0 ? accountId == userId : accountId == getAccountId(context, screenName);
 	}
 
 	public int getTotalItemsCount() {

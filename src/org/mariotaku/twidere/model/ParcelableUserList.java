@@ -136,11 +136,11 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
 		if (!(obj instanceof ParcelableUserList)) return false;
-		ParcelableUserList other = (ParcelableUserList) obj;
+		final ParcelableUserList other = (ParcelableUserList) obj;
 		if (account_id != other.account_id) return false;
 		if (id != other.id) return false;
 		return true;
@@ -150,8 +150,8 @@ public class ParcelableUserList implements Parcelable, JSONParcelable, Comparabl
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (account_id ^ (account_id >>> 32));
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int) (account_id ^ account_id >>> 32);
+		result = prime * result + (int) (id ^ id >>> 32);
 		return result;
 	}
 

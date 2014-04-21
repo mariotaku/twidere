@@ -30,16 +30,16 @@ public class QuickMenuFragment extends BaseSupportFragment {
 	private Context mThemedContext;
 	private ListView mListView;
 	private SlidingUpPanelLayout mSlidingUpPanel;
-	
+
 	private MergeAdapter mAdapter;
 	private TrendsAdapter mTrendsAdapter;
-	
+
 	private static final int LOADER_ID_TRENDS = 1;
-	
+
 	private final LoaderCallbacks<Cursor> mTrendsCallback = new LoaderCallbacks<Cursor>() {
 
 		@Override
-		public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
 			final Uri uri = CachedTrends.Local.CONTENT_URI;
 			final String table = getTableNameByUri(uri);
 			final String where = table != null ? CachedTrends.TIMESTAMP + " = " + "(SELECT " + CachedTrends.TIMESTAMP
@@ -48,16 +48,15 @@ public class QuickMenuFragment extends BaseSupportFragment {
 		}
 
 		@Override
-		public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-			mTrendsAdapter.swapCursor(data);
+		public void onLoaderReset(final Loader<Cursor> loader) {
+			mTrendsAdapter.swapCursor(null);
 		}
 
 		@Override
-		public void onLoaderReset(Loader<Cursor> loader) {
-			mTrendsAdapter.swapCursor(null);
+		public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
+			mTrendsAdapter.swapCursor(data);
 		}
-		
-		
+
 	};
 
 	@Override
@@ -72,14 +71,6 @@ public class QuickMenuFragment extends BaseSupportFragment {
 		mAdapter.addAdapter(mTrendsAdapter);
 		mListView.setAdapter(mAdapter);
 		getLoaderManager().initLoader(LOADER_ID_TRENDS, null, mTrendsCallback);
-	}
-	
-	private Context getThemedContext() {
-		if (mThemedContext != null) return mThemedContext;
-		final Context context = getActivity();
-		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
-		final int accentColor = ThemeUtils.getUserThemeColor(context);
-		return mThemedContext = new TwidereContextThemeWrapper(context, themeResource, accentColor);
 	}
 
 	@Override
@@ -100,6 +91,14 @@ public class QuickMenuFragment extends BaseSupportFragment {
 		super.onViewCreated(view, savedInstanceState);
 		mListView = (ListView) view.findViewById(android.R.id.list);
 		mSlidingUpPanel = (SlidingUpPanelLayout) view.findViewById(R.id.activities_drawer);
+	}
+
+	private Context getThemedContext() {
+		if (mThemedContext != null) return mThemedContext;
+		final Context context = getActivity();
+		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
+		final int accentColor = ThemeUtils.getUserThemeColor(context);
+		return mThemedContext = new TwidereContextThemeWrapper(context, themeResource, accentColor);
 	}
 
 }

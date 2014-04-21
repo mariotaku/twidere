@@ -26,7 +26,9 @@ import static org.mariotaku.twidere.util.CompareUtils.objectEquals;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-public class SupportTabSpec implements Comparable<SupportTabSpec> {
+import org.mariotaku.twidere.TwidereConstants;
+
+public class SupportTabSpec implements Comparable<SupportTabSpec>, TwidereConstants {
 
 	public final String name;
 	public final Object icon;

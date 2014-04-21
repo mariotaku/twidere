@@ -73,7 +73,7 @@ public class ParcelableMediaUpdate implements Parcelable, JSONParcelable {
 	@Override
 	public void writeToParcel(final Parcel dest, final int flags) {
 		dest.writeString(uri);
-		dest.writeInt(flags);
+		dest.writeInt(type);
 	}
 
 	public static ParcelableMediaUpdate[] fromJSONString(final String json) {

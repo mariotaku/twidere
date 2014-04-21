@@ -90,8 +90,8 @@ public interface ICardItemView extends IColorLabelView {
 
 		public DrawingHelper(final View view, final Context context, final AttributeSet attrs, final int defStyleAttr) {
 			mView = view;
-			final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CardItemView,
-					defStyleAttr, R.style.Widget_CardItemView);
+			final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CardItemView, defStyleAttr,
+					R.style.Widget_CardItemView);
 			mGapTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 			mCardGapHeight = a.getDimensionPixelSize(R.styleable.CardItemView_cardGapHeight, 0);
 			mCardGapText = a.getString(R.styleable.CardItemView_cardGapText);

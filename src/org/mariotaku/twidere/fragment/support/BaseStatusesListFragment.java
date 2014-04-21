@@ -218,7 +218,7 @@ abstract class BaseStatusesListFragment<Data> extends BasePullToRefreshListFragm
 	}
 
 	@Override
-	public final void onLoadFinished(final Loader<Data> loader, final Data data) {
+	public void onLoadFinished(final Loader<Data> loader, final Data data) {
 		if (getActivity() == null || getView() == null) return;
 		setListShown(true);
 		setRefreshComplete();

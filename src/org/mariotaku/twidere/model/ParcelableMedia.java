@@ -75,7 +75,7 @@ public class ParcelableMedia implements Parcelable, JSONParcelable {
 		type = in.readInt();
 	}
 
-	private ParcelableMedia(final String url, final String media_url, final int start, final int end, int type) {
+	private ParcelableMedia(final String url, final String media_url, final int start, final int end, final int type) {
 		this.url = url;
 		this.media_url = media_url;
 		this.start = start;
@@ -140,7 +140,7 @@ public class ParcelableMedia implements Parcelable, JSONParcelable {
 		}
 	}
 
-	public static ParcelableMedia newImage(String media_url, String url) {
+	public static ParcelableMedia newImage(final String media_url, final String url) {
 		return new ParcelableMedia(url, media_url, 0, 0, TYPE_IMAGE);
 	}
 

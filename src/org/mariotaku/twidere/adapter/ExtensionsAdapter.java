@@ -60,10 +60,10 @@ public class ExtensionsAdapter extends ArrayAdapter<ExtensionInfo> implements Co
 		}
 
 		final ExtensionInfo info = getItem(position);
-		holder.checkbox.setVisibility(info.permissions != PERMISSION_INVALID ? View.VISIBLE : View.GONE);
-		if (info.permissions != PERMISSION_INVALID) {
-			holder.checkbox.setChecked(info.permissions != PERMISSION_DENIED
-					&& mPermissionsManager.checkPermission(info.pname, info.permissions));
+		final boolean permissionValid = PermissionsManager.isPermissionValid(info.permissions);
+		holder.checkbox.setVisibility(permissionValid ? View.VISIBLE : View.GONE);
+		if (permissionValid) {
+			holder.checkbox.setChecked(mPermissionsManager.checkPermission(info.pname, info.permissions));
 		}
 		holder.text1.setText(info.label);
 		holder.text2.setVisibility(TextUtils.isEmpty(info.description) ? View.GONE : View.VISIBLE);

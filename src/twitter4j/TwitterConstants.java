@@ -34,6 +34,7 @@ public interface TwitterConstants {
 	static final String ENDPOINT_ACCOUNT_UPDATE_PROFILE_BANNER = "account/update_profile_banner.json";
 	static final String ENDPOINT_ACCOUNT_UPDATE_PROFILE_COLORS = "account/update_profile_colors.json";
 	static final String ENDPOINT_ACCOUNT_UPDATE_PROFILE_IMAGE = "account/update_profile_image.json";
+	static final String ENDPOINT_ACCOUNT_VERIFY_CREDENTIALS = "account/verify_credentials.json";
 
 	static final String ENDPOINT_ACTIVITY_ABOUT_ME = "activity/about_me.json";
 	static final String ENDPOINT_ACTIVITY_BY_FRIENDS = "activity/by_friends.json";
@@ -118,6 +119,7 @@ public interface TwitterConstants {
 	static final String ENDPOINT_STATUSES_UPDATE_WITH_MEDIA = "statuses/update_with_media.json";
 	static final String ENDPOINT_STATUSES_USER_TIMELINE = "statuses/user_timeline.json";
 	static final String ENDPOINT_STATUSES_MEDIA_TIMELINE = "statuses/media_timeline.json";
+	static final String ENDPOINT_STATUSES_REPORT_SPAM = "statuses/report_spam.json";
 
 	static final String ENDPOINT_TRENDS_AVAILABLE = "trends/available.json";
 	static final String ENDPOINT_TRENDS_CLOSEST = "trends/closest.json";

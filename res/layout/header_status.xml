@@ -90,7 +90,7 @@
 			layout="@layout/image_preview_grid"
 			android:visibility="gone"/>
 
-		<org.mariotaku.twidere.view.themed.ThemedTextView
+		<org.mariotaku.twidere.view.StatusTextView
 			android:id="@+id/text"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

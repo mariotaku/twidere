@@ -43,10 +43,12 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 	private static final int URI_CODE_TWITTER_USER_FOLLOWING = 11;
 	private static final int URI_CODE_TWITTER_USER_FOLLOWERS = 12;
 	private static final int URI_CODE_TWITTER_USER_FAVORITES = 13;
+	private static final int URI_CODE_TWITTER_INTENT_TWEET = 101;
 	private static final int URI_CODE_TWITTER_REDIRECT = 201;
 
 	static {
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/i/redirect", URI_CODE_TWITTER_REDIRECT);
+		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/intent/tweet", URI_CODE_TWITTER_INTENT_TWEET);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/status/#", URI_CODE_TWITTER_STATUS);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*/status/#/photo/#", URI_CODE_TWITTER_STATUS);
 		URI_MATCHER.addURI(AUTHORITY_TWITTER_COM, "/*", URI_CODE_TWITTER_USER);
@@ -118,7 +120,7 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 		finish();
 	}
 
-	private Intent getHandledIntent(Uri uri) {
+	private Intent getHandledIntent(final Uri uri) {
 		final List<String> pathSegments = uri.getPathSegments();
 		switch (URI_MATCHER.match(uri)) {
 			case URI_CODE_TWITTER_STATUS: {
@@ -127,6 +129,14 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 				builder.authority(AUTHORITY_STATUS);
 				builder.appendQueryParameter(QUERY_PARAM_STATUS_ID, pathSegments.get(2));
 				return new Intent(Intent.ACTION_VIEW, builder.build());
+			}
+			case URI_CODE_TWITTER_INTENT_TWEET: {
+				final Intent handledIntent = new Intent(this, ComposeActivity.class);
+				handledIntent.setAction(Intent.ACTION_SEND);
+				final String text = uri.getQueryParameter("text");
+				final String url = uri.getQueryParameter("url");
+				handledIntent.putExtra(Intent.EXTRA_TEXT, Utils.getShareStatus(this, text, url));
+				return handledIntent;
 			}
 			case URI_CODE_TWITTER_USER: {
 				final String pathSegment = pathSegments.get(0);
@@ -151,9 +161,8 @@ public class TwitterLinkHandlerActivity extends Activity implements Constants {
 				} else if (!ArrayUtils.contains(TWITTER_RESERVED_PATHS, pathSegment)) {
 					builder.authority(AUTHORITY_USER);
 					builder.appendQueryParameter(QUERY_PARAM_SCREEN_NAME, pathSegment);
-				} else {
+				} else
 					return null;
-				}
 				return new Intent(Intent.ACTION_VIEW, builder.build());
 			}
 			case URI_CODE_TWITTER_USER_FOLLOWING: {

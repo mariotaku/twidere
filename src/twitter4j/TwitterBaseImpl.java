@@ -50,7 +50,7 @@ import java.util.List;
  * 
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-abstract class TwitterBaseImpl implements OAuthSupport, HttpResponseListener {
+abstract class TwitterBaseImpl implements OAuthSupport, HttpResponseListener, TwitterConstants {
 	protected Configuration conf;
 	protected transient String screenName = null;
 	protected transient long id = 0;
@@ -407,11 +407,9 @@ abstract class TwitterBaseImpl implements OAuthSupport, HttpResponseListener {
 
 	protected User fillInIDAndScreenName() throws TwitterException {
 		ensureAuthorizationEnabled();
-		final User user = factory.createUser(http.get(
-				conf.getRestBaseURL() + "account/verify_credentials.json?include_entities="
-						+ conf.isIncludeEntitiesEnabled(),
-				conf.getSigningRestBaseURL() + "account/verify_credentials.json?include_entities="
-						+ conf.isIncludeEntitiesEnabled(), auth));
+		final HttpParameter[] params = { new HttpParameter("include_entities", conf.isIncludeEntitiesEnabled()) };
+		final User user = factory.createUser(http.get(conf.getRestBaseURL() + ENDPOINT_ACCOUNT_VERIFY_CREDENTIALS,
+				conf.getSigningRestBaseURL() + ENDPOINT_ACCOUNT_VERIFY_CREDENTIALS, params, auth));
 		screenName = user.getScreenName();
 		id = user.getId();
 		return user;

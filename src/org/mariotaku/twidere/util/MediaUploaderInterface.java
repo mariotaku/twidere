@@ -33,6 +33,7 @@ import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.IMediaUploader;
 import org.mariotaku.twidere.model.MediaUploadResult;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
+import org.mariotaku.twidere.model.UploaderMediaItem;
 
 public final class MediaUploaderInterface implements Constants, IMediaUploader {
 
@@ -65,10 +66,11 @@ public final class MediaUploaderInterface implements Constants, IMediaUploader {
 	}
 
 	@Override
-	public MediaUploadResult upload(final ParcelableStatusUpdate status) throws RemoteException {
+	public MediaUploadResult upload(final ParcelableStatusUpdate status, final UploaderMediaItem[] medias)
+			throws RemoteException {
 		if (mUploader == null) return null;
 		try {
-			return mUploader.upload(status);
+			return mUploader.upload(status, medias);
 		} catch (final RemoteException e) {
 			e.printStackTrace();
 		}

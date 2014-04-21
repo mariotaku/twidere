@@ -250,7 +250,7 @@ public class HttpClientImpl extends HttpClientBase implements HttpClient, HttpRe
 		} else {
 			proxy = Proxy.NO_PROXY;
 		}
-		final HostAddressResolver resolver = CONF.getHostAddressResolver();
+		final HostAddressResolver resolver = FactoryUtils.getHostAddressResolver(CONF);
 		final URI url_orig;
 		try {
 			url_orig = new URI(url_string);

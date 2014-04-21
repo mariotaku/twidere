@@ -562,7 +562,8 @@ public class SettingsWizardActivity extends Activity implements Constants {
 
 		private boolean wasConfigured(final List<SupportTabSpec> tabs) {
 			for (final SupportTabSpec spec : tabs) {
-				if (classEquals(spec.cls, HomeTimelineFragment.class) || classEquals(spec.cls, MentionsTimelineFragment.class)
+				if (classEquals(spec.cls, HomeTimelineFragment.class)
+						|| classEquals(spec.cls, MentionsTimelineFragment.class)
 						|| classEquals(spec.cls, DirectMessagesFragment.class)) return true;
 			}
 			return false;

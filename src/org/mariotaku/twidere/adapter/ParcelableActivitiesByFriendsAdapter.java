@@ -29,13 +29,13 @@ import org.mariotaku.twidere.model.ParcelableActivity;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
-import org.mariotaku.twidere.util.ImageLoadingHandler;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.view.holder.ActivityViewHolder;
 
 public class ParcelableActivitiesByFriendsAdapter extends BaseParcelableActivitiesAdapter {
 
-	public ParcelableActivitiesByFriendsAdapter(final Context context, final boolean compactCards, final boolean plainList) {
+	public ParcelableActivitiesByFriendsAdapter(final Context context, final boolean compactCards,
+			final boolean plainList) {
 		super(context, compactCards, plainList);
 	}
 

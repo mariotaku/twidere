@@ -370,7 +370,7 @@
 	<string name="permission_description_accounts">Read account information</string>
 	<string name="permission_description_preferences">Read settings</string>
 	<string name="permissions_request">Permissions request</string>
-	<string name="permissions_request_message">Extension is requesting following permissions</string>
+	<string name="permissions_request_message">Application is requesting following permissions</string>
 	<string name="accept_permission_request">Accept</string>
 	<string name="no_thanks">No, thanks</string>
 	<string name="revoke_permissions">Revoke permissions</string>
@@ -629,5 +629,7 @@
 	<string name="add">Add</string>
 	<string name="N_medias_quantity_one"><xliff:g id="items">%d</xliff:g> media</string>
 	<string name="N_medias_quantity_other"><xliff:g id="items">%d</xliff:g> medias</string>
+	<string name="delete_drafts_confirm">Delete selcted drafts?</string>
+	<string name="extra_configurations">Extra configurations</string>
 
 </resources>

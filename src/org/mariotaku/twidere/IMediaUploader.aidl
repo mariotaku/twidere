@@ -20,9 +20,10 @@ package org.mariotaku.twidere;
 
 import org.mariotaku.twidere.model.MediaUploadResult;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
+import org.mariotaku.twidere.model.UploaderMediaItem;
 
 interface IMediaUploader {
 	
-	MediaUploadResult upload(in ParcelableStatusUpdate status);
+	MediaUploadResult upload(in ParcelableStatusUpdate status, in UploaderMediaItem[] medias);
 	
 }

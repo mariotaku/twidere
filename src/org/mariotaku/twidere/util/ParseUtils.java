@@ -62,39 +62,38 @@ public final class ParseUtils implements Constants {
 
 	public static Bundle jsonToBundle(final String string) {
 		final Bundle bundle = new Bundle();
-		if (string != null) {
-			try {
-				final JSONObject json = new JSONObject(string);
-				final Iterator<?> it = json.keys();
-				while (it.hasNext()) {
-					final Object key_obj = it.next();
-					if (key_obj == null) {
-						continue;
-					}
-					final String key = key_obj.toString();
-					final Object value = json.get(key);
-					if (value instanceof Boolean) {
-						bundle.putBoolean(key, json.optBoolean(key));
-					} else if (value instanceof Integer) {
-						// Simple workaround for account_id
-						if (shouldPutLong(key)) {
-							bundle.putLong(key, json.optLong(key));
-						} else {
-							bundle.putInt(key, json.optInt(key));
-						}
-					} else if (value instanceof Long) {
-						bundle.putLong(key, json.optLong(key));
-					} else if (value instanceof String) {
-						bundle.putString(key, json.optString(key));
-					} else {
-						Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
-					}
+		if (string == null) return bundle;
+		try {
+			final JSONObject json = new JSONObject(string);
+			final Iterator<?> it = json.keys();
+			while (it.hasNext()) {
+				final Object key_obj = it.next();
+				if (key_obj == null) {
+					continue;
 				}
-			} catch (final JSONException e) {
-				e.printStackTrace();
-			} catch (final ClassCastException e) {
-				e.printStackTrace();
+				final String key = key_obj.toString();
+				final Object value = json.get(key);
+				if (value instanceof Boolean) {
+					bundle.putBoolean(key, json.optBoolean(key));
+				} else if (value instanceof Integer) {
+					// Simple workaround for account_id
+					if (shouldPutLong(key)) {
+						bundle.putLong(key, json.optLong(key));
+					} else {
+						bundle.putInt(key, json.optInt(key));
+					}
+				} else if (value instanceof Long) {
+					bundle.putLong(key, json.optLong(key));
+				} else if (value instanceof String) {
+					bundle.putString(key, json.optString(key));
+				} else {
+					Log.w(LOGTAG, "Unknown type " + value.getClass().getSimpleName() + " in arguments key " + key);
+				}
 			}
+		} catch (final JSONException e) {
+			e.printStackTrace();
+		} catch (final ClassCastException e) {
+			e.printStackTrace();
 		}
 		return bundle;
 	}

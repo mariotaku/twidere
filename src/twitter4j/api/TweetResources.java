@@ -20,6 +20,7 @@ import twitter4j.CursorPaging;
 import twitter4j.IDs;
 import twitter4j.OEmbed;
 import twitter4j.OEmbedRequest;
+import twitter4j.ReportAs;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -102,6 +103,8 @@ public interface TweetResources {
 	 * @since Twitter4J 2.0.10
 	 */
 	ResponseList<Status> getRetweets(long statusId, int count) throws TwitterException;
+
+	int reportSpam(long statusId, ReportAs reportAs, boolean blockUser) throws TwitterException;
 
 	/**
 	 * Retweets a tweet. Returns the original tweet with retweet details

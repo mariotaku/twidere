@@ -49,7 +49,6 @@ public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment impl
 
 	private boolean mActivityFirstCreated;
 	private boolean mIsInstanceStateSaved;
-
 	private boolean mReachedBottom, mNotReachedBottomBefore = true;
 
 	public final TwidereApplication getApplication() {
@@ -60,6 +59,16 @@ public class BaseSupportStaggeredGridFragment extends StaggeredGridFragment impl
 		final Activity activity = getActivity();
 		if (activity != null) return activity.getContentResolver();
 		return null;
+	}
+
+	@Override
+	public Bundle getExtraConfiguration() {
+		final Bundle args = getArguments();
+		final Bundle extras = new Bundle();
+		if (args != null && args.containsKey(EXTRA_EXTRAS)) {
+			extras.putAll(args.getBundle(EXTRA_EXTRAS));
+		}
+		return extras;
 	}
 
 	public final MultiSelectManager getMultiSelectManager() {

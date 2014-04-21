@@ -35,12 +35,15 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +55,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.fragment.support.BaseSupportDialogFragment;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
+import org.mariotaku.twidere.model.CustomTabConfiguration.ExtraConfiguration;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.ParcelableUserList;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
@@ -73,16 +77,40 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 	private AccountsSpinnerAdapter mAccountsAdapter;
 	private CustomTabIconsAdapter mTabIconsAdapter;
 
-	private View mAccountContainer, mSecondaryFieldContainer;
+	private View mAccountContainer, mSecondaryFieldContainer, mExtraConfigurationsContainer;
 	private Spinner mTabIconSpinner, mAccountSpinner;
 	private EditText mEditTabName;
 	private TextView mSecondaryFieldLabel;
 	private TextView mTabTypeName;
+	private LinearLayout mExtraConfigurationsContent;
 
 	private long mTabId;
 	private String mTabType;
 	private CustomTabConfiguration mTabConfiguration;
 	private Object mSecondaryFieldValue;
+	private final Bundle mExtrasBundle = new Bundle();
+
+	private final View.OnClickListener mOnExtraConfigurationClickListener = new View.OnClickListener() {
+
+		@Override
+		public void onClick(final View v) {
+			final Object tag = v.getTag();
+			if (tag instanceof ExtraConfiguration) {
+				final ExtraConfiguration conf = (ExtraConfiguration) tag;
+				switch (conf.getType()) {
+					case BOOLEAN: {
+						final CheckBox checkBox = (CheckBox) v.findViewById(android.R.id.checkbox);
+						checkBox.toggle();
+						mExtrasBundle.putBoolean(conf.getKey(), checkBox.isChecked());
+						break;
+					}
+					default: {
+						break;
+					}
+				}
+			}
+		}
+	};
 
 	@Override
 	public void onClick(final View v) {
@@ -120,11 +148,10 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 					if (conf == null) return;
 					final boolean account_id_required = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_REQUIRED;
 					final boolean no_account_id = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_NONE;
-					final boolean secondary_field_required = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
+					final boolean secondaryFieldRequired = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
 					final boolean account_id_invalid = getAccountId() <= 0;
 					final boolean secondary_field_invalid = mSecondaryFieldValue == null;
-					if (account_id_required && account_id_invalid || secondary_field_required
-							&& secondary_field_invalid) {
+					if (account_id_required && account_id_invalid || secondaryFieldRequired && secondary_field_invalid) {
 						Toast.makeText(this, R.string.invalid_settings, Toast.LENGTH_SHORT).show();
 						return;
 					}
@@ -133,13 +160,14 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 					if (!no_account_id) {
 						args.putLong(EXTRA_ACCOUNT_ID, getAccountId());
 					}
-					if (secondary_field_required) {
+					if (secondaryFieldRequired) {
 						addSecondaryFieldValueToArguments(args);
 					}
 					data.putExtra(EXTRA_TYPE, mTabType);
 					data.putExtra(EXTRA_NAME, ParseUtils.parseString(mEditTabName.getText()));
 					data.putExtra(EXTRA_ICON, getIconKey());
 					data.putExtra(EXTRA_ARGUMENTS, ParseUtils.bundleToJSON(args));
+					data.putExtra(EXTRA_EXTRAS, ParseUtils.bundleToJSON(mExtrasBundle));
 					setResult(RESULT_OK, data);
 					finish();
 				} else {
@@ -148,6 +176,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 					data.putExtra(EXTRA_NAME, ParseUtils.parseString(mEditTabName.getText()));
 					data.putExtra(EXTRA_ICON, getIconKey());
 					data.putExtra(EXTRA_ID, mTabId);
+					data.putExtra(EXTRA_EXTRAS, ParseUtils.bundleToJSON(mExtrasBundle));
 					setResult(RESULT_OK, data);
 					finish();
 				}
@@ -161,11 +190,13 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		super.onContentChanged();
 		mAccountContainer = findViewById(R.id.account_container);
 		mSecondaryFieldContainer = findViewById(R.id.secondary_field_container);
+		mExtraConfigurationsContainer = findViewById(R.id.extra_configurations_container);
 		mTabTypeName = (TextView) findViewById(R.id.tab_type_name);
 		mEditTabName = (EditText) findViewById(R.id.tab_name);
 		mSecondaryFieldLabel = (TextView) findViewById(R.id.secondary_field_label);
 		mTabIconSpinner = (Spinner) findViewById(R.id.tab_icon_spinner);
 		mAccountSpinner = (Spinner) findViewById(R.id.account_spinner);
+		mExtraConfigurationsContent = (LinearLayout) findViewById(R.id.extra_configurations_content);
 	}
 
 	public void setExtraFieldSelectText(final View view, final int text) {
@@ -246,7 +277,8 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		mImageLoader = TwidereApplication.getInstance(this).getImageLoaderWrapper();
 		final Intent intent = getIntent();
 		final String type = mTabType = intent.getStringExtra(EXTRA_TYPE);
-		if (type == null) {
+		final CustomTabConfiguration conf = getTabConfiguration(type);
+		if (type == null || conf == null) {
 			finish();
 			return;
 		}
@@ -259,13 +291,12 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 		mAccountsAdapter = new AccountsSpinnerAdapter(this);
 		mAccountSpinner.setAdapter(mAccountsAdapter);
 		mTabIconSpinner.setAdapter(mTabIconsAdapter);
-		final String icon_key;
+		final String iconKey;
+		if (savedInstanceState != null) {
+			mExtrasBundle.putAll(savedInstanceState.getBundle(EXTRA_EXTRAS));
+		}
 		if (!isEditMode()) {
-			final CustomTabConfiguration conf = mTabConfiguration = getTabConfiguration(type);
-			if (conf == null) {
-				finish();
-				return;
-			}
+			mTabConfiguration = conf;
 			final boolean has_secondary_field = conf.getSecondaryFieldType() != CustomTabConfiguration.FIELD_TYPE_NONE;
 			final boolean account_id_none = conf.getAccountRequirement() == CustomTabConfiguration.ACCOUNT_NONE;
 			mAccountContainer.setVisibility(account_id_none ? View.GONE : View.VISIBLE);
@@ -296,7 +327,7 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			if (conf.getSecondaryFieldTitle() != 0) {
 				mSecondaryFieldLabel.setText(conf.getSecondaryFieldTitle());
 			}
-			icon_key = findTabIconKey(conf.getDefaultIcon());
+			iconKey = findTabIconKey(conf.getDefaultIcon());
 			mEditTabName.setText(mTabConfiguration.getDefaultTitle());
 		} else {
 			if (mTabId < 0) {
@@ -305,11 +336,41 @@ public class CustomTabEditorActivity extends BaseSupportDialogActivity implement
 			}
 			mAccountContainer.setVisibility(View.GONE);
 			mSecondaryFieldContainer.setVisibility(View.GONE);
-			icon_key = intent.getStringExtra(EXTRA_ICON);
+			iconKey = intent.getStringExtra(EXTRA_ICON);
 			mEditTabName.setText(intent.getStringExtra(EXTRA_NAME));
+			if (savedInstanceState == null && intent.hasExtra(EXTRA_EXTRAS)) {
+				mExtrasBundle.putAll(ParseUtils.jsonToBundle(intent.getStringExtra(EXTRA_EXTRAS)));
+			}
 		}
-		final int selection = mTabIconsAdapter.getIconPosition(icon_key);
+		final int selection = mTabIconsAdapter.getIconPosition(iconKey);
 		mTabIconSpinner.setSelection(selection > 0 ? selection : 0);
+		final LayoutInflater inflater = getLayoutInflater();
+		final ExtraConfiguration[] extraConfigurations = conf.getExtraConfigurations();
+		if (extraConfigurations == null || extraConfigurations.length == 0) {
+			mExtraConfigurationsContainer.setVisibility(View.GONE);
+		} else {
+			mExtraConfigurationsContainer.setVisibility(View.VISIBLE);
+			for (final ExtraConfiguration config : extraConfigurations) {
+				final boolean hasCheckBox = config.getType() == ExtraConfiguration.Type.BOOLEAN;
+				final View view = inflater.inflate(R.layout.list_item_extra_config, mExtraConfigurationsContent, false);
+				final TextView title = (TextView) view.findViewById(android.R.id.title);
+				final CheckBox checkBox = (CheckBox) view.findViewById(android.R.id.checkbox);
+				title.setText(config.getTitleRes());
+				checkBox.setVisibility(hasCheckBox ? View.VISIBLE : View.GONE);
+				if (hasCheckBox) {
+					checkBox.setChecked(mExtrasBundle.getBoolean(config.getKey(), config.defaultBoolean()));
+				}
+				view.setTag(config);
+				view.setOnClickListener(mOnExtraConfigurationClickListener);
+				mExtraConfigurationsContent.addView(view);
+			}
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(final Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBundle(EXTRA_EXTRAS, mExtrasBundle);
 	}
 
 	private void addFieldValueToArguments(final Object value, final Bundle args) {

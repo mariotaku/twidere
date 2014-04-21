@@ -17,7 +17,7 @@
 package org.mariotaku.dynamicgridview;
 
 public interface DraggableAdapter {
-    void reorderElements(int position, int newPosition);
+	void reorderElements(int position, int newPosition);
 
-    void swapElements(int position, int newPosition);
+	void swapElements(int position, int newPosition);
 }

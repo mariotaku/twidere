@@ -16,8 +16,8 @@
 
 package twitter4j.conf;
 
-import twitter4j.http.HostAddressResolver;
-import twitter4j.http.HttpClient;
+import twitter4j.http.HostAddressResolverFactory;
+import twitter4j.http.HttpClientFactory;
 
 /**
  * A builder that can be used to construct a twitter4j configuration with
@@ -31,6 +31,48 @@ import twitter4j.http.HttpClient;
 public final class ConfigurationBuilder {
 
 	private ConfigurationBase configuration = new ConfigurationBase();
+
+	public ConfigurationBuilder() {
+
+	}
+
+	public ConfigurationBuilder(final Configuration conf) {
+		configuration.setClientName(conf.getClientName());
+		configuration.setClientURL(conf.getClientURL());
+		configuration.setClientVersion(conf.getClientVersion());
+		configuration.setDebug(conf.isDebugEnabled());
+		configuration.setGZIPEnabled(conf.isGZIPEnabled());
+		configuration.setHostAddressResolverFactory(conf.getHostAddressResolverFactory());
+		configuration.setHttpClientFactory(conf.getHttpClientFactory());
+		configuration.setHttpConnectionTimeout(conf.getHttpConnectionTimeout());
+		configuration.setHttpDefaultMaxPerRoute(conf.getHttpDefaultMaxPerRoute());
+		configuration.setHttpMaxTotalConnections(conf.getHttpMaxTotalConnections());
+		configuration.setHttpProxyHost(conf.getHttpProxyHost());
+		configuration.setHttpProxyPassword(conf.getHttpProxyPassword());
+		configuration.setHttpProxyPort(conf.getHttpProxyPort());
+		configuration.setHttpProxyUser(conf.getHttpProxyUser());
+		configuration.setHttpReadTimeout(conf.getHttpReadTimeout());
+		configuration.setHttpRetryCount(conf.getHttpRetryCount());
+		configuration.setHttpRetryIntervalSeconds(conf.getHttpRetryIntervalSeconds());
+		configuration.setHttpUserAgent(conf.getHttpUserAgent());
+		configuration.setIgnoreSSLError(conf.isSSLErrorIgnored());
+		configuration.setIncludeEntitiesEnbled(conf.isIncludeEntitiesEnabled());
+		configuration.setIncludeRTsEnbled(conf.isIncludeRTsEnabled());
+		configuration.setIncludeTwitterClientHeader(conf.isTwitterClientHeaderIncluded());
+		configuration.setOAuthAccessToken(conf.getOAuthAccessToken());
+		configuration.setOAuthAccessTokenSecret(conf.getOAuthAccessTokenSecret());
+		configuration.setOAuthBaseURL(conf.getOAuthBaseURL());
+		configuration.setOAuthConsumerKey(conf.getOAuthConsumerKey());
+		configuration.setOAuthConsumerSecret(conf.getOAuthConsumerSecret());
+		configuration.setPassword(conf.getPassword());
+		configuration.setPrettyDebugEnabled(conf.isPrettyDebugEnabled());
+		configuration.setRestBaseURL(conf.getRestBaseURL());
+		configuration.setSigningOAuthBaseURL(conf.getSigningOAuthBaseURL());
+		configuration.setSigningRestBaseURL(conf.getSigningRestBaseURL());
+		configuration.setUser(conf.getUser());
+		configuration.setUseSSL(conf.isSSLEnabled());
+
+	}
 
 	public Configuration build() {
 		checkNotBuilt();
@@ -72,15 +114,15 @@ public final class ConfigurationBuilder {
 		return this;
 	}
 
-	public ConfigurationBuilder setHostAddressResolver(final HostAddressResolver resolver) {
+	public ConfigurationBuilder setHostAddressResolverFactory(final HostAddressResolverFactory factory) {
 		checkNotBuilt();
-		configuration.setHostAddressResolver(resolver);
+		configuration.setHostAddressResolverFactory(factory);
 		return this;
 	}
 
-	public ConfigurationBuilder setHttpClientImplementation(final Class<? extends HttpClient> httpClientImplementation) {
+	public ConfigurationBuilder setHttpClientFactory(final HttpClientFactory factory) {
 		checkNotBuilt();
-		configuration.setHttpClientImplementation(httpClientImplementation);
+		configuration.setHttpClientFactory(factory);
 		return this;
 	}
 
@@ -141,6 +183,12 @@ public final class ConfigurationBuilder {
 	public ConfigurationBuilder setHttpRetryIntervalSeconds(final int httpRetryIntervalSeconds) {
 		checkNotBuilt();
 		configuration.setHttpRetryIntervalSeconds(httpRetryIntervalSeconds);
+		return this;
+	}
+
+	public ConfigurationBuilder setHttpUserAgent(final String userAgent) {
+		checkNotBuilt();
+		configuration.setHttpUserAgent(userAgent);
 		return this;
 	}
 
@@ -231,12 +279,6 @@ public final class ConfigurationBuilder {
 	public ConfigurationBuilder setUser(final String user) {
 		checkNotBuilt();
 		configuration.setUser(user);
-		return this;
-	}
-
-	public ConfigurationBuilder setUserAgent(final String userAgent) {
-		checkNotBuilt();
-		configuration.setUserAgent(userAgent);
 		return this;
 	}
 

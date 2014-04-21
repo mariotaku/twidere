@@ -47,6 +47,7 @@ import org.mariotaku.twidere.fragment.support.UserFavoritesFragment;
 import org.mariotaku.twidere.fragment.support.UserListTimelineFragment;
 import org.mariotaku.twidere.fragment.support.UserTimelineFragment;
 import org.mariotaku.twidere.model.CustomTabConfiguration;
+import org.mariotaku.twidere.model.CustomTabConfiguration.ExtraConfiguration;
 import org.mariotaku.twidere.model.SupportTabSpec;
 import org.mariotaku.twidere.provider.TweetStore.Tabs;
 
@@ -67,7 +68,8 @@ public class CustomTabUtils implements Constants {
 				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 0, false));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_MENTIONS_TIMELINE, new CustomTabConfiguration(
 				MentionsTimelineFragment.class, R.string.mentions, R.drawable.ic_iconic_action_mention,
-				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 1, false));
+				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 1, false,
+				ExtraConfiguration.newBoolean(EXTRA_MY_FOLLOWING_ONLY, R.string.my_following_only, false)));
 		CUSTOM_TABS_CONFIGURATION_MAP.put(TAB_TYPE_DIRECT_MESSAGES, new CustomTabConfiguration(
 				DirectMessagesFragment.class, R.string.direct_messages, R.drawable.ic_iconic_action_message,
 				CustomTabConfiguration.ACCOUNT_OPTIONAL, CustomTabConfiguration.FIELD_TYPE_NONE, 2, false));
@@ -137,18 +139,20 @@ public class CustomTabUtils implements Constants {
 		final ContentResolver resolver = context.getContentResolver();
 		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, Tabs.POSITION + " = " + position, null,
 				Tabs.DEFAULT_SORT_ORDER);
-		final int idx_name = cur.getColumnIndex(Tabs.NAME), idx_icon = cur.getColumnIndex(Tabs.ICON), idx_type = cur
-				.getColumnIndex(Tabs.TYPE), idx_arguments = cur.getColumnIndex(Tabs.ARGUMENTS);
+		final int idxName = cur.getColumnIndex(Tabs.NAME), idxIcon = cur.getColumnIndex(Tabs.ICON), idxType = cur
+				.getColumnIndex(Tabs.TYPE), idxArguments = cur.getColumnIndex(Tabs.ARGUMENTS), idxExtras = cur
+				.getColumnIndex(Tabs.EXTRAS);
 		try {
 			if (cur.getCount() == 0) return null;
 			cur.moveToFirst();
-			final String type = cur.getString(idx_type);
+			final String type = cur.getString(idxType);
 			final CustomTabConfiguration conf = getTabConfiguration(type);
 			if (conf == null) return null;
-			final String icon_type = cur.getString(idx_icon);
-			final String name = cur.getString(idx_name);
-			final Bundle args = ParseUtils.jsonToBundle(cur.getString(idx_arguments));
+			final String icon_type = cur.getString(idxIcon);
+			final String name = cur.getString(idxName);
+			final Bundle args = ParseUtils.jsonToBundle(cur.getString(idxArguments));
 			args.putInt(EXTRA_TAB_POSITION, position);
+			args.putBundle(EXTRA_EXTRAS, ParseUtils.jsonToBundle(cur.getString(idxExtras)));
 			final Class<? extends Fragment> fragment = conf.getFragmentClass();
 			return new SupportTabSpec(name != null ? name : getTabTypeName(context, type), getTabIconObject(icon_type),
 					type, fragment, args, position);
@@ -162,11 +166,11 @@ public class CustomTabUtils implements Constants {
 		final ContentResolver resolver = context.getContentResolver();
 		final Cursor cur = resolver.query(Tabs.CONTENT_URI, Tabs.COLUMNS, Tabs.POSITION + " = " + position, null,
 				Tabs.DEFAULT_SORT_ORDER);
-		final int idx_type = cur.getColumnIndex(Tabs.TYPE);
+		final int idxType = cur.getColumnIndex(Tabs.TYPE);
 		try {
 			if (cur.getCount() == 0) return null;
 			cur.moveToFirst();
-			final String type = cur.getString(idx_type);
+			final String type = cur.getString(idxType);
 			return getTabConfiguration(type);
 		} finally {
 			cur.close();
@@ -218,8 +222,8 @@ public class CustomTabUtils implements Constants {
 		final ArrayList<SupportTabSpec> tabs = new ArrayList<SupportTabSpec>();
 		cur.moveToFirst();
 		final int idxName = cur.getColumnIndex(Tabs.NAME), idxIcon = cur.getColumnIndex(Tabs.ICON), idxType = cur
-				.getColumnIndex(Tabs.TYPE), idxArguments = cur.getColumnIndex(Tabs.ARGUMENTS), idxPosition = cur
-				.getColumnIndex(Tabs.POSITION);
+				.getColumnIndex(Tabs.TYPE), idxArguments = cur.getColumnIndex(Tabs.ARGUMENTS), idxExtras = cur
+				.getColumnIndex(Tabs.EXTRAS), idxPosition = cur.getColumnIndex(Tabs.POSITION);
 		while (!cur.isAfterLast()) {
 			final String type = cur.getString(idxType);
 			final int position = cur.getInt(idxPosition);
@@ -227,6 +231,7 @@ public class CustomTabUtils implements Constants {
 			final String name = cur.getString(idxName);
 			final Bundle args = ParseUtils.jsonToBundle(cur.getString(idxArguments));
 			args.putInt(EXTRA_TAB_POSITION, position);
+			args.putBundle(EXTRA_EXTRAS, ParseUtils.jsonToBundle(cur.getString(idxExtras)));
 			final CustomTabConfiguration conf = getTabConfiguration(type);
 			final Class<? extends Fragment> cls = conf != null ? conf.getFragmentClass() : InvalidTabFragment.class;
 			tabs.add(new SupportTabSpec(name != null ? name : getTabTypeName(context, type),
@@ -243,6 +248,7 @@ public class CustomTabUtils implements Constants {
 	}
 
 	public static CustomTabConfiguration getTabConfiguration(final String key) {
+		if (key == null) return null;
 		return CUSTOM_TABS_CONFIGURATION_MAP.get(key);
 	}
 

@@ -60,6 +60,7 @@ import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableStatusUpdate;
 import org.mariotaku.twidere.model.SingleResponse;
 import org.mariotaku.twidere.model.StatusShortenResult;
+import org.mariotaku.twidere.model.UploaderMediaItem;
 import org.mariotaku.twidere.preference.ServicePickerPreference;
 import org.mariotaku.twidere.provider.TweetStore.CachedHashtags;
 import org.mariotaku.twidere.provider.TweetStore.DirectMessages;
@@ -379,13 +380,15 @@ public class BackgroundOperationService extends IntentService implements Constan
 					if (mUploader != null) {
 						mUploader.waitForService();
 					}
-					uploadResult = mUploader.upload(statusUpdate);
+					uploadResult = mUploader.upload(statusUpdate,
+							UploaderMediaItem.getFromStatusUpdate(this, statusUpdate));
 				} catch (final Exception e) {
 					throw new UploadException(this);
 				}
 				if (mUseUploader && imageFile != null && imageFile.exists() && uploadResult == null)
 					throw new UploadException(this);
-				overrideStatusText = getImageUploadStatus(this, uploadResult.mediaUris, statusUpdate.text);
+				if (uploadResult.error_code != 0) throw new UploadException(uploadResult.error_message);
+				overrideStatusText = getImageUploadStatus(this, uploadResult.media_uris, statusUpdate.text);
 			} else {
 				overrideStatusText = null;
 			}
@@ -521,7 +524,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		private static final long serialVersionUID = -7262474256595304566L;
 
 		public ShortenerNotFoundException(final Context context) {
-			super(context, R.string.error_message_tweet_shortener_not_found);
+			super(context.getString(R.string.error_message_tweet_shortener_not_found));
 		}
 	}
 
@@ -529,7 +532,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		private static final long serialVersionUID = 3075877185536740034L;
 
 		public ShortenException(final Context context) {
-			super(context, R.string.error_message_tweet_shorten_failed);
+			super(context.getString(R.string.error_message_tweet_shorten_failed));
 		}
 	}
 
@@ -565,15 +568,15 @@ public class BackgroundOperationService extends IntentService implements Constan
 		private static final long serialVersionUID = -6469920130856384219L;
 
 		public StatusTooLongException(final Context context) {
-			super(context, R.string.error_message_status_too_long);
+			super(context.getString(R.string.error_message_status_too_long));
 		}
 	}
 
 	static class UpdateStatusException extends Exception {
 		private static final long serialVersionUID = -1267218921727097910L;
 
-		public UpdateStatusException(final Context context, final int message) {
-			super(context.getString(message));
+		public UpdateStatusException(final String message) {
+			super(message);
 		}
 	}
 
@@ -581,7 +584,7 @@ public class BackgroundOperationService extends IntentService implements Constan
 		private static final long serialVersionUID = 1041685850011544106L;
 
 		public UploaderNotFoundException(final Context context) {
-			super(context, R.string.error_message_image_uploader_not_found);
+			super(context.getString(R.string.error_message_image_uploader_not_found));
 		}
 	}
 
@@ -589,7 +592,11 @@ public class BackgroundOperationService extends IntentService implements Constan
 		private static final long serialVersionUID = 8596614696393917525L;
 
 		public UploadException(final Context context) {
-			super(context, R.string.error_message_image_upload_failed);
+			super(context.getString(R.string.error_message_image_upload_failed));
+		}
+
+		public UploadException(final String message) {
+			super(message);
 		}
 	}
 }

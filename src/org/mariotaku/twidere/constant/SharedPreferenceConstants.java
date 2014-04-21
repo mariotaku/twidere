@@ -291,7 +291,7 @@ public interface SharedPreferenceConstants {
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_PLAIN_LIST_STYLE = "plain_list_style";
 
-	public static final  String KEY_QUICK_MENU_EXPANDED  = "quick_menu_expanded";
+	public static final String KEY_QUICK_MENU_EXPANDED = "quick_menu_expanded";
 
 	@Preference(type = STRING)
 	public static final String KEY_TRANSLATION_DESTINATION = "translation_destination";

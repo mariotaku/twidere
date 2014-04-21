@@ -41,7 +41,7 @@ public interface TwidereConstants extends SharedPreferenceConstants, IntentConst
 	public static final String USER_COLOR_PREFERENCES_NAME = "user_colors";
 	public static final String HOST_MAPPING_PREFERENCES_NAME = "host_mapping";
 	public static final String SHARED_PREFERENCES_NAME = "preferences";
-	public static final String PERMISSION_PREFERENCES_NAME = "permissions";
+	public static final String PERMISSION_PREFERENCES_NAME = "app_permissions";
 	public static final String SILENT_NOTIFICATIONS_PREFERENCE_NAME = "silent_notifications";
 	public static final String TIMELINE_POSITIONS_PREFERENCES_NAME = "timeline_positions";
 	public static final String ACCOUNT_PREFERENCES_NAME_PREFIX = "account_preferences_";
@@ -197,15 +197,16 @@ public interface TwidereConstants extends SharedPreferenceConstants, IntentConst
 	public static final String METADATA_KEY_SETTINGS = "org.mariotaku.twidere.extension.settings";
 	public static final String METADATA_KEY_EXTENSION = "org.mariotaku.twidere.extension";
 
-	public static final int PERMISSION_DENIED = -1;
-	public static final int PERMISSION_INVALID = 0;
-	public static final int PERMISSION_NONE = 1;
-	public static final int PERMISSION_REFRESH = 2;
-	public static final int PERMISSION_READ = 3;
-	public static final int PERMISSION_WRITE = 5;
-	public static final int PERMISSION_DIRECT_MESSAGES = 7;
-	public static final int PERMISSION_ACCOUNTS = 11;
-	public static final int PERMISSION_PREFERENCES = 13;
+	public static final char SEPARATOR_PERMISSION = '|';
+	public static final String SEPARATOR_PERMISSION_REGEX = "\\" + SEPARATOR_PERMISSION;
+
+	public static final String PERMISSION_DENIED = "denied";
+	public static final String PERMISSION_REFRESH = "refresh";
+	public static final String PERMISSION_READ = "read";
+	public static final String PERMISSION_WRITE = "write";
+	public static final String PERMISSION_DIRECT_MESSAGES = "direct_messages";
+	public static final String PERMISSION_ACCOUNTS = "accounts";
+	public static final String PERMISSION_PREFERENCES = "preferences";
 
 	public static final String TAB_TYPE_HOME_TIMELINE = "home_timeline";
 	public static final String TAB_TYPE_MENTIONS_TIMELINE = "mentions_timeline";

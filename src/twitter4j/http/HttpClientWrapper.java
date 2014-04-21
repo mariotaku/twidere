@@ -47,13 +47,13 @@ public final class HttpClientWrapper {
 	public HttpClientWrapper() {
 		wrapperConf = ConfigurationContext.getInstance();
 		requestHeaders = wrapperConf.getRequestHeaders();
-		http = HttpClientFactory.getInstance(wrapperConf);
+		http = FactoryUtils.getHttpClient(wrapperConf);
 	}
 
 	public HttpClientWrapper(final Configuration wrapperConf) {
 		this.wrapperConf = wrapperConf;
 		requestHeaders = wrapperConf.getRequestHeaders();
-		http = HttpClientFactory.getInstance(wrapperConf);
+		http = FactoryUtils.getHttpClient(wrapperConf);
 	}
 
 	public HttpResponse delete(final String url, final String signUrl) throws TwitterException {

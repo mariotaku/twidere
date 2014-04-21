@@ -346,8 +346,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 				}
 				case VIRTUAL_TABLE_ID_PERMISSIONS: {
 					final MatrixCursor c = new MatrixCursor(TweetStore.Permissions.MATRIX_COLUMNS);
-					final Map<String, Integer> map = mPermissionsManager.getAll();
-					for (final Map.Entry<String, Integer> item : map.entrySet()) {
+					final Map<String, String> map = mPermissionsManager.getAll();
+					for (final Map.Entry<String, String> item : map.entrySet()) {
 						c.addRow(new Object[] { item.getKey(), item.getValue() });
 					}
 					return c;
@@ -479,8 +479,8 @@ public final class TwidereDataProvider extends ContentProvider implements Consta
 		builder.setDefaults(defaults);
 	}
 
-	private boolean checkPermission(final int level) {
-		return mPermissionsManager.checkCallingPermission(level);
+	private boolean checkPermission(final String... permissions) {
+		return mPermissionsManager.checkCallingPermission(permissions);
 	}
 
 	private void checkReadPermission(final int id, final String table, final String[] projection) {

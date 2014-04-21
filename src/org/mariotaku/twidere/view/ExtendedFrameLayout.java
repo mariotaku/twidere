@@ -44,11 +44,12 @@ public class ExtendedFrameLayout extends FrameLayout implements IExtendedView {
 	}
 
 	@Override
-	public final boolean dispatchTouchEvent(final MotionEvent ev) {
+	public final boolean dispatchTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
-			mTouchInterceptor.dispatchTouchEvent(this, ev);
+			final boolean ret = mTouchInterceptor.dispatchTouchEvent(this, event);
+			if (ret) return true;
 		}
-		return super.dispatchTouchEvent(ev);
+		return super.dispatchTouchEvent(event);
 	}
 
 	@Override

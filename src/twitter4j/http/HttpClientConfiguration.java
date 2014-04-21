@@ -21,7 +21,9 @@ package twitter4j.http;
  */
 public interface HttpClientConfiguration {
 
-	HostAddressResolver getHostAddressResolver();
+	HostAddressResolverFactory getHostAddressResolverFactory();
+
+	HttpClientFactory getHttpClientFactory();
 
 	int getHttpConnectionTimeout();
 
@@ -43,9 +45,15 @@ public interface HttpClientConfiguration {
 
 	int getHttpRetryIntervalSeconds();
 
+	String getHttpUserAgent();
+
 	boolean isGZIPEnabled();
 
 	boolean isPrettyDebugEnabled();
+
+	boolean isProxyConfigured();
+
+	boolean isSSLEnabled();
 
 	boolean isSSLErrorIgnored();
 }

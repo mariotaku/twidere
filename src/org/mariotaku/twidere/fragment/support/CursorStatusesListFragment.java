@@ -28,6 +28,7 @@ import static org.mariotaku.twidere.util.Utils.shouldEnableFiltersForRTs;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,26 +68,28 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 
 	@Override
 	public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
+		final Context context = getActivity();
 		final Uri uri = getContentUri();
 		final String table = getTableNameByUri(uri);
-		final String sort_by = Statuses.SORT_ORDER_STATUS_ID_DESC;
+		final String sortOrder = Statuses.SORT_ORDER_STATUS_ID_DESC;
 		final long account_id = getAccountId();
-		final long[] account_ids = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(getActivity());
-		final boolean no_account_selected = account_ids.length == 0;
+		final long[] accountIds = account_id > 0 ? new long[] { account_id } : getActivatedAccountIds(context);
+		final boolean no_account_selected = accountIds.length == 0;
 		setEmptyText(no_account_selected ? getString(R.string.no_account_selected) : null);
 		if (!no_account_selected) {
 			getListView().setEmptyView(null);
 		}
-		final Where accountWhere = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(account_ids));
+		final Where accountWhere = Where.in(new Column(Statuses.ACCOUNT_ID), new RawItemArray(accountIds));
 		final Where where;
 		if (isFiltersEnabled()) {
 			final Where filterWhere = new Where(buildStatusFilterWhereClause(table, null,
-					shouldEnableFiltersForRTs(getActivity())));
+					shouldEnableFiltersForRTs(context)));
 			where = Where.and(accountWhere, filterWhere);
 		} else {
 			where = accountWhere;
 		}
-		return new CursorLoader(getActivity(), uri, CursorStatusesAdapter.CURSOR_COLS, where.getSQL(), null, sort_by);
+		final String selection = processWhere(where).getSQL();
+		return new CursorLoader(context, uri, CursorStatusesAdapter.CURSOR_COLS, selection, null, sortOrder);
 	}
 
 	@Override
@@ -110,6 +113,12 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 			}
 
 		}.execute();
+	}
+
+	@Override
+	public void onRestart() {
+		super.onRestart();
+		getLoaderManager().restartLoader(0, getArguments(), this);
 	}
 
 	@Override
@@ -194,7 +203,7 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 	}
 
 	@Override
-	protected CursorStatusesAdapter newAdapterInstance(boolean compact, boolean plain) {
+	protected CursorStatusesAdapter newAdapterInstance(final boolean compact, final boolean plain) {
 		return new CursorStatusesAdapter(getActivity(), compact, plain);
 	}
 
@@ -204,6 +213,10 @@ public abstract class CursorStatusesListFragment extends BaseStatusesListFragmen
 		if (twitter != null) {
 			twitter.clearNotificationAsync(getNotificationType(), getAccountId());
 		}
+	}
+
+	protected Where processWhere(final Where where) {
+		return where;
 	}
 
 	@Override

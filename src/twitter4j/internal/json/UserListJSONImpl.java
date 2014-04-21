@@ -75,11 +75,11 @@ import java.net.URISyntaxException;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) return true;
 		if (obj == null) return false;
 		if (!(obj instanceof UserListJSONImpl)) return false;
-		UserListJSONImpl other = (UserListJSONImpl) obj;
+		final UserListJSONImpl other = (UserListJSONImpl) obj;
 		if (id != other.id) return false;
 		return true;
 	}
@@ -166,7 +166,7 @@ import java.net.URISyntaxException;
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int) (id ^ id >>> 32);
 		return result;
 	}
 

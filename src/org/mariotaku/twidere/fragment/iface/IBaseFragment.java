@@ -19,6 +19,10 @@
 
 package org.mariotaku.twidere.fragment.iface;
 
+import android.os.Bundle;
+
 public interface IBaseFragment {
+	Bundle getExtraConfiguration();
+
 	int getTabPosition();
 }

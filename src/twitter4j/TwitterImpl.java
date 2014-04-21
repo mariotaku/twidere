@@ -1169,6 +1169,16 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 	}
 
 	@Override
+	public int reportSpam(final long statusId, final ReportAs reportAs, final boolean blockUser)
+			throws TwitterException {
+		ensureAuthorizationEnabled();
+		final HttpParameter[] params = { new HttpParameter("status_id", statusId),
+				new HttpParameter("report_as", reportAs.value()), new HttpParameter("block_user", blockUser) };
+		return post(conf.getRestBaseURL() + ENDPOINT_STATUSES_REPORT_SPAM,
+				conf.getSigningRestBaseURL() + ENDPOINT_STATUSES_REPORT_SPAM, params).getStatusCode();
+	}
+
+	@Override
 	public User reportSpam(final String screenName) throws TwitterException {
 		ensureAuthorizationEnabled();
 		return factory.createUser(post(conf.getRestBaseURL() + ENDPOINT_USERS_REPORT_SPAM, conf.getSigningRestBaseURL()

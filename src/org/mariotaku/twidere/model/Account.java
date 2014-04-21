@@ -157,7 +157,7 @@ public class Account implements Parcelable {
 		final String where = accountIds != null ? Where.in(new Column(Accounts.ACCOUNT_ID),
 				new RawItemArray(accountIds)).getSQL() : null;
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
-				Accounts.COLUMNS, where, null, null);
+				Accounts.COLUMNS_NO_CREDENTIALS, where, null, null);
 		if (cur == null) return new Account[0];
 		try {
 			final Indices idx = new Indices(cur);
@@ -182,7 +182,7 @@ public class Account implements Parcelable {
 		if (context == null) return Collections.emptyList();
 		final ArrayList<Account> accounts = new ArrayList<Account>();
 		final Cursor cur = ContentResolverUtils.query(context.getContentResolver(), Accounts.CONTENT_URI,
-				Accounts.COLUMNS, activatedOnly ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
+				Accounts.COLUMNS_NO_CREDENTIALS, activatedOnly ? Accounts.IS_ACTIVATED + " = 1" : null, null, null);
 		if (cur != null) {
 			final Indices indices = new Indices(cur);
 			cur.moveToFirst();
@@ -224,14 +224,37 @@ public class Account implements Parcelable {
 
 	public static class AccountWithCredentials extends Account {
 
-		public int auth_type;
-		public String consumer_key, consumer_secret;
+		public final int auth_type;
+		public final String consumer_key, consumer_secret;
+		public final String basic_auth_password;
+		public final String oauth_token, oauth_token_secret;
+		public final String rest_base_url, oauth_base_url, signing_rest_base_url, signing_oauth_base_url;
 
 		public AccountWithCredentials(final Cursor cursor, final Indices indices) {
 			super(cursor, indices);
 			auth_type = cursor.getInt(indices.auth_type);
 			consumer_key = cursor.getString(indices.consumer_key);
 			consumer_secret = cursor.getString(indices.consumer_secret);
+			basic_auth_password = cursor.getString(indices.basic_auth_password);
+			oauth_token = cursor.getString(indices.oauth_token);
+			oauth_token_secret = cursor.getString(indices.oauth_token_secret);
+			rest_base_url = cursor.getString(indices.rest_base_url);
+			oauth_base_url = cursor.getString(indices.oauth_base_url);
+			signing_rest_base_url = cursor.getString(indices.signing_rest_base_url);
+			signing_oauth_base_url = cursor.getString(indices.signing_oauth_base_url);
+		}
+
+		@Override
+		public String toString() {
+			return "AccountWithCredentials{auth_type=" + auth_type + ", consumer_key=" + consumer_key
+					+ ", consumer_secret=" + consumer_secret + ", basic_auth_password=" + basic_auth_password
+					+ ", oauth_token=" + oauth_token + ", oauth_token_secret=" + oauth_token_secret
+					+ ", rest_base_url=" + rest_base_url + ", oauth_base_url=" + oauth_base_url
+					+ ", signing_rest_base_url=" + signing_rest_base_url + ", signing_oauth_base_url="
+					+ signing_oauth_base_url + ", screen_name=" + screen_name + ", name=" + name
+					+ ", profile_image_url=" + profile_image_url + ", profile_banner_url=" + profile_banner_url
+					+ ", account_id=" + account_id + ", color=" + color + ", is_activated=" + is_activated
+					+ ", is_dummy=" + is_dummy + "}";
 		}
 
 		public static final boolean isOfficialCredentials(final Context context, final AccountWithCredentials account) {
@@ -246,7 +269,8 @@ public class Account implements Parcelable {
 	public static final class Indices {
 
 		public final int screen_name, name, account_id, profile_image_url, profile_banner_url, color, is_activated,
-				auth_type, consumer_key, consumer_secret;
+				rest_base_url, oauth_base_url, signing_rest_base_url, signing_oauth_base_url, auth_type, consumer_key,
+				consumer_secret, basic_auth_password, oauth_token, oauth_token_secret;
 
 		public Indices(final Cursor cursor) {
 			screen_name = cursor.getColumnIndex(Accounts.SCREEN_NAME);
@@ -256,16 +280,28 @@ public class Account implements Parcelable {
 			profile_banner_url = cursor.getColumnIndex(Accounts.PROFILE_BANNER_URL);
 			color = cursor.getColumnIndex(Accounts.COLOR);
 			is_activated = cursor.getColumnIndex(Accounts.IS_ACTIVATED);
+			rest_base_url = cursor.getColumnIndex(Accounts.REST_BASE_URL);
+			oauth_base_url = cursor.getColumnIndex(Accounts.OAUTH_BASE_URL);
+			signing_rest_base_url = cursor.getColumnIndex(Accounts.SIGNING_REST_BASE_URL);
+			signing_oauth_base_url = cursor.getColumnIndex(Accounts.SIGNING_OAUTH_BASE_URL);
 			auth_type = cursor.getColumnIndex(Accounts.AUTH_TYPE);
 			consumer_key = cursor.getColumnIndex(Accounts.CONSUMER_KEY);
 			consumer_secret = cursor.getColumnIndex(Accounts.CONSUMER_SECRET);
+			basic_auth_password = cursor.getColumnIndex(Accounts.BASIC_AUTH_PASSWORD);
+			oauth_token = cursor.getColumnIndex(Accounts.OAUTH_TOKEN);
+			oauth_token_secret = cursor.getColumnIndex(Accounts.OAUTH_TOKEN_SECRET);
 		}
 
 		@Override
 		public String toString() {
 			return "Indices{screen_name=" + screen_name + ", name=" + name + ", account_id=" + account_id
 					+ ", profile_image_url=" + profile_image_url + ", profile_banner_url=" + profile_banner_url
-					+ ", user_color=" + color + ", is_activated=" + is_activated + "}";
+					+ ", color=" + color + ", is_activated=" + is_activated + ", rest_base_url=" + rest_base_url
+					+ ", oauth_base_url=" + oauth_base_url + ", signing_rest_base_url=" + signing_rest_base_url
+					+ ", signing_oauth_base_url=" + signing_oauth_base_url + ", auth_type=" + auth_type
+					+ ", consumer_key=" + consumer_key + ", consumer_secret=" + consumer_secret
+					+ ", basic_auth_password=" + basic_auth_password + ", oauth_token=" + oauth_token
+					+ ", oauth_token_secret=" + oauth_token_secret + "}";
 		}
 	}
 }

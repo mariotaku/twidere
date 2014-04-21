@@ -21,7 +21,6 @@ package org.mariotaku.twidere.util.theme;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.view.Window;
 
 import com.negusoft.holoaccent.AccentHelper;

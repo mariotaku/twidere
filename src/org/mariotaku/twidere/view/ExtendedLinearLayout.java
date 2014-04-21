@@ -45,6 +45,15 @@ public class ExtendedLinearLayout extends LinearLayout implements IExtendedView 
 	}
 
 	@Override
+	public final boolean dispatchTouchEvent(final MotionEvent event) {
+		if (mTouchInterceptor != null) {
+			final boolean ret = mTouchInterceptor.dispatchTouchEvent(this, event);
+			if (ret) return true;
+		}
+		return super.dispatchTouchEvent(event);
+	}
+
+	@Override
 	public final boolean onInterceptTouchEvent(final MotionEvent event) {
 		if (mTouchInterceptor != null) {
 			final boolean ret = mTouchInterceptor.onInterceptTouchEvent(this, event);
