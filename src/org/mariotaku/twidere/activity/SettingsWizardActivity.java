@@ -289,7 +289,7 @@ public class SettingsWizardActivity extends Activity implements Constants {
 		@Override
 		public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
 				final Bundle savedInstanceState) {
-			final View view = inflater.inflate(R.layout.wizard_page_finished, container, false);
+			final View view = inflater.inflate(R.layout.fragment_wizard_page_finished, container, false);
 			view.findViewById(R.id.exit_wizard).setOnClickListener(this);
 			return view;
 		}

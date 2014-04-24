@@ -39,7 +39,7 @@ public final class WizardPageHeaderPreference extends Preference {
 
 	public WizardPageHeaderPreference(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		setLayoutResource(R.layout.wizard_page_header_item);
+		setLayoutResource(R.layout.header_wizard_page);
 		setSelectable(false);
 	}
 

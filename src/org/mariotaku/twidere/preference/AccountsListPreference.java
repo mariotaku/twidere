@@ -35,6 +35,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
+import org.mariotaku.twidere.util.ThemeUtils;
 
 import java.util.List;
 
@@ -80,6 +82,9 @@ public abstract class AccountsListPreference extends PreferenceCategory implemen
 			setupPreference(preference, account);
 			addPreference(preference);
 		}
+		final Preference preference = new Preference(getContext());
+		preference.setLayoutResource(R.layout.settings_layout_click_to_config);
+		addPreference(preference);
 	}
 
 	@Override

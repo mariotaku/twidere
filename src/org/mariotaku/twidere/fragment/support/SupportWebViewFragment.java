@@ -37,7 +37,7 @@ public class SupportWebViewFragment extends Fragment {
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.webview, container, false);
+		return inflater.inflate(R.layout.fragment_webview, container, false);
 	}
 
 }

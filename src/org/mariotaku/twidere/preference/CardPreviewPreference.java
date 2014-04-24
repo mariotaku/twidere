@@ -112,7 +112,7 @@ public class CardPreviewPreference extends Preference implements Constants, OnSh
 		if (mHolder.content instanceof CardItemLinearLayout) {
 			((CardItemLinearLayout) mHolder.content).setItemSelector(null);
 		}
-		mHolder.profile_image.setImageResource(R.drawable.ic_launcher);
+		mHolder.profile_image.setImageResource(R.drawable.ic_launcher_by_linkzero);
 		mHolder.image_preview.setImageResource(R.drawable.twidere_feature_graphic);
 		mHolder.name.setText(nickname_only ? TWIDERE_PREVIEW_NICKNAME : context.getString(R.string.name_with_nickname,
 				TWIDERE_PREVIEW_NAME, TWIDERE_PREVIEW_NICKNAME));

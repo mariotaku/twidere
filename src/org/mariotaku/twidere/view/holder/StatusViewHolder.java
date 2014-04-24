@@ -166,8 +166,8 @@ public class StatusViewHolder extends CardViewHolder {
 		return true;
 	}
 
-	public void setUserColor(final int color) {
-		content.drawStart(show_as_gap ? Color.TRANSPARENT : color);
+	public void setUserColor(final int... colors) {
+		content.drawStart(show_as_gap ? null : colors);
 	}
 
 	public void setUserType(final boolean isVerified, final boolean isProtected) {

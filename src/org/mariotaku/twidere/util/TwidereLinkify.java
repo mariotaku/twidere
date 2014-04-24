@@ -271,37 +271,39 @@ public final class TwidereLinkify implements Constants {
 		}
 	}
 
-	private final boolean addMentionOrListLinks(final Spannable spannable, final long account_id,
+	private final boolean addMentionOrListLinks(final Spannable spannable, final long accountId,
 			final OnLinkClickListener listener, final int highlightOption, final int highlightColor) {
 		boolean hasMatches = false;
+		// Extract lists from status text
 		final Matcher matcher = Regex.VALID_MENTION_OR_LIST.matcher(spannable);
-
 		while (matcher.find()) {
 			final int start = matcherStart(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_AT);
 			final int username_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
-			final int list_start = matcherStart(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
-			final int list_end = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
-			final String mention = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
+			final int listStart = matcherStart(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
+			final int listEnd = matcherEnd(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
+			final String username = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_USERNAME);
 			final String list = matcherGroup(matcher, Regex.VALID_MENTION_OR_LIST_GROUP_LIST);
-			applyLink(mention, start, username_end, spannable, account_id, LINK_TYPE_MENTION, false, listener,
+			applyLink(username, start, username_end, spannable, accountId, LINK_TYPE_MENTION, false, listener,
 					highlightOption, highlightColor);
-			if (list_start >= 0 && list_end >= 0) {
-				applyLink(mention + "/" + list, list_start, list_end, spannable, account_id, LINK_TYPE_LIST, false,
-						listener, highlightOption, highlightColor);
+			if (listStart >= 0 && listEnd >= 0) {
+				applyLink(String.format("%s/%s", username, list.substring(list.startsWith("/") ? 1 : 0)), listStart,
+						listEnd, spannable, accountId, LINK_TYPE_LIST, false, listener, highlightOption, highlightColor);
 			}
 			hasMatches = true;
 		}
+		// Extract lists from twitter.com links.
 		final URLSpan[] spans = spannable.getSpans(0, spannable.length(), URLSpan.class);
 		for (final URLSpan span : spans) {
 			final Matcher m = PATTERN_TWITTER_LIST.matcher(span.getURL());
 			if (m.matches()) {
 				final int start = spannable.getSpanStart(span);
 				final int end = spannable.getSpanEnd(span);
-				final String screen_name = matcherGroup(m, GROUP_ID_TWITTER_LIST_SCREEN_NAME);
-				final String list_name = matcherGroup(m, GROUP_ID_TWITTER_LIST_LIST_NAME);
+				final String screenName = matcherGroup(m, GROUP_ID_TWITTER_LIST_SCREEN_NAME);
+				final String listName = matcherGroup(m, GROUP_ID_TWITTER_LIST_LIST_NAME);
 				spannable.removeSpan(span);
-				applyLink(screen_name + "/" + list_name, start, end, spannable, account_id, LINK_TYPE_LIST, false,
+				applyLink(screenName + "/" + listName, start, end, spannable, accountId, LINK_TYPE_LIST, false,
 						listener, highlightOption, highlightColor);
+				hasMatches = true;
 			}
 		}
 		return hasMatches;

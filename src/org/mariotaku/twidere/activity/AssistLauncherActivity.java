@@ -24,6 +24,7 @@ public class AssistLauncherActivity extends Activity implements Constants {
 			action = INTENT_ACTION_COMPOSE;
 		}
 		final Intent intent = new Intent(action);
+		intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 		intent.setClass(this, ComposeActivity.class);
 		startActivity(intent);
 		finish();

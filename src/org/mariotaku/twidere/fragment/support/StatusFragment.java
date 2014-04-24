@@ -122,7 +122,7 @@ import org.mariotaku.twidere.util.MediaPreviewUtils;
 import org.mariotaku.twidere.util.MediaPreviewUtils.OnMediaClickListener;
 import org.mariotaku.twidere.util.OnLinkClickHandler;
 import org.mariotaku.twidere.util.ParseUtils;
-import org.mariotaku.twidere.util.SmartBarUtils;
+import org.mariotaku.twidere.util.FlymeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.Utils;
@@ -917,7 +917,7 @@ public class StatusFragment extends ParcelableStatusesListFragment implements On
 
 	private boolean shouldUseNativeMenu() {
 		final boolean isInLinkHandler = getActivity() instanceof LinkHandlerActivity;
-		return isInLinkHandler && SmartBarUtils.hasSmartBar();
+		return isInLinkHandler && FlymeUtils.hasSmartBar();
 	}
 
 	private void showConversation() {

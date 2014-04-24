@@ -210,7 +210,12 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			final boolean isMention = ParcelableUserMention.hasMention(status.mentions, status.account_id);
 			final boolean isMyStatus = status.account_id == status.user_id;
 			final boolean hasMedia = status.first_media != null;
-			holder.setUserColor(getUserColor(mContext, status.user_id));
+			if (status.is_retweet) {
+				holder.setUserColor(getUserColor(mContext, status.user_id),
+						getUserColor(mContext, status.retweeted_by_id));
+			} else {
+				holder.setUserColor(getUserColor(mContext, status.user_id));
+			}
 			holder.setHighlightColor(getCardHighlightColor(!mMentionsHighlightDisabled && isMention,
 					!mFavoritesHighlightDisabled && status.is_favorite, status.is_retweet));
 			holder.setTextSize(getTextSize());

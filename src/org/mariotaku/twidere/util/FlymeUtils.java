@@ -24,7 +24,7 @@ import android.os.Build;
 
 import java.lang.reflect.Method;
 
-public final class SmartBarUtils {
+public final class FlymeUtils {
 
 	private static String[] SMARTBAR_SUPPORTED_DEVICES = { "mx2", "mx3" };
 
@@ -45,6 +45,16 @@ public final class SmartBarUtils {
 			if (dev.equals(buildDevice)) return true;
 		}
 		return false;
+	}
+
+	public static boolean isFlyme() {
+		try {
+			// Invoke Build.hasSmartBar()
+			final Method method = Build.class.getMethod("hasSmartBar");
+			return method != null;
+		} catch (final Exception e) {
+			return false;
+		}
 	}
 
 	public static void setActionModeHeaderHidden(final ActionBar actionbar, final boolean hidden) {

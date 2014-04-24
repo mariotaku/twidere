@@ -631,5 +631,6 @@
 	<string name="N_medias_quantity_other"><xliff:g id="items">%d</xliff:g> medias</string>
 	<string name="delete_drafts_confirm">Delete selcted drafts?</string>
 	<string name="extra_configurations">Extra configurations</string>
+	<string name="click_item_to_config">Click an item to config</string>
 
 </resources>

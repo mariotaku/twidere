@@ -118,7 +118,7 @@ import org.mariotaku.twidere.provider.TweetStore.Filters;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ParseUtils;
-import org.mariotaku.twidere.util.SmartBarUtils;
+import org.mariotaku.twidere.util.FlymeUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.TwidereLinkify;
 import org.mariotaku.twidere.util.TwidereLinkify.OnLinkClickListener;
@@ -912,7 +912,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 
 	private boolean shouldUseNativeMenu() {
 		final boolean isInLinkHandler = getActivity() instanceof LinkHandlerActivity;
-		return isInLinkHandler && SmartBarUtils.hasSmartBar();
+		return isInLinkHandler && FlymeUtils.hasSmartBar();
 	}
 
 	final class FavoritesAction extends ListAction {

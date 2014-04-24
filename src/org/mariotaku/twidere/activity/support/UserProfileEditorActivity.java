@@ -26,6 +26,8 @@ import static org.mariotaku.twidere.util.Utils.isMyAccount;
 import static org.mariotaku.twidere.util.Utils.showErrorMessage;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -57,6 +59,7 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.loader.support.ParcelableUserLoader;
 import org.mariotaku.twidere.model.ParcelableUser;
 import org.mariotaku.twidere.model.SingleResponse;
+import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.task.AsyncTask.Status;
 import org.mariotaku.twidere.util.AsyncTaskManager;
@@ -555,6 +558,22 @@ public class UserProfileEditorActivity extends BaseSupportActivity implements On
 		public UpdateProfileTaskInternal(final Context context, final AsyncTaskManager manager, final long account_id,
 				final String name, final String url, final String location, final String description) {
 			super(context, manager, account_id, name, url, location, description);
+		}
+
+		@Override
+		protected SingleResponse<ParcelableUser> doInBackground(final Void... params) {
+			final SingleResponse<ParcelableUser> result = super.doInBackground(params);
+			if (result.data != null && isMyAccount(getContext(), result.data.id)) {
+				final ContentResolver resolver = getContentResolver();
+				final ContentValues values = new ContentValues();
+				values.put(Accounts.NAME, result.data.name);
+				values.put(Accounts.SCREEN_NAME, result.data.screen_name);
+				values.put(Accounts.PROFILE_IMAGE_URL, result.data.profile_image_url);
+				values.put(Accounts.PROFILE_BANNER_URL, result.data.profile_banner_url);
+				final String where = Accounts.ACCOUNT_ID + " = " + result.data.id;
+				resolver.update(Accounts.CONTENT_URI, values, where, null);
+			}
+			return result;
 		}
 
 		@Override

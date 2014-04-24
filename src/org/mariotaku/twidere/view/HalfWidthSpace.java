@@ -40,7 +40,7 @@ public class HalfWidthSpace extends View {
 
 	@Override
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-		final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
+		final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 3;
 		setMeasuredDimension(width, height);
 		super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
 	}

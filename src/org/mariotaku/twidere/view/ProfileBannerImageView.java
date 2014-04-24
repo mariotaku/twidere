@@ -107,7 +107,7 @@ public class ProfileBannerImageView extends ForegroundImageView implements IExte
 	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-		final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 2;
+		final int width = MeasureSpec.getSize(widthMeasureSpec), height = width / 3;
 		setMeasuredDimension(width, height);
 		if (width > 0) {
 			mShader = new LinearGradient(width / 2, 0, width / 2, height, COLORS, POSITIONS, Shader.TileMode.CLAMP);

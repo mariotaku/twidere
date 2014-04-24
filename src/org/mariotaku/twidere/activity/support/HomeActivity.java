@@ -95,9 +95,10 @@ import org.mariotaku.twidere.provider.TweetStore.Accounts;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.ArrayUtils;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
+import org.mariotaku.twidere.util.MIUIUtils;
 import org.mariotaku.twidere.util.MathUtils;
 import org.mariotaku.twidere.util.MultiSelectEventHandler;
-import org.mariotaku.twidere.util.SmartBarUtils;
+import org.mariotaku.twidere.util.FlymeUtils;
 import org.mariotaku.twidere.util.SwipebackActivityUtils;
 import org.mariotaku.twidere.util.ThemeUtils;
 import org.mariotaku.twidere.util.UnreadCountUtils;
@@ -340,7 +341,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		if (mViewPager == null || mPagerAdapter == null) return false;
-		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		final boolean useBottomActionItems = FlymeUtils.hasSmartBar() && isBottomComposeButton();
 		setMenuItemAvailability(menu, MENU_ACTIONS, useBottomActionItems);
 		setMenuItemAvailability(menu, MENU_PROGRESS, useBottomActionItems);
 		if (useBottomActionItems) {
@@ -710,7 +711,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	}
 
 	private void setUiOptions(final Window window) {
-		if (SmartBarUtils.hasSmartBar()) {
+		if (FlymeUtils.hasSmartBar()) {
 			if (mBottomComposeButton) {
 				window.setUiOptions(ActivityInfo.UIOPTION_SPLIT_ACTION_BAR_WHEN_NARROW);
 			} else {
@@ -824,7 +825,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	private void updateActionsButtonStyle() {
 		if (mActionsButton == null || mBottomActionsButton == null) return;
 		final boolean isBottomActionsButton = isBottomComposeButton();
-		final boolean showBottomActionsButton = !SmartBarUtils.hasSmartBar() && isBottomActionsButton;
+		final boolean showBottomActionsButton = !FlymeUtils.hasSmartBar() && isBottomActionsButton;
 		final boolean leftsideComposeButton = mPreferences.getBoolean(KEY_LEFTSIDE_COMPOSE_BUTTON, false);
 		mActionsButton.setVisibility(isBottomActionsButton ? View.GONE : View.VISIBLE);
 		mBottomActionsButton.setVisibility(showBottomActionsButton ? View.VISIBLE : View.GONE);
@@ -850,7 +851,7 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	}
 
 	private void updateSmartBar() {
-		final boolean useBottomActionItems = SmartBarUtils.hasSmartBar() && isBottomComposeButton();
+		final boolean useBottomActionItems = FlymeUtils.hasSmartBar() && isBottomComposeButton();
 		if (useBottomActionItems) {
 			invalidateOptionsMenu();
 		}

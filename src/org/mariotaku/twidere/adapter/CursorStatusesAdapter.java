@@ -156,6 +156,11 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 			final boolean isMyStatus = accountId == userId;
 
 			holder.setUserColor(getUserColor(mContext, userId));
+			if (isRetweet) {
+				holder.setUserColor(getUserColor(mContext, userId), getUserColor(mContext, retweetedByUserId));
+			} else {
+				holder.setUserColor(getUserColor(mContext, userId));
+			}
 			holder.setHighlightColor(getCardHighlightColor(!mMentionsHighlightDisabled && isMention,
 					!mFavoritesHighlightDisabled && isFavorite, isRetweet));
 

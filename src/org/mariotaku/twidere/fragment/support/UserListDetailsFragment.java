@@ -250,7 +250,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		mHeaderView = inflater.inflate(R.layout.user_list_details_header, null);
+		mHeaderView = inflater.inflate(R.layout.header_user_list_details, null);
 		mProfileContainer = (ColorLabelRelativeLayout) mHeaderView.findViewById(R.id.profile);
 		mListNameView = (TextView) mHeaderView.findViewById(R.id.list_name);
 		mCreatedByView = (TextView) mHeaderView.findViewById(R.id.created_by);
@@ -321,7 +321,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 	public boolean onMenuItemClick(final MenuItem item) {
 		final AsyncTwitterWrapper twitter = getTwitterWrapper();
 		final ParcelableUserList userList = mUserList;
-		if (userList == null) return false;
+		if (twitter == null || userList == null) return false;
 		switch (item.getItemId()) {
 			case MENU_ADD: {
 				if (userList.user_id != userList.account_id) return false;
@@ -350,10 +350,9 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			}
 			case MENU_FOLLOW: {
 				if (userList.is_following) {
-
 					DestroyUserListSubscriptionDialogFragment.show(getFragmentManager(), userList);
 				} else {
-					mTwitterWrapper.createUserListSubscriptionAsync(userList.account_id, userList.id);
+					twitter.createUserListSubscriptionAsync(userList.account_id, userList.id);
 				}
 				return true;
 			}
@@ -399,7 +398,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		if (followItem != null) {
 			followItem.setEnabled(userList != null);
 			if (userList == null) {
-				followItem.setIcon(null);
+				followItem.setIcon(android.R.color.transparent);
 			}
 		}
 		if (twitter == null || userList == null) return;
