@@ -408,6 +408,12 @@ public class CursorStatusesAdapter extends BaseCursorAdapter implements IStatuse
 	}
 
 	@Override
+	public void setHighlightKeyword(final String... keywords) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void setIgnoredFilterFields(final boolean user, final boolean textPlain, final boolean textHtml,
 			final boolean source, final boolean retweetedById) {
 		mFilterIgnoreTextPlain = textPlain;

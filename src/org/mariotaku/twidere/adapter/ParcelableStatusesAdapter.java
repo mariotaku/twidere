@@ -45,6 +45,7 @@ import org.mariotaku.twidere.adapter.iface.IStatusesAdapter;
 import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.ParcelableStatus;
 import org.mariotaku.twidere.model.ParcelableUserMention;
+import org.mariotaku.twidere.util.HtmlEscapeHelper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
 import org.mariotaku.twidere.util.ImageLoadingHandler;
 import org.mariotaku.twidere.util.MultiSelectManager;
@@ -75,6 +76,7 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			mFilterRetweetedById;
 	private int mMaxAnimationPosition, mCardHighlightOption;
 	private ScaleType mImagePreviewScaleType;
+	private String[] mHighlightKeywords;
 
 	public ParcelableStatusesAdapter(final Context context) {
 		this(context, Utils.isCompactCards(context), Utils.isPlainListStyle(context));
@@ -196,11 +198,16 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			holder.setAccountColorEnabled(mShowAccountColor);
 
 			if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
-				holder.text.setText(Html.fromHtml(status.text_html));
+				holder.text.setText(Html.fromHtml(Utils.getKeywordBoldedText(status.text_html, mHighlightKeywords)));
 				linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
 				holder.text.setMovementMethod(null);
 			} else {
-				holder.text.setText(status.text_unescaped);
+				if (mHighlightKeywords == null || mHighlightKeywords.length == 0) {
+					holder.text.setText(status.text_unescaped);
+				} else {
+					holder.text.setText(Html.fromHtml(Utils.getKeywordBoldedText(
+							HtmlEscapeHelper.escape(status.text_unescaped), mHighlightKeywords)));
+				}
 			}
 
 			if (mShowAccountColor) {
@@ -368,6 +375,11 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 	@Override
 	public void setGapDisallowed(final boolean disallowed) {
 		mGapDisallowed = disallowed;
+	}
+
+	@Override
+	public void setHighlightKeyword(final String... keywords) {
+		mHighlightKeywords = keywords;
 	}
 
 	@Override

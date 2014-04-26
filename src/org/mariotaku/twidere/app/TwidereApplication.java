@@ -38,7 +38,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -65,7 +64,6 @@ import org.mariotaku.twidere.service.RefreshService;
 import org.mariotaku.twidere.util.AsyncTaskManager;
 import org.mariotaku.twidere.util.AsyncTwitterWrapper;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.MIUIUtils;
 import org.mariotaku.twidere.util.MessagesManager;
 import org.mariotaku.twidere.util.MultiSelectManager;
 import org.mariotaku.twidere.util.StrictModeUtils;

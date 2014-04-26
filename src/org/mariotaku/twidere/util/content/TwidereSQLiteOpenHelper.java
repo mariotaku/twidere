@@ -87,12 +87,12 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 
 	@Override
 	public void onDowngrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-		handleVersionChange(db);
+		handleVersionChange(db, oldVersion, newVersion);
 	}
 
 	@Override
 	public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-		handleVersionChange(db);
+		handleVersionChange(db, oldVersion, newVersion);
 		if (oldVersion <= 43 && newVersion >= 44) {
 			final ContentValues values = new ContentValues();
 			final SharedPreferences prefs = mContext
@@ -120,7 +120,7 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 		return qb.build();
 	}
 
-	private void handleVersionChange(final SQLiteDatabase db) {
+	private void handleVersionChange(final SQLiteDatabase db, int oldVersion, int newVersion) {
 		final HashMap<String, String> accountsAlias = new HashMap<String, String>();
 		final HashMap<String, String> filtersAlias = new HashMap<String, String>();
 		accountsAlias.put(Accounts.SCREEN_NAME, "username");
@@ -134,13 +134,15 @@ public final class TwidereSQLiteOpenHelper extends SQLiteOpenHelper implements C
 		safeUpgrade(db, Mentions.TABLE_NAME, Mentions.COLUMNS, Mentions.TYPES, true, null);
 		safeUpgrade(db, Drafts.TABLE_NAME, Drafts.COLUMNS, Drafts.TYPES, false, null);
 		safeUpgrade(db, CachedUsers.TABLE_NAME, CachedUsers.COLUMNS, CachedUsers.TYPES, true, null);
-		safeUpgrade(db, CachedStatuses.TABLE_NAME, CachedStatuses.COLUMNS, CachedStatuses.TYPES, true, null);
-		safeUpgrade(db, CachedHashtags.TABLE_NAME, CachedHashtags.COLUMNS, CachedHashtags.TYPES, true, null);
-		safeUpgrade(db, Filters.Users.TABLE_NAME, Filters.Users.COLUMNS, Filters.Users.TYPES, true, null);
-		safeUpgrade(db, Filters.Keywords.TABLE_NAME, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, false,
+		safeUpgrade(db, CachedStatuses.TABLE_NAME, CachedStatuses.COLUMNS, CachedStatuses.TYPES, false, null);
+		safeUpgrade(db, CachedHashtags.TABLE_NAME, CachedHashtags.COLUMNS, CachedHashtags.TYPES, false, null);
+		safeUpgrade(db, Filters.Users.TABLE_NAME, Filters.Users.COLUMNS, Filters.Users.TYPES, oldVersion < 49, null);
+		safeUpgrade(db, Filters.Keywords.TABLE_NAME, Filters.Keywords.COLUMNS, Filters.Keywords.TYPES, oldVersion < 49,
 				filtersAlias);
-		safeUpgrade(db, Filters.Sources.TABLE_NAME, Filters.Sources.COLUMNS, Filters.Sources.TYPES, false, filtersAlias);
-		safeUpgrade(db, Filters.Links.TABLE_NAME, Filters.Links.COLUMNS, Filters.Links.TYPES, false, filtersAlias);
+		safeUpgrade(db, Filters.Sources.TABLE_NAME, Filters.Sources.COLUMNS, Filters.Sources.TYPES, oldVersion < 49,
+				filtersAlias);
+		safeUpgrade(db, Filters.Links.TABLE_NAME, Filters.Links.COLUMNS, Filters.Links.TYPES, oldVersion < 49,
+				filtersAlias);
 		safeUpgrade(db, DirectMessages.Inbox.TABLE_NAME, DirectMessages.Inbox.COLUMNS, DirectMessages.Inbox.TYPES,
 				true, null);
 		safeUpgrade(db, DirectMessages.Outbox.TABLE_NAME, DirectMessages.Outbox.COLUMNS, DirectMessages.Outbox.TYPES,

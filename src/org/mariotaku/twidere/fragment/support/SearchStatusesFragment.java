@@ -44,6 +44,8 @@ public class SearchStatusesFragment extends ParcelableStatusesListFragment {
 		final long sinceId = args.getLong(EXTRA_SINCE_ID, -1);
 		final String query = args.getString(EXTRA_QUERY);
 		final int tabPosition = args.getInt(EXTRA_TAB_POSITION, -1);
+		final IStatusesAdapter<List<ParcelableStatus>> adapter = getListAdapter();
+		adapter.setHighlightKeyword(query.split(" "));
 		return new TweetSearchLoader(getActivity(), accountId, query, maxId, sinceId, getData(),
 				getSavedStatusesFileArgs(), tabPosition);
 	}

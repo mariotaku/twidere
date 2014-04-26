@@ -214,8 +214,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1686,6 +1688,21 @@ public final class Utils implements Constants {
 			if (in_reply_to_user_id == entity.getId()) return entity.getName();
 		}
 		return orig.getInReplyToScreenName();
+	}
+
+	public static String getKeywordBoldedText(final String orig, final String... keywords) {
+		if (keywords == null || keywords.length == 0 || orig == null) return orig;
+		final Set<String> keywordsSet = new HashSet<String>();
+		for (final String keyword : keywords) {
+			keywordsSet.add(keyword);
+		}
+		String result = orig;
+		for (final String keyword : keywordsSet) {
+			final String regex = String.format("(?i)(%s)", Pattern.quote(HtmlEscapeHelper.escape(keyword)));
+			result = result.replaceAll(regex, "<b>$1</b>");
+		}
+		result.toString();
+		return result;
 	}
 
 	public static String getLinkHighlightOption(final Context context) {

@@ -42,8 +42,8 @@ import org.mariotaku.twidere.R;
 import org.mariotaku.twidere.fragment.iface.IBasePullToRefreshFragment;
 import org.mariotaku.twidere.fragment.iface.RefreshScrollTopInterface;
 import org.mariotaku.twidere.fragment.iface.SupportFragmentCallback;
-import org.mariotaku.twidere.util.MultiSelectEventHandler;
 import org.mariotaku.twidere.util.FlymeUtils;
+import org.mariotaku.twidere.util.MultiSelectEventHandler;
 
 public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnClickListener, OnLongClickListener {
 

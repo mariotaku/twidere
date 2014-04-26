@@ -254,7 +254,8 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		first_media = medias != null && medias.length > 0 ? medias[0].url : null;
 	}
 
-	public ParcelableStatus(final Status orig, final long account_id, final boolean is_gap) {
+	public ParcelableStatus(final Status orig, final long account_id, final boolean is_gap,
+			final String... highlightKeywords) {
 		this.is_gap = is_gap;
 		this.account_id = account_id;
 		id = orig.getId();

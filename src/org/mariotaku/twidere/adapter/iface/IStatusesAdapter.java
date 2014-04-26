@@ -53,6 +53,8 @@ public interface IStatusesAdapter<Data> extends IBaseCardAdapter {
 
 	public void setGapDisallowed(boolean disallowed);
 
+	public void setHighlightKeyword(String... keywords);
+
 	public void setIgnoredFilterFields(final boolean user, final boolean textPlain, final boolean textHtml,
 			final boolean source, final boolean retweetedById);
 

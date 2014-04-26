@@ -34,6 +34,7 @@ public interface TweetStore {
 	public static final String TYPE_BOOLEAN_DEFAULT_TRUE = "INTEGER(1) DEFAULT 1";
 	public static final String TYPE_TEXT = "TEXT";
 	public static final String TYPE_TEXT_NOT_NULL = "TEXT NOT NULL";
+	public static final String TYPE_TEXT_NOT_NULL_UNIQUE = "TEXT NOT NULL UNIQUE";
 
 	public static final String CONTENT_PATH_NULL = "null_content";
 
@@ -464,7 +465,7 @@ public interface TweetStore {
 
 		public static final String[] COLUMNS = new String[] { _ID, VALUE };
 
-		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL };
+		public static final String[] TYPES = new String[] { TYPE_PRIMARY_KEY, TYPE_TEXT_NOT_NULL_UNIQUE };
 
 		public static interface Keywords extends Filters {
 

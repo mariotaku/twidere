@@ -35,7 +35,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -48,7 +47,6 @@ import org.mariotaku.twidere.app.TwidereApplication;
 import org.mariotaku.twidere.model.Account;
 import org.mariotaku.twidere.task.AsyncTask;
 import org.mariotaku.twidere.util.ImageLoaderWrapper;
-import org.mariotaku.twidere.util.ThemeUtils;
 
 import java.util.List;
 
