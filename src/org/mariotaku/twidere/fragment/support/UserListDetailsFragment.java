@@ -431,7 +431,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		private CheckBox mPublicCheckBox;
 		private String mName, mDescription;
 		private long mAccountId;
-		private int mListId;
+		private long mListId;
 		private boolean mIsPublic;
 		private AsyncTwitterWrapper mTwitterWrapper;
 
@@ -456,7 +456,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 			mTwitterWrapper = getApplication().getTwitterWrapper();
 			final Bundle bundle = savedInstanceState == null ? getArguments() : savedInstanceState;
 			mAccountId = bundle != null ? bundle.getLong(EXTRA_ACCOUNT_ID, -1) : -1;
-			mListId = bundle != null ? bundle.getInt(EXTRA_LIST_ID, -1) : -1;
+			mListId = bundle != null ? bundle.getLong(EXTRA_LIST_ID, -1) : -1;
 			mName = bundle != null ? bundle.getString(EXTRA_LIST_NAME) : null;
 			mDescription = bundle != null ? bundle.getString(EXTRA_DESCRIPTION) : null;
 			mIsPublic = bundle != null ? bundle.getBoolean(EXTRA_IS_PUBLIC, true) : true;
@@ -483,7 +483,7 @@ public class UserListDetailsFragment extends BaseSupportListFragment implements 
 		@Override
 		public void onSaveInstanceState(final Bundle outState) {
 			outState.putLong(EXTRA_ACCOUNT_ID, mAccountId);
-			outState.putInt(EXTRA_LIST_ID, mListId);
+			outState.putLong(EXTRA_LIST_ID, mListId);
 			outState.putString(EXTRA_LIST_NAME, mName);
 			outState.putString(EXTRA_DESCRIPTION, mDescription);
 			outState.putBoolean(EXTRA_IS_PUBLIC, mIsPublic);

@@ -100,6 +100,8 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 
 	private TextView mAccountsSectionView, mAccountOptionsSectionView, mAppMenuSectionView;
 
+	private Context mThemedContext;
+
 	public Account getSelectedAccount() {
 		return mAccountsAdapter.getSelectedAccount();
 	}
@@ -161,11 +163,7 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		final Context context = getActivity();
-		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
-		final int accentColor = ThemeUtils.getUserThemeColor(context);
-		final Context theme = new TwidereContextThemeWrapper(context, themeResource, accentColor);
-		return LayoutInflater.from(theme).inflate(R.layout.fragment_accounts_drawer, container, false);
+		return LayoutInflater.from(getThemedContext()).inflate(R.layout.fragment_accounts_drawer, container, false);
 	}
 
 	@Override
@@ -332,6 +330,15 @@ public class AccountsDrawerFragment extends BaseSupportListFragment implements L
 		if (activity instanceof HomeActivity) {
 			((HomeActivity) activity).closeAccountsDrawer();
 		}
+	}
+
+	private Context getThemedContext() {
+		if (mThemedContext != null) return mThemedContext;
+		final Context context = getActivity();
+		if (!ThemeUtils.isDarkDrawerEnabled(context)) return mThemedContext = context;
+		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
+		final int accentColor = ThemeUtils.getUserThemeColor(context);
+		return mThemedContext = new TwidereContextThemeWrapper(context, themeResource, accentColor);
 	}
 
 	private void updateAccountOptionsSeparatorLabel() {

@@ -35,7 +35,7 @@ public class CreateComposeShortcutActivity extends Activity implements Constants
 		final Intent intent = new Intent();
 		final Intent launch_intent = new Intent(INTENT_ACTION_COMPOSE);
 		final ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(this,
-				R.drawable.ic_launcher_by_linkzero);
+				R.drawable.ic_launcher);
 		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, launch_intent);
 		intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
 		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.compose));

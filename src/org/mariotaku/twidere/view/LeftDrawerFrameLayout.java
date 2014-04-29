@@ -47,7 +47,12 @@ public class LeftDrawerFrameLayout extends FrameLayout {
 
 	public LeftDrawerFrameLayout(final Context context, final AttributeSet attrs, final int defStyle) {
 		super(context, attrs, defStyle);
-		final Drawable bg = ThemeUtils.getWindowBackground(context, ThemeUtils.getDrawerThemeResource(context));
+		final Drawable bg;
+		if (ThemeUtils.isDarkDrawerEnabled(context)) {
+			bg = ThemeUtils.getWindowBackground(context, ThemeUtils.getDrawerThemeResource(context));
+		} else {
+			bg = ThemeUtils.getWindowBackground(context);
+		}
 		ViewAccessor.setBackground(this, bg);
 		setWillNotDraw(false);
 		mClipPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));

@@ -31,6 +31,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -309,6 +310,13 @@ public class ThemeUtils implements Constants {
 
 	public static int getDrawerThemeResource(final Context context) {
 		return getDrawerThemeResource(getThemeResource(context));
+	}
+
+	public static boolean isDarkDrawerEnabled(final Context context) {
+		final SharedPreferencesWrapper prefs = SharedPreferencesWrapper.getInstance(context, SHARED_PREFERENCES_NAME,
+				Context.MODE_PRIVATE);
+		if (prefs == null) return false;
+		return prefs.getBoolean(KEY_DARK_DRAWER, true);
 	}
 
 	public static int getDrawerThemeResource(final int themeRes) {
@@ -605,7 +613,7 @@ public class ThemeUtils implements Constants {
 	}
 
 	public static Typeface getUserTypeface(final Context context, final Typeface defTypeface) {
-		if (context == null) return Typeface.DEFAULT;
+		if (context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) return Typeface.DEFAULT;
 		final int fontStyle = defTypeface != null ? defTypeface.getStyle() : Typeface.NORMAL;
 		final String fontFamily = getThemeFontFamily(context);
 		final Typeface tf = Typeface.create(fontFamily, fontStyle);

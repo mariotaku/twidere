@@ -290,6 +290,8 @@ public interface SharedPreferenceConstants {
 	public static final String KEY_IMAGE_PREVIEW_SCALE_TYPE = "image_preview_scale_type";
 	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = false)
 	public static final String KEY_PLAIN_LIST_STYLE = "plain_list_style";
+	@Preference(type = BOOLEAN, hasDefault = true, defaultBoolean = true)
+	public static final String KEY_DARK_DRAWER = "dark_drawer";
 
 	public static final String KEY_QUICK_MENU_EXPANDED = "quick_menu_expanded";
 

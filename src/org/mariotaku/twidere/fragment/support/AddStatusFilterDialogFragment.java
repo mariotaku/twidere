@@ -154,7 +154,7 @@ public class AddStatusFilterDialogFragment extends BaseSupportDialogFragment imp
 				}
 			}
 		}
-		final Collection<String> hashtags = mExtractor.extractHashtags(status.text_plain);
+		final HashSet<String> hashtags = new HashSet<String>();
 		hashtags.addAll(mExtractor.extractHashtags(status.text_plain));
 		for (final String hashtag : hashtags) {
 			list.add(new FilterItemInfo(FilterItemInfo.FILTER_TYPE_KEYWORD, hashtag));

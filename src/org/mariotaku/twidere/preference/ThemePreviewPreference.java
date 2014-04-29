@@ -131,7 +131,7 @@ public class ThemePreviewPreference extends Preference implements Constants, OnS
 			repliesView.setBackgroundResource(0);
 			textView.setTextIsSelectable(false);
 
-			profileImageView.setImageResource(R.drawable.ic_launcher_by_linkzero);
+			profileImageView.setImageResource(R.drawable.ic_launcher);
 			nameView.setText(TWIDERE_PREVIEW_NAME);
 			screenNameView.setText("@" + TWIDERE_PREVIEW_SCREEN_NAME);
 			textView.setText(toPlainText(TWIDERE_PREVIEW_TEXT_HTML));

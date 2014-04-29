@@ -116,7 +116,7 @@ public class RequestPermissionsActivity extends BaseSupportDialogActivity implem
 			final CharSequence desc = info.loadDescription(pm);
 			mDescriptionView.setText(desc);
 			mDescriptionView.setVisibility(isEmpty(desc) ? View.GONE : View.VISIBLE);
-			final String[] permissions = PermissionsManager.parsePermissions(meta.getString(METADATA_KEY_PERMISSIONS));
+			final String[] permissions = PermissionsManager.parsePermissions(meta.getString(METADATA_KEY_EXTENSION_PERMISSIONS));
 			mPermissions = permissions;
 			mCallingPackage = pname;
 			final StringBuilder builder = new StringBuilder();

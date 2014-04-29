@@ -43,7 +43,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
-public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<ParcelableStatus> {
+public class ParcelableStatus implements TwidereParcelable, Comparable<ParcelableStatus> {
 
 	public static final Parcelable.Creator<ParcelableStatus> CREATOR = new Parcelable.Creator<ParcelableStatus>() {
 		@Override
@@ -204,7 +204,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		text_html = in.readString("text_html");
 		text_plain = in.readString("text_plain");
 		user_name = in.readString("name");
-		user_screen_name = in.readString("scrren_name");
+		user_screen_name = in.readString("screen_name");
 		in_reply_to_name = in.readString("in_reply_to_name");
 		in_reply_to_screen_name = in.readString("in_reply_to_screen_name");
 		source = in.readString("source");
@@ -367,7 +367,7 @@ public class ParcelableStatus implements Parcelable, JSONParcelable, Comparable<
 		out.writeString("text_plain", text_plain);
 		out.writeString("text_unescaped", text_unescaped);
 		out.writeString("name", user_name);
-		out.writeString("scrren_name", user_screen_name);
+		out.writeString("screen_name", user_screen_name);
 		out.writeString("in_reply_to_name", in_reply_to_name);
 		out.writeString("in_reply_to_screen_name", in_reply_to_screen_name);
 		out.writeString("source", source);

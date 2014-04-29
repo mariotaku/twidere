@@ -101,6 +101,11 @@ public abstract class BasePreferenceActivity extends PreferenceActivity implemen
 	}
 
 	@Override
+	public boolean isDarkDrawerEnabled() {
+		return false;
+	}
+
+	@Override
 	public void navigateUpFromSameTask() {
 		NavUtils.navigateUpFromSameTask(this);
 		overrideCloseAnimationIfNeeded();

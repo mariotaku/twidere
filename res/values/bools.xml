@@ -6,5 +6,6 @@
 	<bool name="is_large_screen">false</bool>
 	<bool name="default_shadow_slidable">true</bool>
 	<bool name="shadow_slidable">true</bool>
+	<bool name="has_font_family">false</bool>
 
 </resources>

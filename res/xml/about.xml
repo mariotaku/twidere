@@ -65,7 +65,6 @@
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/special_thanks_to">
 		<Preference
-			android:icon="@drawable/ic_launcher_by_rieya"
 			android:summary="Icon designer for 0.0.6 version"
 			android:title="Rieya">
 			<intent
@@ -73,7 +72,6 @@
 				android:data="http://rieya.me"/>
 		</Preference>
 		<Preference
-			android:icon="@drawable/ic_launcher_by_ilovinheart"
 			android:summary="Icon designer for 0.0.7 version"
 			android:title="ilovinheart">
 			<intent
@@ -81,7 +79,6 @@
 				android:data="twidere://user?user_id=144878723&amp;finish_only=true"/>
 		</Preference>
 		<Preference
-			android:icon="@drawable/ic_launcher_by_lordfriend"
 			android:summary="Adjusted icon from 0.0.13 version to 0.2.9.10 version"
 			android:title="lordfriend">
 			<intent
@@ -89,7 +86,6 @@
 				android:data="twidere://user?user_id=450691326&amp;finish_only=true"/>
 		</Preference>
 		<Preference
-			android:icon="@drawable/ic_launcher_by_linkzero"
 			android:summary="Designed 3D Twidere icon"
 			android:title="Linkzero">
 			<intent

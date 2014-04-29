@@ -121,10 +121,10 @@ public class ExtensionsListLoader extends AsyncTaskLoader<List<ExtensionsListLoa
 
 		ExtensionInfo(final ApplicationInfo info, final PackageManager pm) {
 			final Bundle meta = info.metaData;
-			final String permissionString = meta.getString(METADATA_KEY_PERMISSIONS);
+			final String permissionString = meta.getString(METADATA_KEY_EXTENSION_PERMISSIONS);
 			permissions = permissionString != null ? permissionString
 					.split(PermissionsManager.SEPARATOR_PERMISSION_REGEX) : null;
-			settings = meta.getString(METADATA_KEY_SETTINGS);
+			settings = meta.getString(METADATA_KEY_EXTENSION_SETTINGS);
 			icon = info.loadIcon(pm);
 			pname = info.packageName;
 			label = ParseUtils.parseString(info.loadLabel(pm), pname);

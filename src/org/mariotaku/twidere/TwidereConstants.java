@@ -193,9 +193,11 @@ public interface TwidereConstants extends SharedPreferenceConstants, IntentConst
 	public static final String SERVICE_COMMAND_GET_SENT_DIRECT_MESSAGES = "get_sent_direct_messages";
 	public static final String SERVICE_COMMAND_GET_RECEIVED_DIRECT_MESSAGES = "get_received_direct_messages";
 
-	public static final String METADATA_KEY_PERMISSIONS = "org.mariotaku.twidere.extension.permissions";
-	public static final String METADATA_KEY_SETTINGS = "org.mariotaku.twidere.extension.settings";
 	public static final String METADATA_KEY_EXTENSION = "org.mariotaku.twidere.extension";
+	public static final String METADATA_KEY_EXTENSION_PERMISSIONS = "org.mariotaku.twidere.extension.permissions";
+	public static final String METADATA_KEY_EXTENSION_SETTINGS = "org.mariotaku.twidere.extension.settings";
+	public static final String METADATA_KEY_EXTENSION_ICON = "org.mariotaku.twidere.extension.icon";
+	public static final String METADATA_KEY_EXTENSION_USE_JSON = "org.mariotaku.twidere.extension.use_json";
 
 	public static final char SEPARATOR_PERMISSION = '|';
 	public static final String SEPARATOR_PERMISSION_REGEX = "\\" + SEPARATOR_PERMISSION;

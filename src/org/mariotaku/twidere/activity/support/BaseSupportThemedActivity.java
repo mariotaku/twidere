@@ -41,6 +41,8 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 
 	private String mCurrentThemeFontFamily;
 
+	private boolean mCurrentIsDarkDrawerEnabled;
+
 	private AccentHelper mAccentHelper;
 
 	@Override
@@ -89,6 +91,11 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	public abstract int getThemeResourceId();
 
 	@Override
+	public boolean isDarkDrawerEnabled() {
+		return ThemeUtils.isDarkDrawerEnabled(this);
+	}
+
+	@Override
 	public void navigateUpFromSameTask() {
 		NavUtils.navigateUpFromSameTask(this);
 		overrideCloseAnimationIfNeeded();
@@ -111,7 +118,8 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 	protected boolean isThemeChanged() {
 		return getThemeResourceId() != mCurrentThemeResource || getThemeColor() != mCurrentThemeColor
 				|| !CompareUtils.objectEquals(getThemeFontFamily(), mCurrentThemeFontFamily)
-				|| getThemeBackgroundAlpha() != mCurrentThemeBackgroundAlpha;
+				|| getThemeBackgroundAlpha() != mCurrentThemeBackgroundAlpha
+				|| isDarkDrawerEnabled() != mCurrentIsDarkDrawerEnabled;
 	}
 
 	@Override
@@ -157,6 +165,7 @@ public abstract class BaseSupportThemedActivity extends FragmentActivity impleme
 		mCurrentThemeColor = getThemeColor();
 		mCurrentThemeFontFamily = getThemeFontFamily();
 		mCurrentThemeBackgroundAlpha = getThemeBackgroundAlpha();
+		mCurrentIsDarkDrawerEnabled = isDarkDrawerEnabled();
 		ThemeUtils.notifyStatusBarColorChanged(this, mCurrentThemeResource, mCurrentThemeColor,
 				mCurrentThemeBackgroundAlpha);
 		setTheme(mCurrentThemeResource);

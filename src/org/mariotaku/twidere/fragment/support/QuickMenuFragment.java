@@ -23,6 +23,7 @@ import org.mariotaku.twidere.content.TwidereContextThemeWrapper;
 import org.mariotaku.twidere.fragment.support.TrendsSuggectionsFragment.TrendsAdapter;
 import org.mariotaku.twidere.provider.TweetStore.CachedTrends;
 import org.mariotaku.twidere.util.ThemeUtils;
+import org.mariotaku.twidere.util.accessor.ViewAccessor;
 
 public class QuickMenuFragment extends BaseSupportFragment {
 
@@ -91,11 +92,14 @@ public class QuickMenuFragment extends BaseSupportFragment {
 		super.onViewCreated(view, savedInstanceState);
 		mListView = (ListView) view.findViewById(android.R.id.list);
 		mSlidingUpPanel = (SlidingUpPanelLayout) view.findViewById(R.id.activities_drawer);
+		final View activitiesContainer = view.findViewById(R.id.activities_container);
+		ViewAccessor.setBackground(activitiesContainer, ThemeUtils.getWindowBackground(getThemedContext()));
 	}
 
 	private Context getThemedContext() {
 		if (mThemedContext != null) return mThemedContext;
 		final Context context = getActivity();
+		if (!ThemeUtils.isDarkDrawerEnabled(context)) return mThemedContext = context;
 		final int themeResource = ThemeUtils.getDrawerThemeResource(context);
 		final int accentColor = ThemeUtils.getUserThemeColor(context);
 		return mThemedContext = new TwidereContextThemeWrapper(context, themeResource, accentColor);

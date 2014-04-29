@@ -403,9 +403,9 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		return 0;
 	}
 
-	public int updateUserListDetails(final long accountId, final int list_id, final boolean is_public,
+	public int updateUserListDetails(final long accountId, final long listId, final boolean isPublic,
 			final String name, final String description) {
-		final UpdateUserListDetailsTask task = new UpdateUserListDetailsTask(accountId, list_id, is_public, name,
+		final UpdateUserListDetailsTask task = new UpdateUserListDetailsTask(accountId, listId, isPublic, name,
 				description);
 		return mAsyncTaskManager.add(task, true);
 	}
@@ -2292,31 +2292,29 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 
 	class UpdateUserListDetailsTask extends ManagedAsyncTask<Void, Void, SingleResponse<ParcelableUserList>> {
 
-		private final long account_id;
-
-		private final int list_id;
-
-		private final boolean is_public;
+		private final long accountId;
+		private final long listId;
+		private final boolean isPublic;
 		private final String name, description;
 
-		public UpdateUserListDetailsTask(final long account_id, final int list_id, final boolean is_public,
+		public UpdateUserListDetailsTask(final long accountId, final long listId, final boolean isPublic,
 				final String name, final String description) {
 			super(mContext, mAsyncTaskManager);
-			this.account_id = account_id;
+			this.accountId = accountId;
+			this.listId = listId;
 			this.name = name;
-			this.list_id = list_id;
-			this.is_public = is_public;
+			this.isPublic = isPublic;
 			this.description = description;
 		}
 
 		@Override
 		protected SingleResponse<ParcelableUserList> doInBackground(final Void... params) {
 
-			final Twitter twitter = getTwitterInstance(mContext, account_id, false);
+			final Twitter twitter = getTwitterInstance(mContext, accountId, false);
 			if (twitter != null) {
 				try {
-					final UserList list = twitter.updateUserList(list_id, name, is_public, description);
-					return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, account_id), null);
+					final UserList list = twitter.updateUserList(listId, name, isPublic, description);
+					return new SingleResponse<ParcelableUserList>(new ParcelableUserList(list, accountId), null);
 				} catch (final TwitterException e) {
 					return SingleResponse.withException(e);
 				}
@@ -2327,7 +2325,7 @@ public class AsyncTwitterWrapper extends TwitterWrapper {
 		@Override
 		protected void onPostExecute(final SingleResponse<ParcelableUserList> result) {
 			final Intent intent = new Intent(BROADCAST_USER_LIST_DETAILS_UPDATED);
-			intent.putExtra(EXTRA_LIST_ID, list_id);
+			intent.putExtra(EXTRA_LIST_ID, listId);
 			if (result.data != null && result.data.id > 0) {
 				final String message = mContext.getString(R.string.updated_list_details, result.data.name);
 				mMessagesManager.showOkMessage(message, false);

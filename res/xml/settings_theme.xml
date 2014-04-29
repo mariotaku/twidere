@@ -55,8 +55,15 @@
 
 	<org.mariotaku.twidere.preference.ThemeFontFamilyPreference
 		android:defaultValue="sans-serif-light"
+		android:enabled="@bool/has_font_family"
 		android:key="theme_font_family"
 		android:order="26"
 		android:title="@string/theme_font_family"/>
+
+	<org.mariotaku.twidere.preference.AutoFixCheckBoxPreference
+		android:defaultValue="true"
+		android:key="dark_drawer"
+		android:order="27"
+		android:title="@string/dark_drawer"/>
 
 </PreferenceScreen>

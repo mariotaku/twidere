@@ -38,7 +38,7 @@ import twitter4j.User;
 
 import java.util.Date;
 
-public class ParcelableUser implements Parcelable, JSONParcelable, Comparable<ParcelableUser> {
+public class ParcelableUser implements TwidereParcelable, Comparable<ParcelableUser> {
 
 	public static final Parcelable.Creator<ParcelableUser> CREATOR = new Parcelable.Creator<ParcelableUser>() {
 		@Override
