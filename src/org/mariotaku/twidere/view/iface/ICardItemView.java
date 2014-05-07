@@ -209,6 +209,7 @@ public interface ICardItemView extends IColorLabelView {
 		}
 
 		public boolean isOverflowIconClicked(final MotionEvent ev) {
+			if (mOverflowIcon == null || mOnOverflowIconClickListener == null) return false;
 			final int x = Math.round(ev.getX()), y = Math.round(ev.getY());
 			if (mOverflowIconBounds.contains(x, y)) return true;
 			return false;
@@ -361,6 +362,9 @@ public interface ICardItemView extends IColorLabelView {
 
 			@Override
 			public boolean onDown(final MotionEvent e) {
+				final Drawable d = mDrawingHelper.mPaddedOverflowIcon;
+				final OnOverflowIconClickListener l = mDrawingHelper.mOnOverflowIconClickListener;
+				if (d == null || l == null) return false;
 				return true;
 			}
 

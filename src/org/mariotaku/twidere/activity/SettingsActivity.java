@@ -56,7 +56,7 @@ public class SettingsActivity extends BasePreferenceActivity {
 
 	public HeaderAdapter getHeaderAdapter() {
 		if (mAdapter != null) return mAdapter;
-		return mAdapter = new HeaderAdapter(ThemeUtils.getContextForActionIcons(this, getThemeResourceId()));
+		return mAdapter = new HeaderAdapter(ThemeUtils.getThemedContextForActionIcons(this, getThemeResourceId()));
 	}
 
 	@Override

@@ -122,7 +122,7 @@ public class CustomTabsFragment extends BaseListFragment implements LoaderCallba
 		} else {
 			themeRes = ThemeUtils.getSettingsThemeResource(activity);
 		}
-		mAdapter = new CustomTabsAdapter(ThemeUtils.getContextForActionIcons(activity, themeRes));
+		mAdapter = new CustomTabsAdapter(ThemeUtils.getThemedContextForActionIcons(activity, themeRes));
 		setListAdapter(mAdapter);
 		setEmptyText(getString(R.string.no_tab_hint));
 		mListView = (DragSortListView) getListView();

@@ -404,7 +404,8 @@ public class DirectMessagesConversationFragment extends BaseSupportListFragment 
 		if (mPopupMenu != null && mPopupMenu.isShowing()) {
 			mPopupMenu.dismiss();
 		}
-		mPopupMenu = PopupMenu.getInstance(getActivity(), view);
+		final Context context = ThemeUtils.getThemedContextForActionIcons(getActivity());
+		mPopupMenu = PopupMenu.getInstance(context, view);
 		mPopupMenu.inflate(R.menu.action_direct_message);
 		final Menu menu = mPopupMenu.getMenu();
 		final MenuItem view_profile_item = menu.findItem(MENU_VIEW_PROFILE);
