@@ -150,7 +150,7 @@ public class HttpClientImpl extends HttpClientBase implements HttpClient, HttpRe
 							write(out, "\r\n");
 
 						} else {
-							con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+							con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 							final String postParam = HttpParameter.encodeParameters(req.getParameters());
 							logger.debug("Post Params: ", postParam);
 							final byte[] bytes = postParam.getBytes("UTF-8");

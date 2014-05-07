@@ -71,6 +71,7 @@ final class StatusJSONImpl extends TwitterResponseImpl implements Status {
 	private GeoLocation geoLocation = null;
 	private Place place = null;
 	private long retweetCount;
+	private long favoriteCount;
 	private boolean wasRetweetedByMe;
 	private boolean isPossiblySensitive;
 
@@ -145,6 +146,11 @@ final class StatusJSONImpl extends TwitterResponseImpl implements Status {
 	@Override
 	public long getCurrentUserRetweet() {
 		return currentUserRetweet;
+	}
+
+	@Override
+	public long getFavoriteCount() {
+		return favoriteCount;
 	}
 
 	/**
@@ -342,6 +348,7 @@ final class StatusJSONImpl extends TwitterResponseImpl implements Status {
 		inReplyToScreenName = getHTMLUnescapedString("in_reply_to_screen_name", json);
 		isPossiblySensitive = getBoolean("possibly_sensitive", json);
 		retweetCount = getLong("retweet_count", json);
+		favoriteCount = getLong("favorite_count", json);
 		try {
 			if (!json.isNull("user")) {
 				user = new UserJSONImpl(json.getJSONObject("user"));

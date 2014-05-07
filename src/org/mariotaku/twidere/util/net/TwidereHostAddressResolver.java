@@ -24,6 +24,7 @@ import static android.text.TextUtils.isEmpty;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.Patterns;
 
 import org.mariotaku.twidere.Constants;
 import org.mariotaku.twidere.util.HostsFileParser;
@@ -74,7 +75,9 @@ public class TwidereHostAddressResolver implements Constants, HostAddressResolve
 
 	@Override
 	public String resolve(final String host) throws IOException {
-		if (host == null || !mPreferences.getBoolean(KEY_IGNORE_SSL_ERROR, false)) return null;
+		if (host == null) return null;
+		if (Patterns.IP_ADDRESS.matcher(host).matches() || !mPreferences.getBoolean(KEY_IGNORE_SSL_ERROR, false))
+			return null;
 		// First, I'll try to load address cached.
 		if (mHostCache.containsKey(host)) {
 			if (Utils.isDebugBuild()) {

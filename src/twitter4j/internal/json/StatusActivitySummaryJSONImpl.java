@@ -21,6 +21,7 @@ public class StatusActivitySummaryJSONImpl extends TwitterResponseImpl implement
 	private long favoritersCount;
 	private long repliersCount;
 	private long retweetersCount;
+	private long descendentReplyCount;
 
 	/* package */StatusActivitySummaryJSONImpl(final HttpResponse res, final Configuration conf)
 			throws TwitterException {
@@ -40,6 +41,7 @@ public class StatusActivitySummaryJSONImpl extends TwitterResponseImpl implement
 		if (obj == null) return false;
 		if (!(obj instanceof StatusActivitySummaryJSONImpl)) return false;
 		final StatusActivitySummaryJSONImpl other = (StatusActivitySummaryJSONImpl) obj;
+		if (descendentReplyCount != other.descendentReplyCount) return false;
 		if (favoriters == null) {
 			if (other.favoriters != null) return false;
 		} else if (!favoriters.equals(other.favoriters)) return false;
@@ -53,6 +55,11 @@ public class StatusActivitySummaryJSONImpl extends TwitterResponseImpl implement
 		} else if (!retweeters.equals(other.retweeters)) return false;
 		if (retweetersCount != other.retweetersCount) return false;
 		return true;
+	}
+
+	@Override
+	public long getDescendentReplyCount() {
+		return descendentReplyCount;
 	}
 
 	@Override
@@ -89,6 +96,7 @@ public class StatusActivitySummaryJSONImpl extends TwitterResponseImpl implement
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (int) (descendentReplyCount ^ descendentReplyCount >>> 32);
 		result = prime * result + (favoriters == null ? 0 : favoriters.hashCode());
 		result = prime * result + (int) (favoritersCount ^ favoritersCount >>> 32);
 		result = prime * result + (repliers == null ? 0 : repliers.hashCode());
@@ -102,7 +110,7 @@ public class StatusActivitySummaryJSONImpl extends TwitterResponseImpl implement
 	public String toString() {
 		return "StatusActivitySummaryJSONImpl{favoriters=" + favoriters + ", repliers=" + repliers + ", retweeters="
 				+ retweeters + ", favoritersCount=" + favoritersCount + ", repliersCount=" + repliersCount
-				+ ", retweetersCount=" + retweetersCount + "}";
+				+ ", retweetersCount=" + retweetersCount + ", descendentReplyCount=" + descendentReplyCount + "}";
 	}
 
 	private void init(final JSONObject json) throws TwitterException {
@@ -112,5 +120,6 @@ public class StatusActivitySummaryJSONImpl extends TwitterResponseImpl implement
 		favoritersCount = getLong("favoriters_count", json);
 		repliersCount = getLong("repliers_count", json);
 		retweetersCount = getLong("retweeters_count", json);
+		descendentReplyCount = getLong("descendent_reply_count", json);
 	}
 }

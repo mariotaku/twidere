@@ -20,7 +20,7 @@
 package org.mariotaku.twidere.activity.support;
 
 import static android.text.TextUtils.isEmpty;
-import static org.mariotaku.twidere.util.ContentValuesCreator.makeAccountContentValues;
+import static org.mariotaku.twidere.util.ContentValuesCreator.*;
 import static org.mariotaku.twidere.util.Utils.getActivatedAccountIds;
 import static org.mariotaku.twidere.util.Utils.getNonEmptyString;
 import static org.mariotaku.twidere.util.Utils.isUserLoggedIn;
@@ -488,8 +488,28 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 	void onSignInResult(final SignInActivity.SigninResponse result) {
 		if (result != null) {
 			if (result.succeed) {
-				final ContentValues values = makeAccountContentValues(result.conf, result.basic_password,
-						result.access_token, result.user, result.auth_type, result.color);
+				final ContentValues values;
+				switch (result.auth_type) {
+					case Accounts.AUTH_TYPE_BASIC: {
+						values = makeAccountContentValuesBasic(result.conf, result.basic_username,
+								result.basic_password, result.user, result.color);
+						break;
+
+					}
+					case Accounts.AUTH_TYPE_TWIP_O_MODE: {
+						values = makeAccountContentValuesTWIP(result.conf, result.user, result.color);
+						break;
+					}
+					case Accounts.AUTH_TYPE_OAUTH:
+					case Accounts.AUTH_TYPE_XAUTH: {
+						values = makeAccountContentValuesOAuth(result.conf, result.access_token, result.user,
+								result.auth_type, result.color);
+						break;
+					}
+					default: {
+						values = null;
+					}
+				}
 				if (values != null) {
 					mResolver.insert(Accounts.CONTENT_URI, values);
 				}
@@ -611,8 +631,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				final User user = twitter.showUser(user_id);
 				if (isUserLoggedIn(context, user_id)) return new SigninResponse(true, false, null);
 				final int color = user_color != null ? user_color : analyseUserProfileColor(user);
-				return new SigninResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
-						color);
+				return new SigninResponse(conf, access_token, user, Accounts.AUTH_TYPE_OAUTH, color);
 			} catch (final TwitterException e) {
 				return new SigninResponse(false, false, e);
 			}
@@ -668,8 +687,10 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 				}
 				return authOAuth();
 			} catch (final TwitterException e) {
+				e.printStackTrace();
 				return new SigninResponse(false, false, e);
 			} catch (final AuthenticationException e) {
+				e.printStackTrace();
 				return new SigninResponse(false, false, e);
 			}
 		}
@@ -681,7 +702,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			if (user_id <= 0) return new SigninResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new SigninResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
-			return new SigninResponse(false, true, null, conf, password, null, user, Accounts.AUTH_TYPE_BASIC, color);
+			return new SigninResponse(conf, username, password, user, color);
 		}
 
 		private SigninResponse authOAuth() throws AuthenticationException, TwitterException {
@@ -693,8 +714,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			final User user = twitter.showUser(user_id);
 			if (isUserLoggedIn(context, user_id)) return new SigninResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
-			return new SigninResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_OAUTH,
-					color);
+			return new SigninResponse(conf, access_token, user, Accounts.AUTH_TYPE_OAUTH, color);
 		}
 
 		private SigninResponse authTwipOMode() throws TwitterException {
@@ -704,7 +724,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			if (user_id <= 0) return new SigninResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new SigninResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
-			return new SigninResponse(false, true, null, conf, null, null, user, Accounts.AUTH_TYPE_TWIP_O_MODE, color);
+			return new SigninResponse(conf, user, color);
 		}
 
 		private SigninResponse authxAuth() throws TwitterException {
@@ -715,8 +735,7 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 			if (user_id <= 0) return new SigninResponse(false, false, null);
 			if (isUserLoggedIn(context, user_id)) return new SigninResponse(true, false, null);
 			final int color = user_color != null ? user_color : analyseUserProfileColor(user);
-			return new SigninResponse(false, true, null, conf, null, access_token, user, Accounts.AUTH_TYPE_XAUTH,
-					color);
+			return new SigninResponse(conf, access_token, user, Accounts.AUTH_TYPE_XAUTH, color);
 		}
 
 	}
@@ -732,22 +751,37 @@ public class SignInActivity extends BaseSupportActivity implements TwitterConsta
 		public final boolean already_logged_in, succeed;
 		public final Exception exception;
 		final Configuration conf;
-		final String basic_password;
+		final String basic_username, basic_password;
 		final AccessToken access_token;
 		final User user;
 		final int auth_type, color;
 
 		public SigninResponse(final boolean already_logged_in, final boolean succeed, final Exception exception) {
-			this(already_logged_in, succeed, exception, null, null, null, null, 0, 0);
+			this(already_logged_in, succeed, exception, null, null, null, null, null, 0, 0);
+		}
+
+		public SigninResponse(final Configuration conf, final String basic_username, final String basic_password,
+				final User user, final int color) {
+			this(false, true, null, conf, basic_username, basic_password, null, user, Accounts.AUTH_TYPE_BASIC, 0);
+		}
+
+		public SigninResponse(final Configuration conf, final AccessToken access_token, final User user,
+				final int auth_type, final int color) {
+			this(false, true, null, conf, null, null, access_token, user, auth_type, 0);
+		}
+
+		public SigninResponse(final Configuration conf, final User user, final int color) {
+			this(false, true, null, conf, null, null, null, user, Accounts.AUTH_TYPE_TWIP_O_MODE, 0);
 		}
 
 		public SigninResponse(final boolean already_logged_in, final boolean succeed, final Exception exception,
-				final Configuration conf, final String basic_password, final AccessToken access_token, final User user,
-				final int auth_type, final int color) {
+				final Configuration conf, final String basic_username, final String basic_password,
+				final AccessToken access_token, final User user, final int auth_type, final int color) {
 			this.already_logged_in = already_logged_in;
 			this.succeed = succeed;
 			this.exception = exception;
 			this.conf = conf;
+			this.basic_username = basic_username;
 			this.basic_password = basic_password;
 			this.access_token = access_token;
 			this.user = user;

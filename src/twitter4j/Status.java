@@ -102,6 +102,8 @@ public interface Status extends Comparable<Status>, TwitterResponse, EntitySuppo
 	 * @return the retweet count.
 	 */
 	long getRetweetCount();
+	
+	long getFavoriteCount();
 
 	/**
 	 * @since Twitter4J 2.1.0

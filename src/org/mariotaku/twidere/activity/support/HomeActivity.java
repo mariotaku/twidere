@@ -183,6 +183,11 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 		return mViewPager;
 	}
 
+	public void hideControls() {
+		// TODO Auto-generated method stub
+
+	}
+
 	public void notifyAccountsChanged() {
 		if (mPreferences == null) return;
 		final long[] account_ids = getAccountIds(this);
@@ -407,6 +412,11 @@ public class HomeActivity extends BaseSupportActivity implements OnClickListener
 	@Override
 	public boolean shouldOverrideActivityAnimation() {
 		return false;
+	}
+
+	public void showControls() {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override

@@ -648,9 +648,11 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 	public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 			final int totalItemCount) {
 		super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-		final float factor = -mHeaderView.getTop() / (mHeaderView.getWidth() * 0.5f);
-		mProfileBannerView.setAlpha(1.0f - factor);
-		mProfileBannerView.setTranslationY(mHeaderView.getTop() / 2);
+		final View headerView = mHeaderView, profileBannerView = mProfileBannerView;
+		if (headerView == null || profileBannerView == null) return;
+		final float factor = -headerView.getTop() / (headerView.getWidth() * 0.5f);
+		profileBannerView.setAlpha(1.0f - factor);
+		profileBannerView.setTranslationY(headerView.getTop() / 2);
 	}
 
 	@Override

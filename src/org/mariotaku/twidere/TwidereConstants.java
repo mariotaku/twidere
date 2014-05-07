@@ -88,7 +88,9 @@ public interface TwidereConstants extends SharedPreferenceConstants, IntentConst
 	public static final String AUTHORITY_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
 	public static final String AUTHORITY_INCOMING_FRIENDSHIPS = "incoming_friendships";
 	public static final String AUTHORITY_STATUS_RETWEETERS = "status_retweeters";
+	public static final String AUTHORITY_STATUS_FAVORITERS = "status_favoriters";
 	public static final String AUTHORITY_STATUS_REPLIES = "status_replies";
+	public static final String AUTHORITY_RETWEETS_OF_ME = "retweets_of_me";
 
 	public static final String QUERY_PARAM_ACCOUNT_ID = "account_id";
 	public static final String QUERY_PARAM_ACCOUNT_IDS = "account_ids";
@@ -220,6 +222,7 @@ public interface TwidereConstants extends SharedPreferenceConstants, IntentConst
 	public static final String TAB_TYPE_LIST_TIMELINE = "list_timeline";
 	public static final String TAB_TYPE_ACTIVITIES_ABOUT_ME = "activities_about_me";
 	public static final String TAB_TYPE_ACTIVITIES_BY_FRIENDS = "activities_by_friends";
+	public static final String TAB_TYPE_RETWEETS_OF_ME = "retweets_of_me";
 	public static final String TAB_TYPE_STAGGERED_HOME_TIMELINE = "staggered_home_timeline";
 
 	public static final int TWITTER_MAX_IMAGE_SIZE = 3145728;

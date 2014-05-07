@@ -114,7 +114,7 @@ public class ThemePreviewPreference extends Preference implements Constants, OnS
 			final TextView screenNameView = (TextView) statusContentView.findViewById(R.id.screen_name);
 			final TextView textView = (TextView) statusContentView.findViewById(R.id.text);
 			final TextView timeSourceView = (TextView) statusContentView.findViewById(R.id.time_source);
-			final TextView retweetView = (TextView) statusContentView.findViewById(R.id.retweet_view);
+//			final TextView retweetView = (TextView) statusContentView.findViewById(R.id.retweet_view);
 			final TextView repliesView = (TextView) statusContentView.findViewById(R.id.replies_view);
 
 			cardView.setItemSelector(null);
@@ -123,11 +123,11 @@ public class ThemePreviewPreference extends Preference implements Constants, OnS
 			textView.setTextSize(defaultTextSize * 1.25f);
 			screenNameView.setTextSize(defaultTextSize * 0.85f);
 			timeSourceView.setTextSize(defaultTextSize * 0.85f);
-			retweetView.setTextSize(defaultTextSize * 0.85f);
+//			retweetView.setTextSize(defaultTextSize * 0.85f);
 			repliesView.setTextSize(defaultTextSize * 0.85f);
 
 			profileView.setBackgroundResource(0);
-			retweetView.setBackgroundResource(0);
+//			retweetView.setBackgroundResource(0);
 			repliesView.setBackgroundResource(0);
 			textView.setTextIsSelectable(false);
 

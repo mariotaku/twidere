@@ -14,4 +14,6 @@ public interface StatusActivitySummary extends TwitterResponse {
 
 	public long getRetweetersCount();
 
+	public long getDescendentReplyCount();
+
 }

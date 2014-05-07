@@ -143,20 +143,9 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 			} else if (method == RequestMethod.POST) {
 				final HttpPost post = new HttpPost(resolvedUrl);
 				// parameter has a file?
-				boolean hasFile = false;
 				final HttpParameter[] params = req.getParameters();
 				if (params != null) {
-					for (final HttpParameter param : params) {
-						if (param.isFile()) {
-							hasFile = true;
-							break;
-						}
-					}
-					if (!hasFile) {
-						if (params.length > 0) {
-							post.setEntity(new UrlEncodedFormEntity(params));
-						}
-					} else {
+					if (HttpParameter.containsFile(params)) {
 						final MultipartEntity me = new MultipartEntity();
 						for (final HttpParameter param : params) {
 							if (param.isFile()) {
@@ -175,6 +164,10 @@ public class HttpClientImpl implements twitter4j.http.HttpClient, HttpResponseCo
 							}
 						}
 						post.setEntity(me);
+					} else {
+						if (params.length > 0) {
+							post.setEntity(new UrlEncodedFormEntity(params));
+						}
 					}
 				}
 				post.getParams().setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);

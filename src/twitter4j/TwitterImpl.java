@@ -832,20 +832,18 @@ final class TwitterImpl extends TwitterBaseImpl implements Twitter {
 
 	@Override
 	public StatusActivitySummary getStatusActivitySummary(final long statusId) throws TwitterException {
-		final String endpoint = String.format(Locale.US, "statuses/%d/activity/summary.json", statusId);
-		final String url = conf.getRestBaseURL() + endpoint;
-		final String sign_url = conf.getSigningRestBaseURL() + endpoint;
-		return factory.createStatusActivitySummary(get(url, sign_url));
+		return getStatusActivitySummary(statusId, false);
 	}
 
 	@Override
-	public StatusActivitySummary getStatusActivitySummary(final long statusId, final boolean includeUserEntities)
+	public StatusActivitySummary getStatusActivitySummary(final long statusId, final boolean includeDescendentReplyCount)
 			throws TwitterException {
-		final String endpoint = String.format(Locale.US, "statuses/%d/activity/summary.json", statusId);
+		final String endpoint = String.format(Locale.ROOT, "statuses/%d/activity/summary.json", statusId);
 		final String url = conf.getRestBaseURL() + endpoint;
 		final String signUrl = conf.getSigningRestBaseURL() + endpoint;
-		final HttpParameter paramIncludeUserEntities = new HttpParameter("include_user_entities", includeUserEntities);
-		return factory.createStatusActivitySummary(get(url, signUrl, paramIncludeUserEntities));
+		final HttpParameter paramIncludeDescendentReplyCount = new HttpParameter("include_descendent_reply_count",
+				includeDescendentReplyCount);
+		return factory.createStatusActivitySummary(get(url, signUrl, paramIncludeDescendentReplyCount));
 	}
 
 	@Override

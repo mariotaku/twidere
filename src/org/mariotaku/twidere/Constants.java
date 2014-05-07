@@ -29,7 +29,7 @@ package org.mariotaku.twidere;
 public interface Constants extends TwidereConstants {
 
 	public static final String DATABASES_NAME = "twidere.sqlite";
-	public static final int DATABASES_VERSION = 60;
+	public static final int DATABASES_VERSION = 62;
 
 	public static final String GOOGLE_MAPS_API_KEY_RELEASE = "0kjPwJOe_zwYjzGc9uYak7vhm_Sf3eob-2L3Xzw";
 	public static final String GOOGLE_MAPS_API_KEY_DEBUG = "0kjPwJOe_zwY9p6kT-kygu4mxwysyOOpfkaXqTA";
@@ -133,7 +133,8 @@ public interface Constants extends TwidereConstants {
 	public static final int LINK_ID_STATUSES = 24;
 	public static final int LINK_ID_STATUS_RETWEETERS = 25;
 	public static final int LINK_ID_STATUS_REPLIES = 26;
-	public static final int LINK_ID_SEARCH = 27;
+	public static final int LINK_ID_STATUS_FAVORITERS = 27;
+	public static final int LINK_ID_SEARCH = 28;
 
 	public static final String DIR_NAME_IMAGE_CACHE = "image_cache";
 	public static final String DIR_NAME_FULL_IMAGE_CACHE = "full_image_cache";

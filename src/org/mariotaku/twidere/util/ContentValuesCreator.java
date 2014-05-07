@@ -59,31 +59,63 @@ import java.util.List;
 
 public final class ContentValuesCreator implements TwidereConstants {
 
-	public static ContentValues makeAccountContentValues(final Configuration conf, final String basic_password,
-			final AccessToken access_token, final User user, final int auth_type, final int color) {
+	public static ContentValues makeAccountContentValuesBasic(final Configuration conf, final String basicUsername,
+			final String basicPassword, final User user, final int color) {
 		if (user == null || user.getId() <= 0) return null;
 		final ContentValues values = new ContentValues();
-		switch (auth_type) {
-			case Accounts.AUTH_TYPE_TWIP_O_MODE: {
-				break;
-			}
-			case Accounts.AUTH_TYPE_BASIC: {
-				if (basic_password == null) return null;
-				values.put(Accounts.BASIC_AUTH_PASSWORD, basic_password);
-				break;
-			}
+		if (basicUsername == null || basicPassword == null) return null;
+		values.put(Accounts.BASIC_AUTH_USERNAME, basicUsername);
+		values.put(Accounts.BASIC_AUTH_PASSWORD, basicPassword);
+		values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_BASIC);
+		values.put(Accounts.ACCOUNT_ID, user.getId());
+		values.put(Accounts.SCREEN_NAME, user.getScreenName());
+		values.put(Accounts.NAME, user.getName());
+		values.put(Accounts.PROFILE_IMAGE_URL, ParseUtils.parseString(user.getProfileImageUrlHttps()));
+		values.put(Accounts.PROFILE_BANNER_URL, ParseUtils.parseString(user.getProfileBannerImageUrl()));
+		values.put(Accounts.COLOR, color);
+		values.put(Accounts.IS_ACTIVATED, 1);
+		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
+		values.put(Accounts.SIGNING_REST_BASE_URL, conf.getSigningRestBaseURL());
+		values.put(Accounts.OAUTH_BASE_URL, conf.getOAuthBaseURL());
+		values.put(Accounts.SIGNING_OAUTH_BASE_URL, conf.getSigningOAuthBaseURL());
+		return values;
+	}
+
+	public static ContentValues makeAccountContentValuesOAuth(final Configuration conf, final AccessToken accessToken,
+			final User user, final int authType, final int color) {
+		if (user == null || user.getId() <= 0) return null;
+		final ContentValues values = new ContentValues();
+		switch (authType) {
 			case Accounts.AUTH_TYPE_OAUTH:
 			case Accounts.AUTH_TYPE_XAUTH: {
-				if (access_token == null) return null;
-				if (user.getId() != access_token.getUserId()) return null;
-				values.put(Accounts.OAUTH_TOKEN, access_token.getToken());
-				values.put(Accounts.OAUTH_TOKEN_SECRET, access_token.getTokenSecret());
+				if (accessToken == null) return null;
+				if (user.getId() != accessToken.getUserId()) return null;
+				values.put(Accounts.OAUTH_TOKEN, accessToken.getToken());
+				values.put(Accounts.OAUTH_TOKEN_SECRET, accessToken.getTokenSecret());
 				values.put(Accounts.CONSUMER_KEY, conf.getOAuthConsumerKey());
 				values.put(Accounts.CONSUMER_SECRET, conf.getOAuthConsumerSecret());
 				break;
 			}
 		}
-		values.put(Accounts.AUTH_TYPE, auth_type);
+		values.put(Accounts.AUTH_TYPE, authType);
+		values.put(Accounts.ACCOUNT_ID, user.getId());
+		values.put(Accounts.SCREEN_NAME, user.getScreenName());
+		values.put(Accounts.NAME, user.getName());
+		values.put(Accounts.PROFILE_IMAGE_URL, ParseUtils.parseString(user.getProfileImageUrlHttps()));
+		values.put(Accounts.PROFILE_BANNER_URL, ParseUtils.parseString(user.getProfileBannerImageUrl()));
+		values.put(Accounts.COLOR, color);
+		values.put(Accounts.IS_ACTIVATED, 1);
+		values.put(Accounts.REST_BASE_URL, conf.getRestBaseURL());
+		values.put(Accounts.SIGNING_REST_BASE_URL, conf.getSigningRestBaseURL());
+		values.put(Accounts.OAUTH_BASE_URL, conf.getOAuthBaseURL());
+		values.put(Accounts.SIGNING_OAUTH_BASE_URL, conf.getSigningOAuthBaseURL());
+		return values;
+	}
+
+	public static ContentValues makeAccountContentValuesTWIP(final Configuration conf, final User user, final int color) {
+		if (user == null || user.getId() <= 0) return null;
+		final ContentValues values = new ContentValues();
+		values.put(Accounts.AUTH_TYPE, Accounts.AUTH_TYPE_TWIP_O_MODE);
 		values.put(Accounts.ACCOUNT_ID, user.getId());
 		values.put(Accounts.SCREEN_NAME, user.getScreenName());
 		values.put(Accounts.NAME, user.getName());

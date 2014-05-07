@@ -26,6 +26,7 @@ import twitter4j.http.HttpResponse;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -118,6 +119,11 @@ public final class InternalParseUtil {
 		if (null == str || "".equals(str) || "null".equals(str))
 			return -1;
 		else {
+			try {
+				final Number number = NumberFormat.getInstance().parse(str);
+				return number.longValue();
+			} catch (final ParseException e) {
+			}
 			// some count over 100 will be expressed as "100+"
 			if (str.endsWith("+")) {
 				str = str.substring(0, str.length() - 1);
@@ -145,11 +151,9 @@ public final class InternalParseUtil {
 
 	public static String getRawString(final String name, final JSONObject json) {
 		try {
-			if (json.isNull(name))
-				return null;
-			else
-				return json.getString(name);
-		} catch (final JSONException jsone) {
+			if (json.isNull(name)) return null;
+			return json.getString(name);
+		} catch (final JSONException e) {
 			return null;
 		}
 	}

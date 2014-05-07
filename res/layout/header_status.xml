@@ -151,19 +151,67 @@
 			android:padding="@dimen/element_spacing_normal"
 			android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-		<org.mariotaku.twidere.view.themed.ThemedTextView
-			android:id="@+id/retweet_view"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?android:selectableItemBackground"
-			android:drawableLeft="@drawable/ic_indicator_retweet"
-			android:drawablePadding="4dp"
-			android:gravity="center_vertical"
-			android:padding="@dimen/element_spacing_normal"
-			android:singleLine="true"
-			android:text="@string/users_retweeted_this"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:visibility="visible"/>
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="@dimen/button_bar_height"
+			android:orientation="horizontal">
+
+			<LinearLayout
+				android:id="@+id/favorites_container"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:background="?android:selectableItemBackground"
+				android:clickable="true"
+				android:gravity="center"
+				android:minWidth="@dimen/button_width_content_min"
+				android:orientation="vertical"
+				android:padding="@dimen/element_spacing_small">
+
+				<org.mariotaku.twidere.view.themed.ThemedTextView
+					android:id="@+id/favorites_count"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="?android:textColorPrimary"/>
+
+				<org.mariotaku.twidere.view.themed.ThemedTextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:text="@string/favorites"
+					android:textAppearance="?android:textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+			</LinearLayout>
+
+			<LinearLayout
+				android:id="@+id/retweets_container"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:background="?android:selectableItemBackground"
+				android:clickable="true"
+				android:gravity="center"
+				android:minWidth="@dimen/button_width_content_min"
+				android:orientation="vertical"
+				android:padding="@dimen/element_spacing_small">
+
+				<org.mariotaku.twidere.view.themed.ThemedTextView
+					android:id="@+id/retweets_count"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:textAppearance="?android:textAppearanceMedium"
+					android:textColor="?android:textColorPrimary"/>
+
+				<org.mariotaku.twidere.view.themed.ThemedTextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:text="@string/retweets"
+					android:textAppearance="?android:textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+			</LinearLayout>
+		</LinearLayout>
 
 		<org.mariotaku.twidere.view.themed.ThemedTextView
 			android:id="@+id/replies_view"

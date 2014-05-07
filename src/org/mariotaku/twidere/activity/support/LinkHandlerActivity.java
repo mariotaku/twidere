@@ -255,6 +255,10 @@ public class LinkHandlerActivity extends TwidereSwipeBackActivity implements OnC
 				setTitle(R.string.users_retweeted_this);
 				break;
 			}
+			case LINK_ID_STATUS_FAVORITERS: {
+				setTitle(R.string.users_retweeted_this);
+				break;
+			}
 			case LINK_ID_STATUS_REPLIES: {
 				setTitle(R.string.view_replies);
 				break;

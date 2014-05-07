@@ -198,15 +198,15 @@ public class ParcelableStatusesAdapter extends BaseArrayAdapter<ParcelableStatus
 			holder.setAccountColorEnabled(mShowAccountColor);
 
 			if (highlightOption != VALUE_LINK_HIGHLIGHT_OPTION_CODE_NONE) {
-				holder.text.setText(Html.fromHtml(Utils.getKeywordBoldedText(status.text_html, mHighlightKeywords)));
+				holder.text.setText(Utils.getKeywordBoldedText(Html.fromHtml(status.text_html), mHighlightKeywords));
 				linkify.applyAllLinks(holder.text, status.account_id, status.is_possibly_sensitive);
 				holder.text.setMovementMethod(null);
 			} else {
 				if (mHighlightKeywords == null || mHighlightKeywords.length == 0) {
 					holder.text.setText(status.text_unescaped);
 				} else {
-					holder.text.setText(Html.fromHtml(Utils.getKeywordBoldedText(
-							HtmlEscapeHelper.escape(status.text_unescaped), mHighlightKeywords)));
+					holder.text.setText(Utils.getKeywordBoldedText(HtmlEscapeHelper.escape(status.text_unescaped),
+							mHighlightKeywords));
 				}
 			}
 
