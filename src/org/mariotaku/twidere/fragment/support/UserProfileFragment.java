@@ -344,7 +344,7 @@ public class UserProfileFragment extends BaseSupportListFragment implements OnCl
 		final String created_at = formatToLongTimeString(getActivity(), user.created_at);
 		final double total_created_days = (System.currentTimeMillis() - user.created_at) / 1000 / 60 / 60 / 24;
 		final long daily_tweets = Math.round(user.statuses_count / Math.max(1, total_created_days));
-		mCreatedAtView.setText(getString(R.string.daily_statuses_count, created_at, daily_tweets));
+		mCreatedAtView.setText(getResources().getQuantityString(R.plurals.daily_statuses_count, created_at, daily_tweets, daily_tweets));
 		mTweetCount.setText(getLocalizedNumber(mLocale, user.statuses_count));
 		mFollowersCount.setText(getLocalizedNumber(mLocale, user.followers_count));
 		mFriendsCount.setText(getLocalizedNumber(mLocale, user.friends_count));

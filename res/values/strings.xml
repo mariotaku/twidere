@@ -449,7 +449,8 @@
 	<string name="no_close_after_status_updated_summary">A little gift for chatterbox</string>
 	<string name="status_saved_to_draft">Tweet saved to draft.</string>
 	<string name="default_account">Default account</string>
-	<string name="daily_statuses_count"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet(s) per day)</string>
+	<string name="daily_statuses_count_one"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweet per day)</string>
+	<string name="daily_statuses_count_other"><xliff:g id="created_at">%1$s</xliff:g> (<xliff:g id="daily_tweet">%2$d</xliff:g> tweets per day)</string>
 	<string name="empty_content">Empty content</string>
 	<string name="fast_image_loading">Fast image loading</string>
 	<string name="fast_image_loading_summary">Enable to make images load faster, disable this if some image can\'t be displayed.</string>
