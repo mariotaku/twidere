@@ -178,7 +178,7 @@
   <string name="refresh_on_start">Beim Start aktualisieren</string>
   <string name="refresh_on_start_summary">Timeline und Erwähnungen beim Start aktualisieren.</string>
   <string name="refresh_after_status_updated">Aktualisiere nach dem Senden</string>
-  <string name="refresh_after_status_updated_summary">Timeline nach dem senden aktualisieren.</string>
+  <string name="refresh_after_status_updated_summary">Timeline nach dem Senden aktualisieren.</string>
   <string name="list_timeline">Zeitleiste anzeigen</string>
   <string name="list_members">Mitglieder anzeigen</string>
   <string name="list_subscribers">Abonnenten anzeigen</string>
@@ -350,9 +350,9 @@
   <string name="hashtag">Hashtag</string>
   <string name="links">Links</string>
   <string name="edit_profile">Profil bearbeiten</string>
-  <string name="display_sensitive_contents">Heikelen Inhanlt anzeigen</string>
-  <string name="display_sensitive_contents_summary">Heikelen Inhanlt ohne Mitteilung anzeigen</string>
-  <string name="sensitive_content_warning">Dieser Tweet könnte heikelen Inhalt haben, fortfahren?</string>
+  <string name="display_sensitive_contents">Heikelen Inhalt anzeigen</string>
+  <string name="display_sensitive_contents_summary">Heiklen Inhalt ohne Mitteilung anzeigen</string>
+  <string name="sensitive_content_warning">Dieser Tweet könnte heiklen Inhalt haben, fortfahren?</string>
   <string name="mark_as_sensitive">Als heikel markieren</string>
   <string name="remove_sensitive_mark">Markieren als heikel entfernen</string>
   <string name="none">Nichts</string>
