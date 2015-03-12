@@ -8,7 +8,7 @@ Twidere is an open source Twitter client for Android.
 
 ###iOS version (Planning, but development not yet started)###
 
-###Twidere for Modern Windows (Planning, but development not yet started)###
+###Modern Windows version (Planning, but development not yet started)###
 
 
 ## Support my work ##
@@ -21,7 +21,7 @@ I started a crowdin project, so anyone can do something for Twidere. Visit this 
 
 **Donation methods**
 
-PayPal & AliPay: "mariotaku.lee#gmail.com".replace("#", "@");
+PayPal & AliPay: String.format("%s@%s", "mariotaku.lee", "gmail.com");
 
 Bitcoin: 1FHAVAzge7cj1LfCTMfnLL49DgA3mVUCuW
 
@@ -29,4 +29,4 @@ Bitcoin: 1FHAVAzge7cj1LfCTMfnLL49DgA3mVUCuW
 
 [@TwidereProject/donators](https://twitter.com/TwidereProject/lists/donators), if you haven't find your name, please contact @TwidereProject :)
 
-Buy me a bread or anything you want :)
+Buy me a ~~bread~~ [game](http://steamcommunity.com/id/mariotaku/wishlist) or anything you want :)
