@@ -6,6 +6,8 @@ Twidere is an open source Twitter client for Android.
 
 ###[Android version](https://github.com/TwidereProject/Twidere-Android/)##
 
+[Report issues](https://github.com/TwidereProject/Twidere-Android/issues)
+
 ###iOS version (Planning, but development not yet started)###
 
 ###Modern Windows version (Planning, but development not yet started)###
