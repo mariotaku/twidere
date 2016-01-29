@@ -25,8 +25,6 @@ I started a crowdin project, so anyone can do something for Twidere. Visit this 
 
 * Me: mariotaku.lee[AT]gmail.com
 
-* Our designer: pay[AT]uucky.me
-
 PayPal & Alipay accepted.
 
 Bitcoin: 1FHAVAzge7cj1LfCTMfnLL49DgA3mVUCuW
