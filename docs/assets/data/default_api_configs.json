@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Twidere",
+    "type": "twitter",
+    "localized_name": "@string/provider_default",
+    "api_url_format": "https://[DOMAIN.]twitter.com/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": false,
+    "consumer_key": "i5XtSVfoWjLjKlnrvhiLPMZC0",
+    "consumer_secret": "sQncmZ2atQR6tKbqnnAtqjrECqN8k6FD4p4OoNS0XTDkUz3HGH",
+    "sign_up_url": "https://twitter.com/signup"
+  },
+  {
+    "name": "Fanfou",
+    "type": "fanfou",
+    "localized_name": "@string/provider_fanfou",
+    "api_url_format": "http://api.fanfou.com/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": true,
+    "consumer_key": "86d1146dda1d21d59351008a1d1058fd",
+    "consumer_secret": "c00f4b83dbfc52e2ed78a21d4edfc3cc",
+    "sign_up_url": "http://fanfou.com/register"
+  },
+  {
+    "name": "Quitter.se",
+    "type": "statusnet",
+    "localized_name": "@string/provider_quitter_se",
+    "api_url_format": "https://quitter.se/api/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": true,
+    "consumer_key": "3584cd86bd8e04948be15650acbd0d59",
+    "consumer_secret": "84a39eff81c0a0ecbfba5239d25c0367",
+    "sign_up_url": "https://quitter.se/"
+  },
+  {
+    "name": "LoadAverage.org",
+    "type": "statusnet",
+    "localized_name": "@string/provider_loadaverage_org",
+    "api_url_format": "https://loadaverage.org/api/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": true,
+    "consumer_key": "b6ec1e0db2664a2c8672fd85d0a247ae",
+    "consumer_secret": "267ab1bb064b8268283ca38835d1f45a"
+  },
+  {
+    "name": "GNU Social.net",
+    "type": "statusnet",
+    "localized_name": "@string/provider_gnusocial_net",
+    "api_url_format": "https://gnusocial.net/api/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": true,
+    "consumer_key": "0d3f84140b97cefec01e9583d88dc760",
+    "consumer_secret": "da3b203278ab34eadf7e578eb2f6f9d7"
+  },
+  {
+    "name": "GNU Social.de",
+    "type": "statusnet",
+    "localized_name": "@string/provider_gnusocial_de",
+    "api_url_format": "https://gnusocial.de/api/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": true,
+    "consumer_key": "4a81cef8ec5d896c4602d0a9b62725de",
+    "consumer_secret": "07e34108712788e31267a7d656242220"
+  },
+  {
+    "name": "status.vinilox.eu",
+    "type": "statusnet",
+    "api_url_format": "https://status.vinilox.eu/api/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": true,
+    "consumer_key": "3f04dd3e588d3189ebe16904a1089e67",
+    "consumer_secret": "5a797b92a22481be94c9c81058d02124"
+  },
+  {
+    "name": "Quitter.im",
+    "type": "statusnet",
+    "api_url_format": "https://quitter.im/api/",
+    "auth_type": "oauth",
+    "same_oauth_url": true,
+    "no_version_suffix": true,
+    "consumer_key": "55c955ee84205e958093d9131bb47154",
+    "consumer_secret": "a13013cac18c9a13bd3f77e1a909f925"
+  }
+]
