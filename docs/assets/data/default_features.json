@@ -2,5 +2,6 @@
   "media_link_counts_in_status": false,
   "default_twitter_consumer_key": "0WEJk1x6AlgtjGRhyABXw",
   "default_twitter_consumer_secret": "gWXNqEFhO3fMkAqoIKpTdjK0MOJs68xnOky0FRdDTP8",
-  "twitter_direct_message_media_limit": 1
+  "twitter_direct_message_media_limit": 1,
+  "twitter_direct_message_max_participants": 50
 }
