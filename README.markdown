@@ -22,9 +22,7 @@ I started a crowdin project, so anyone can do something for Twidere. Visit this 
 
 **Donation methods**
 
-* Me: mariotaku.lee[AT]gmail.com
-
-PayPal & Alipay accepted.
+PayPal & Alipay: mariotaku.lee[AT]gmail.com
 
 Bitcoin: 1FHAVAzge7cj1LfCTMfnLL49DgA3mVUCuW
 
