@@ -1,0 +1,11 @@
+[{
+  "images": [{
+    "url": "https://twidere.mariotaku.org/assets/images/presentations/uccu.jpg"
+  }],
+  "locales": ["zh-CN"],
+  "url": "https://github.com/TwidereProject/Twidere-Android",
+  "schedule": {
+    "cron": "* * * * SUN",
+    "local": true
+  }
+}]
