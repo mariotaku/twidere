@@ -5,7 +5,7 @@
   "locales": ["zh-CN"],
   "url": "https://github.com/TwidereProject/Twidere-Android",
   "schedule": {
-    "cron": "* * * * SUN",
+    "cron": "* * * * *",
     "local": true
   }
 }]
