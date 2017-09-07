@@ -1,0 +1,14 @@
+[{
+  "images": [{
+    "url": "https://twidere.mariotaku.org/assets/images/presentations/the-man-who-changed-china-cover.jpg",
+    "density": 1,
+    "width": 1080,
+    "height": 1500
+  }],
+  "locales": ["zh-CN"],
+  "url": "https://github.com/TwidereProject/Twidere-Android",
+  "schedule": {
+    "cron": "* * * * *",
+    "local": true
+  }
+}]
